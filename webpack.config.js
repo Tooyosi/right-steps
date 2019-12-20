@@ -1,13 +1,13 @@
 const path = require('path');
 const dotenv = require('dotenv');
 const currentPath = path.join(__dirname);
-const configLocation = process.env.CONFIG_LOCATION;
-const basePath = configLocation + '/communicationsApp'
-const fileEnv = dotenv.config({ path: basePath }).parsed;
-const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
-    prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
-    return prev;
-  }, {});
+// const configLocation = process.env.CONFIG_LOCATION;
+// const basePath = configLocation + '/communicationsApp'
+// const fileEnv = dotenv.config({ path: basePath }).parsed;
+// const envKeys = Object.keys(fileEnv).reduce((prev, next) => {
+//     prev[`process.env.${next}`] = JSON.stringify(fileEnv[next]);
+//     return prev;
+//   }, {});
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -72,7 +72,7 @@ const config = {
             template: 'src/index.html',
             // favicon: 'src/favicon.ico',
         }),
-        new webpack.DefinePlugin(envKeys),
+        // new webpack.DefinePlugin(envKeys),
         new webpack.ProvidePlugin({
             $: "jquery",
             jquery: "jquery",
