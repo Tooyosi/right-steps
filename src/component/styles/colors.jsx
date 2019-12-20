@@ -1,0 +1,12 @@
+export const NavBackgroundColor = "#FFFFFF"
+export const ButtonColors = "transparent linear-gradient(180deg, #29CB97 0%, #1AA175 100%) 0% 0% no-repeat padding-box";
+export const ButtonShadow = "0px 5px 15px #ACB2C1;"
+export const ButtonBorderColors = "#49C5A1";
+export const AboutBackground = "#FEF7F9"
+export const LearnMoreBtnColor = "#EF6394"
+export const BoxShadowColor = "#E5E9F2"
+export const FormInputColor = "#f2f8ff"
+export const FooterBackground = "#ECECEC"
+export const RegisterationFrameBackground = "#D3DEEB"
+export const SideBarLinkColors = "#B8C5D3"
+export const CardBackground = " transparent linear-gradient(180deg, #F66798 0%, #B84979 100%) 0% 0% no-repeat padding-box";
