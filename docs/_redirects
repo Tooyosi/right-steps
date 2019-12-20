@@ -1,7 +1,7 @@
-/*           /
-/signup     /signup
-/signin     /signin
-/dashboard  /dashboard
-/stages     /stages
-/members    /members
-/balance    /balance
+/*          / 200
+/signup     /signup 200
+/signin     /signin 200
+/dashboard  /dashboard 200
+/stages     /stages 200
+/members    /members 200
+/balance    /balance 200
