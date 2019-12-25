@@ -21,3 +21,18 @@ export const RegisterProvider = (props) => {
             </RegisterContext.Provider>
         );
 }
+
+export const ErrorContext = createContext();
+
+export const ErrorProvider = (props) => {
+    const [error, setError] = useState({
+        show: false,
+        message: "",
+        isError: false
+    })
+    return (
+        <ErrorContext.Provider value={[error, setError]}>
+            {props.children}
+        </ErrorContext.Provider>
+    );
+}
