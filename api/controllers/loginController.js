@@ -1,30 +1,34 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const jwt = require('jsonwebtoken');
-
-let user = {
-    id: "nklkljkh",
-	username: "test",
-	password : "test"
-}
+const models = require('../connections/sequelize')
 
 module.exports = {
-    post: ('/', (req, res)=>{
+    post: ('/', async (req, res)=>{
         let {username, password} = req.body;
-        if(username == user.username && password == user.password){
-            const token = jwt.sign(
-                {
-                  id: user.id,
-                  username: user.username,
-                },
-                'userdetails',
-                { expiresIn: '3 hours' }
-              );
-              res.cookie('token', token, { httpOnly: true })
-                .status(200)
-                .send(req.body);
-        }else{
-            res.status(401).send("Wrong credentials")
+        try {
+            let user = await models.User.findOne({
+                where:{
+                    username: username,
+                    password: password
+                }
+            })
+            console.log(user)
+            if(user != null || user != undefined){
+                const token = jwt.sign(
+                    user.dataValues,
+                    'userdetails',
+                    { expiresIn: '3 hours' }
+                  );
+                  res.cookie('token', token, { httpOnly: true })
+                    .status(200)
+                    .send(user.dataValues);
+            }else{
+                res.status(401).send("Username Or Password Incorrect")
+            }
+            
+        } catch (error) {
+            console.log(error)
         }
     })
 };

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 class WebService {
     constructor() {
-        this.url = "http://192.168.43.96:3001/"
+        this.url = "http://localhost:3001/"
         this.headers = {
             'Content-type': 'application/json'
         }

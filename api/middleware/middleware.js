@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 module.exports = {
     validateBody: (req, res, next) => {
         let err = []
@@ -13,5 +15,25 @@ module.exports = {
         } else {
             return next()
         }
+    },
+
+    withAuth: (req, res, next) => {
+        const token =
+            req.body.token ||
+            req.query.token ||
+            req.headers['x-access-token'] ||
+            req.cookies.token;
+
+            jwt.verify(token, 'userdetails', (err, decoded) => {
+                if (err) {
+                    console.log(err)
+                  return res.status(401).send({
+                    message: 'Unauthorized User',
+                  });
+                }
+                req.user = decoded;
+                req.token = token;
+                next();
+              });
     }
 }

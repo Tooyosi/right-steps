@@ -1,19 +1,22 @@
 import React, { Fragment, useState, useContext } from 'react'
-import {withRouter} from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import { RegisterFormStyle } from '../styles/style'
 import { Icon } from 'react-icons-kit'
 import { longArrowRight } from 'react-icons-kit/fa/longArrowRight'
 import { Spinner, Row, Col, Nav, Button, Carousel, Image, Navbar, Form, Accordion, Card } from 'react-bootstrap';
 import WebService from '../globals/WebService';
-import { ErrorContext } from '../Context/Context';
+import { ErrorContext, UserListContext } from '../Context/Context';
 import ErrorDisplay from '../globals/Error';
 import { LOGIN } from '../globals/links';
+import { default as localforage } from 'localforage';
+
 
 const SignInForm = (props) => {
     const [username, updateUsername] = useState('')
     const [password, updatePassword] = useState('')
     const [loading, updateLoading] = useState(false)
     const [error, setError] = useContext(ErrorContext);
+    const [user, setUser] = useContext(UserListContext);
 
     let service = new WebService()
     const submitForm = async ({ target }) => {
@@ -34,18 +37,31 @@ const SignInForm = (props) => {
                         message: ""
                     })
                     updateLoading(true)
-                    let result = await service.sendPost(LOGIN, {
-                        username,
-                        password
-                    })
-                    if (result.status == 200){
-                        let {data} = result;
-                        props.history.push("/dashboard")
-                    }else {
+                    try {
+                        let result = await service.sendPost(LOGIN, {
+                            username,
+                            password
+                        })
+                        if (result.status == 200) {
+                            let { data } = result;
+                            localforage.setItem('user', data)
+                                .then((value) => {
+                                    setUser(data)
+                                    props.history.replace('/dashboard');
+                                })
+                        } else {
+                            setError({
+                                show: true,
+                                isError: true,
+                                message: result.response.data
+                            })
+                            updateLoading(false)
+                        }
+                    } catch (error) {
                         setError({
                             show: true,
                             isError: true,
-                            message: result.response.data
+                            message: "A network error occured"
                         })
                         updateLoading(false)
                     }
@@ -101,9 +117,9 @@ const SignInForm = (props) => {
                         <Button onClick={submitForm} id="Submit">
                             {loading ? (
                                 <>
-                                    <Spinner animation="grow" role="status"/>
-                                        <span style={{ marginRight: "5px" }}>
-                                            Loading ....
+                                    <Spinner animation="grow" role="status" />
+                                    <span style={{ marginRight: "5px" }}>
+                                        Loading ....
                                          </span>
                                 </>
                             ) : (
@@ -111,7 +127,7 @@ const SignInForm = (props) => {
                                         <span style={{ marginRight: "5px" }} onClick={submitForm} id="Submit">
                                             LOG IN
                                          </span>
-                                         <Icon size={'15px'} icon={longArrowRight} onClick={submitForm} id="Submit" />
+                                        <Icon size={'15px'} icon={longArrowRight} onClick={submitForm} id="Submit" />
                                     </>
 
                                 )}
