@@ -1,35 +1,33 @@
 const express = require('express');
-const router = express.Router({ mergeParams: true });
-const jwt = require('jsonwebtoken');
-const middleware = require('../middleware/middleware')
 const models = require('../connections/sequelize')
+const {logger} = require('./../loggers/logger')
 
 module.exports = {
     post: ('/',  async (req, res) => {
-        let { name, email, gender, dob, country, state, username, password, sponsor } = req.body;
+        let {firstname, lastname, phone, email, gender, dob, country, state, username, password, role } = req.body;
         try {
             let newUSer = await models.User.build({
-                name: name,
+                firstname: firstname,
+                lastname : lastname,
                 username: username,
-                email: email,
+                email_address: email,
+                role_id: role,
                 gender: gender,
                 dob: dob,
+                phone_no: phone,
                 country: country,
                 state: state,
+                status: 0,
                 password: password,
-                sponsor_id: sponsor.trim() !== ""? sponsor : null,
-                createdAt: Date.now()
+                date_created: Date.now(),
+                last_login_date: Date.now(),
             }).save()
-            const token = jwt.sign(
-                newUSer,
-                'userdetails',
-                { expiresIn: '3 hours' }
-            );
-            res.cookie('token', token, { httpOnly: true })
-                .status(200)
-                .send(newUSer);
+            
+            res.status(201)
+                .send("User Created Successfully");
         } catch (error) {
-            console.log(error.original.toString())
+            console.log(error.original? error.original : error)
+            logger.info(error.original? error.original.toString() : error.toString())
             res.status(400).send(error.original? error.original.toString() : error.toString())
         }
 

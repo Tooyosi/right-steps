@@ -1,7 +1,8 @@
 const express = require('express')
 const app = express()
 const cors = require('cors');
-// const Models = require('./connections/sequelize')
+const { httpLogger } = require('./loggers/httpLogger');
+const { logger } = require('./loggers/logger');
 require('dotenv').config()
 
 app.use(express.json())
@@ -12,11 +13,16 @@ app.use(
       origin: '*',
     })
   );
+
+// app.use(httpLogger);  
 const loginRoute = require('./routes/login')
 const registerRoute = require('./routes/register')
 
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
+app.post('/logout', (req, res)=>{
+  
+})
 app.listen(process.env.API_PORT, ()=>{
-    console.log(`App is running on ${process.env.API_PORT}`)
+    logger.info(`Server listening on port ${process.env.API_PORT}`);
 })

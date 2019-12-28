@@ -117,7 +117,13 @@ const SignInForm = (props) => {
                         <Button onClick={submitForm} id="Submit">
                             {loading ? (
                                 <>
-                                    <Spinner animation="grow" role="status" />
+                                    <Spinner
+                                        as="span"
+                                        animation="grow"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                    />
                                     <span style={{ marginRight: "5px" }}>
                                         Loading ....
                                          </span>

@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { Skeleton } from "../globals/Skeleton";
+import Skeleton from "../globals/Skeleton";
 import { Body } from "./Body";
 
 export const Stages = ()=>{
