@@ -1,14 +1,15 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useContext } from 'react'
 import { Container, Row, Col, Image, Button, Form } from 'react-bootstrap'
 import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
+import { UserListContext } from '../Context/Context'
 
 export const Body = () => {
-
-
+    let [user] = useContext(UserListContext)
+    console.log(user)
     return (
         <Row>
             <Col lg={{span: 9, order: 1}} md={{span: 8, order: 1}} xs={{ order: 12 }}>

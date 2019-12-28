@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Col, Row, Image, Container } from 'react-bootstrap'
 import Logo from '../../../assets/logo.png'
@@ -9,9 +9,12 @@ import Members from '../../../assets/members.png'
 import Settings from '../../../assets/settings.png'
 import Logout from '../../../assets/logout.png'
 import { SidebarStyle, ToggleStyle, BackdropStyle } from '../styles/style'
+import { UserListContext } from '../Context/Context'
 
 export const Sidebar = () => {
     let [toggle, updateToggle] = useState(false)
+    let [user] = useContext(UserListContext)
+
     const toggleClick = () => {
         if (toggle) {
             updateToggle(false)
@@ -33,12 +36,17 @@ export const Sidebar = () => {
                         <Image src={Logo} fluid width="100px" />
                     </Col>
                     <Col lg={12} className="text-center">
-                        <Image src={Logo} roundedCircle width="120px" />
-                        <h6>Mr. Tega Osemudiamen</h6>
+                        {user.image !== null ? (
+                            <Image src={user.image} roundedCircle width="120px" />
+                        ) : (
+                                <Image src={Logo} roundedCircle width="120px" />
+
+                            )}
+                        <h6>{user.gender == "male" ? "Mr" : "Mrs"} {user.name}</h6>
                     </Col>
                     <Col lg={12}>
                         <ul>
-                            <li className={window.location.pathname == "/dashboard"? "active" : ""}>
+                            <li className={window.location.pathname == "/dashboard" ? "active" : ""}>
                                 <i>
                                     <Image src={Dashboard} />
                                 </i>
@@ -46,7 +54,7 @@ export const Sidebar = () => {
                                     <p>Dashboard</p>
                                 </Link>
                             </li>
-                            <li className={window.location.pathname == "/stages"? "active" : ""}>
+                            <li className={window.location.pathname == "/stages" ? "active" : ""}>
                                 <i>
                                     <Image src={Stages} />
                                 </i>
@@ -54,7 +62,7 @@ export const Sidebar = () => {
                                     <p>Stages</p>
                                 </Link>
                             </li>
-                            <li className={window.location.pathname == "/balance"? "active" : ""}>
+                            <li className={window.location.pathname == "/balance" ? "active" : ""}>
                                 <i>
                                     <Image src={Balance} />
                                 </i>
@@ -62,7 +70,7 @@ export const Sidebar = () => {
                                     <p>Balance</p>
                                 </Link>
                             </li>
-                            <li className={window.location.pathname == "/members"? "active" : ""}>
+                            <li className={window.location.pathname == "/members" ? "active" : ""}>
                                 <i>
                                     <Image src={Members} />
                                 </i>
@@ -70,7 +78,7 @@ export const Sidebar = () => {
                                     <p>Members</p>
                                 </Link>
                             </li>
-                            <li className={window.location.pathname == "/settings"? "active" : ""}>
+                            <li className={window.location.pathname == "/settings" ? "active" : ""}>
                                 <i>
                                     <Image src={Settings} />
                                 </i>
