@@ -19,6 +19,9 @@ module.exports = {
                     'userdetails',
                     { expiresIn: '3 hours' }
                   );
+                 let updatedUser = await  user.update({
+                    last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
+                  })
                   return res.cookie('token', token, { httpOnly: true })
                     .status(200)
                     .send(user.dataValues);

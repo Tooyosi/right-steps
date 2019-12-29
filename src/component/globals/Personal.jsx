@@ -1,10 +1,59 @@
-import React, { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect, useContext } from 'react'
+import { Link, withRouter } from 'react-router-dom';
 import { PersonalStyle, ButtonStyle } from '../styles/style'
-import { Container, Row, Col, Image, Button, Form } from 'react-bootstrap'
+import { Spinner, Row, Col, Modal, Button, Form } from 'react-bootstrap'
 import { Members } from './Members';
+import { MEMBERS_LINK, REFERRAL_LINK } from './links'
+import { UserListContext } from '../Context/Context';
+import WebService from './WebService';
 
-export const Personal = (props) => {
+export const Personal = withRouter((props) => {
     let { Data } = props;
+    let [user] = useContext(UserListContext)
+    let [members, updateMembers] = useState('')
+    let [membersLoading, updateMembersLoading] = useState(true)
+    let [showModal, updateShowModal] = useState(false)
+    let [referralLink, updateReferralLink] = useState('')
+    let service = new WebService()
+    const fetchMembers = async (date) => {
+        updateMembersLoading(true);
+        let result = await service.sendPost(MEMBERS_LINK, {
+            userId: user.user_id,
+            date: date
+        })
+        try {
+            if (result.status == 200) {
+                let { data } = result
+                updateMembers(data)
+                updateMembersLoading(false)
+            }
+
+        } catch (error) {
+
+        }
+    }
+    useEffect(() => {
+        fetchMembers("")
+    }, [])
+
+    const generateReferral = async () => {
+        updateShowModal(true)
+
+        let result = await service.sendPost(REFERRAL_LINK, { userId: 18 })
+        try {
+            if (result.status == 200) {
+                let { data } = result
+                console.log(window.location.origin)
+                updateReferralLink(`${window.location.origin}/referral/${data}`)
+
+            }
+        } catch (error) {
+
+        }
+    }
+    const handleClose = () => {
+        updateShowModal(false)
+    }
     return (
         <Fragment>
             <PersonalStyle>
@@ -29,15 +78,17 @@ export const Personal = (props) => {
                     <Col className="buttons text-center" lg={12}>
                         <Row>
                             <Col lg={6} md={6} sm={6} xs={6}>
-                                <button className="first-btn">
+                                <button className="first-btn" onClick={generateReferral}>
                                     Generate a referal link
                                 </button>
                             </Col>
 
                             <Col lg={6} md={6} sm={6} xs={6}>
-                                <button className="second-btn">
+                                <Link to="/signup">
+                                    <button className="second-btn">
                                     Add member
-                                            </button>
+                                    </button>
+                                            </Link>
                             </Col>
                             <Col lg={12}>
                                 <ButtonStyle style={{ width: "100%" }} className="btn">
@@ -46,33 +97,33 @@ export const Personal = (props) => {
                             </Col>
                         </Row>
                     </Col>
-                    {props.HideMembers ? (null): (
-                        <div className="scroller">
-                            <Members Data={[{
-                                name: "Mr Tega",
-                                state: "Lagos",
-                                stage: "3"
-                            },
-                            {
-                                name: "Mr Robo",
-                                state: "Lagos",
-                                stage: "4"
-                            },
-                            {
-                                name: "Mr Chibu",
-                                state: "Lagos",
-                                stage: "5"
-                            },
-                            {
-                                name: "Mr Chris",
-                                state: "Lagos",
-                                stage: "2"
-                            },
-                            {
-                                name: "Mr Dammy",
-                                state: "Lagos",
-                                stage: "1"
-                            },]} />
+                    <Modal show={showModal} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Referral Link</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>{referralLink !== '' ? <a target="_blank" href={referralLink}> {referralLink} </a>: (
+                            <Spinner animation="border" variant="success" />
+
+                        )}</Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="success" onClick={handleClose}>
+                                Close
+                            </Button>
+
+                        </Modal.Footer>
+                    </Modal>
+                    {props.HideMembers ? (null) : (
+                        <div  className={membersLoading ? "text-center scroller" : "scroller"}>
+                            {membersLoading ? (
+
+                                <Spinner animation="border" variant="success" />
+                            ) : (
+                                    <>
+                                        {members.length > 0 ? (
+                                            <Members Data={members} />
+                                        ) : ("No Referrals")}
+                                    </>
+                                )}
                         </div>
                     )}
                 </Row>
@@ -81,4 +132,4 @@ export const Personal = (props) => {
 
         </Fragment>
     )
-}
+})

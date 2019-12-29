@@ -1,18 +1,50 @@
-import React, { Fragment, useState, useContext } from 'react'
-import { Container, Row, Col, Image, Button, Form } from 'react-bootstrap'
+import React, { Fragment, useState, useContext, useEffect } from 'react'
+import { Container, Row, Col, Image, Spinner, Form } from 'react-bootstrap'
 import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
+import { MEMBERS_LINK } from '../globals/links'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import { UserListContext } from '../Context/Context'
+import WebService from '../globals/WebService'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
     console.log(user)
+    let [members, updateMembers] = useState('')
+    let [membersDate, updateMembersDate] = useState('')
+    let [membersLoading, updateMembersLoading] = useState(true)
+    let service = new WebService()
+    const fetchMembers = async (date) => {
+        updateMembersLoading(true);
+        let result = await service.sendPost(MEMBERS_LINK, {
+            userId: user.user_id,
+            date: date
+        })
+        if (result.status == 200) {
+            let { data } = result
+            console.log(data)
+            updateMembers(data)
+            updateMembersLoading(false)
+        }
+    }
+    useEffect(() => {
+        fetchMembers("")
+    }, [])
+
+    const handleDateChange = ({target})=>{
+        let {name, value} = target;
+        switch(name){
+            case "members":
+                updateMembersDate(value)
+                fetchMembers(new Date(value).toISOString())
+                break;
+        }
+    }
     return (
         <Row>
-            <Col lg={{span: 9, order: 1}} md={{span: 8, order: 1}} xs={{ order: 12 }}>
+            <Col lg={{ span: 9, order: 1 }} md={{ span: 8, order: 1 }} xs={{ order: 12 }}>
                 <h3>Dashboard</h3>
                 <DashboardStyle>
                     <Container fluid={true}>
@@ -86,37 +118,22 @@ export const Body = () => {
                                                     <Form.Label column lg={2} md={2} sm={2} xs={2}>for</Form.Label>
 
                                                     <Col sm={10}>
-                                                        <Form.Control type="date" />
+                                                        <Form.Control type="date" name="members" value={membersDate} onChange={handleDateChange} />
                                                     </Col>
                                                 </Form.Group>
                                             </Form>
                                         </Col>
-                                        <Col lg={12}>
-                                            <Members Data={[{
-                                                name: "Mr Tega",
-                                                state: "Lagos",
-                                                stage: "3"
-                                            },
-                                            {
-                                                name: "Mr Robo",
-                                                state: "Lagos",
-                                                stage: "4"
-                                            },
-                                            {
-                                                name: "Mr Chibu",
-                                                state: "Lagos",
-                                                stage: "5"
-                                            },
-                                            {
-                                                name: "Mr Chris",
-                                                state: "Lagos",
-                                                stage: "2"
-                                            },
-                                            {
-                                                name: "Mr Dammy",
-                                                state: "Lagos",
-                                                stage: "1"
-                                            },]} />
+                                        <Col lg={12} className={membersLoading? "text-center" : ""}>
+                                            {membersLoading ? (
+
+                                                <Spinner  animation="border" variant="success" />
+                                            ) : (
+                                                <>
+                                                {members.length> 0? (
+                                                    <Members Data={members} />
+                                                    ): ("No Referrals")}
+                                                </>
+                                                )}
                                         </Col>
                                     </Row>
                                 </Container>
@@ -147,8 +164,8 @@ export const Body = () => {
                     </Container>
                 </DashboardStyle>
             </Col>
-            <Col lg={{span: 3, order: 12}} md={{span: 4, order: 12}} xs={{ span: 12,order: 1 }}>
-                <Personal Data={{name: "Mr. Tega Osemudiamen", balance: "25,000", stage: "4"}}/>
+            <Col lg={{ span: 3, order: 12 }} md={{ span: 4, order: 12 }} xs={{ span: 12, order: 1 }}>
+                <Personal Data={{ name: "Mr. Tega Osemudiamen", balance: "25,000", stage: "4" }} />
             </Col>
         </Row>
 

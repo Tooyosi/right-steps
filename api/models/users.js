@@ -61,17 +61,17 @@ module.exports = function(sequelize, DataTypes) {
       comment: "(1=>active,0=>inactive)"
     },
     'date_created': {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: false,
       comment: "null"
     },
     'last_login_date': {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: false,
       comment: "null"
     },
     'last_update': {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.DATE,
       allowNull: true,
       comment: "null"
     },

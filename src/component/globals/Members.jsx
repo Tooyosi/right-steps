@@ -22,7 +22,7 @@ export const Members = (props) => {
                             ...
                         </div>
                     </div>
-                    <StageDivStyle Stage="70%" Color={item.stage}>
+                    <StageDivStyle Color={item.stage}>
                         <div></div>
                     </StageDivStyle>
                     <div className="bottom">

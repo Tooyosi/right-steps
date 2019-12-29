@@ -68,8 +68,8 @@ module.exports = {
                         state: state,
                         status: 0,
                         password: ts,
-                        date_created: Date.now(),
-                        last_login_date: Date.now(),
+                        date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
                     }).save()
                     if(newUser){
                         let newMember = await models.Members.create({
