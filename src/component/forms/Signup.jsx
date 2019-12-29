@@ -26,6 +26,7 @@ export const SignupForm = (props) => {
     const [username, updateUsername] = useState('')
     const [password, updatePassword] = useState('')
     const [confPassword, updateConfPassword] = useState('')
+    const [upline, updateUpline] = useState('')
     const [sponsor, updateSponsor] = useState('')
     const [loading, updateLoading] = useState(false)
 
@@ -72,8 +73,8 @@ export const SignupForm = (props) => {
                 // submit the form
                 if (
                     username.trim() == "" ||
-                    password.trim() == "" ||
-                    confPassword.trim() == "" ||
+                    upline.trim() == "" ||
+                    // confPassword.trim() == "" ||
                     sponsor.trim() == ""
                 ) {
                     setError({
@@ -81,15 +82,9 @@ export const SignupForm = (props) => {
                         isError: true,
                         message: "One or more details are missing"
                     })
-                } else if (password != confPassword) {
-                    setError({
-                        show: true,
-                        isError: true,
-                        message: "Passwords don't match"
-                    })
+                } else {
+                    updateLoading(true)
 
-                }
-                else {
                     setError({
                         show: false,
                         isError: false,
@@ -101,14 +96,17 @@ export const SignupForm = (props) => {
                         lastname: lastName,
                         username: username,
                         email: email,
-                        role: 1,
+                        role: 2,
                         gender: gender,
                         dob: dob,
                         phone: phone,
                         country: country,
                         state: state,
-                        password: password
+                        upline: upline,
+                        sponsor: sponsor
                     });
+                    try{
+                        console.log(result)
                     if (result.status == 201) {
                         let { data } = result
                         setError({
@@ -133,10 +131,19 @@ export const SignupForm = (props) => {
                         setError({
                             show: true,
                             isError: true,
-                            message: result.response.data
+                            message: result.response.data? result.response.data : 'A network error occured'
                         })
                         updateLoading(false)
                     }
+                } catch(error){
+                    setError({
+                        show: true,
+                        isError: true,
+                        message: error.toString()
+                    })
+                    updateLoading(false)
+                }
+
                 }
                 break;
             default:
@@ -179,6 +186,9 @@ export const SignupForm = (props) => {
                 break;
             case "confPassword":
                 updateConfPassword(value);
+                break;
+            case "upline":
+                updateUpline(value);
                 break;
             case "sponsor":
                 updateSponsor(value);
@@ -267,20 +277,20 @@ export const SignupForm = (props) => {
                     </Col>
                     <Col lg={12}>
                         <Form.Group>
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control value={password} onChange={handleChange} type="password" placeholder="Set password" name="password" />
+                            <Form.Label>Upline Username</Form.Label>
+                            <Form.Control value={upline} onChange={handleChange} type="text" placeholder="Upline Username" name="upline" />
                         </Form.Group>
                     </Col>
-                    <Col lg={12}>
+                    {/* <Col lg={12}>
                         <Form.Group>
                             <Form.Label>Confirm Password</Form.Label>
                             <Form.Control value={confPassword} onChange={handleChange} type="password" placeholder="Confirm password" name="confPassword" />
                         </Form.Group>
-                    </Col>
+                    </Col> */}
                     <Col lg={12}>
                         <Form.Group>
-                            <Form.Label>Sponsor ID</Form.Label>
-                            <Form.Control value={sponsor} onChange={handleChange} type="text" placeholder="Sponsor ID" name="sponsor" />
+                            <Form.Label>Sponsor Username</Form.Label>
+                            <Form.Control value={sponsor} onChange={handleChange} type="text" placeholder="Sponsor Username" name="sponsor" />
                         </Form.Group>
                     </Col>
                 </Row>
@@ -305,6 +315,8 @@ export const SignupForm = (props) => {
                                     </Button>
                                     {loading ? (
                                         <>
+                                            <Button style={{ float: "right" }} id="Submit">
+
                                             <Spinner
                                                 as="span"
                                                 animation="grow"
@@ -312,9 +324,10 @@ export const SignupForm = (props) => {
                                                 role="status"
                                                 aria-hidden="true"
                                             />
-                                            <span style={{ marginRight: "5px" }}>
+                                            <span>
                                                 Loading ....
                                          </span>
+                                         </Button>
                                         </>
                                     ) : (
                                             <Button style={{ float: "right" }} onClick={submitForm} id="Submit">Submit</Button>

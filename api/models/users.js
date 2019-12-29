@@ -3,7 +3,7 @@
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('users', {
     'user_id': {
-      type: DataTypes.INTEGER(11).UNSIGNED,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       primaryKey: true,
@@ -51,7 +51,7 @@ module.exports = function(sequelize, DataTypes) {
       }
     },
     'phone_no': {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(11),
       allowNull: false,
       comment: "null"
     },

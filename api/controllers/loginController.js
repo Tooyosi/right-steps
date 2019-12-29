@@ -14,7 +14,6 @@ module.exports = {
                 }
             })
             if(user != null || user != undefined){
-                
                 const token = jwt.sign(
                     user.dataValues,
                     'userdetails',

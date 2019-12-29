@@ -36,13 +36,13 @@ export const Sidebar = () => {
                         <Image src={Logo} fluid width="100px" />
                     </Col>
                     <Col lg={12} className="text-center">
-                        {user.image !== null ? (
-                            <Image src={user.image} roundedCircle width="120px" />
+                        {user.passport !== null ? (
+                            <Image src={user.passport} roundedCircle width="120px" />
                         ) : (
                                 <Image src={Logo} roundedCircle width="120px" />
 
                             )}
-                        <h6>{user.gender == "male" ? "Mr" : "Mrs"} {user.name}</h6>
+                        <h6>{user.gender == "Male" ? "Mr" : "Mrs"} {user.firstname} {user.lastname}</h6>
                     </Col>
                     <Col lg={12}>
                         <ul>
