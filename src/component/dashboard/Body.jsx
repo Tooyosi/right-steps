@@ -11,7 +11,6 @@ import WebService from '../globals/WebService'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
-    console.log(user)
     let [members, updateMembers] = useState('')
     let [membersDate, updateMembersDate] = useState('')
     let [membersLoading, updateMembersLoading] = useState(true)
@@ -24,7 +23,6 @@ export const Body = () => {
         })
         if (result.status == 200) {
             let { data } = result
-            console.log(data)
             updateMembers(data)
             updateMembersLoading(false)
         }

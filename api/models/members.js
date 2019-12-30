@@ -62,6 +62,15 @@ module.exports = function(sequelize, DataTypes) {
         model: 'users',
         key: 'user_id'
       }
+    },
+    'account_id': {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      comment: "null",
+      references: {
+        model: 'account',
+        key: 'account_id'
+      }
     }
   }, {
     tableName: 'members'

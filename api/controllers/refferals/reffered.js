@@ -43,7 +43,6 @@ module.exports = {
                 }
             }
             return res.status(200).json(dataToSend)
-            // console.log(members)
         } catch (error) {
             return res.status(400).json(error.toString())
         }

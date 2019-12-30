@@ -11,16 +11,15 @@ export const Personal = withRouter((props) => {
     let { Data } = props;
     let [user] = useContext(UserListContext)
     let [members, updateMembers] = useState('')
+    let [personalDataLoading, updatePersonalDataLoading] = useState(true);
+    let [personalDetails, updatePersonalDetails] = useState('')
     let [membersLoading, updateMembersLoading] = useState(true)
     let [showModal, updateShowModal] = useState(false)
     let [referralLink, updateReferralLink] = useState('')
     let service = new WebService()
-    const fetchMembers = async (date) => {
+    const fetchMembers = async (data) => {
         updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, {
-            userId: user.user_id,
-            date: date
-        })
+        let result = await service.sendPost(MEMBERS_LINK, data)
         try {
             if (result.status == 200) {
                 let { data } = result
@@ -32,18 +31,28 @@ export const Personal = withRouter((props) => {
 
         }
     }
+
+    const fetchDetails = async (id) => {
+        let result = await service.sendGet(`${MEMBERS_LINK}/${id}`)
+        let { data } = result;
+        updatePersonalDetails(data)
+        updatePersonalDataLoading(false)
+    }
     useEffect(() => {
-        fetchMembers("")
+        fetchMembers({
+            userId: user.user_id,
+            date: ""
+        });
+        fetchDetails(user.user_id)
     }, [])
 
     const generateReferral = async () => {
         updateShowModal(true)
 
-        let result = await service.sendPost(REFERRAL_LINK, { userId: 18 })
+        let result = await service.sendPost(REFERRAL_LINK, { userId: user.user_id })
         try {
             if (result.status == 200) {
                 let { data } = result
-                console.log(window.location.origin)
                 updateReferralLink(`${window.location.origin}/referral/${data}`)
 
             }
@@ -59,22 +68,30 @@ export const Personal = withRouter((props) => {
             <PersonalStyle>
                 {/* <Container fluid={true}> */}
                 <Row>
-                    <Col lg={12}>
+                    <Col lg={12} className={personalDataLoading ? "text-center" : ''}>
                         <h3>Personal</h3>
                         <div className="personal-card">
-                            <div className="name">
-                                <p>{Data.name}</p>
-                            </div>
-                            <div className="balance">
-                                <p>My Balance</p>
-                                <p>{Data.balance}</p>
-                            </div>
-                            <div className="balance">
-                                <p>Stage</p>
-                                <p>{Data.stage}</p>
-                            </div>
+                            {personalDataLoading ? (
+
+                                <Spinner animation="border" variant="light" />
+                            ) : (
+                                    <>
+                                        <div className="name">
+                                            <p>{personalDetails.user.gender == "Male"? "Mr." : "Mrs."} {personalDetails.user.firstname} {personalDetails.user.lastname}</p>
+                                        </div>
+                                        <div className="balance">
+                                            <p>My Balance</p>
+                                            <p>{personalDetails.account.balance}</p>
+                                        </div>
+                                        <div className="balance">
+                                            <p>Stage</p>
+                                            <p>{personalDetails.current_stage}</p>
+                                        </div>  </>
+                                )}
                         </div>
+
                     </Col>
+
                     <Col className="buttons text-center" lg={12}>
                         <Row>
                             <Col lg={6} md={6} sm={6} xs={6}>
@@ -86,9 +103,9 @@ export const Personal = withRouter((props) => {
                             <Col lg={6} md={6} sm={6} xs={6}>
                                 <Link to="/signup">
                                     <button className="second-btn">
-                                    Add member
+                                        Add member
                                     </button>
-                                            </Link>
+                                </Link>
                             </Col>
                             <Col lg={12}>
                                 <ButtonStyle style={{ width: "100%" }} className="btn">
@@ -101,7 +118,7 @@ export const Personal = withRouter((props) => {
                         <Modal.Header closeButton>
                             <Modal.Title>Referral Link</Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>{referralLink !== '' ? <a target="_blank" href={referralLink}> {referralLink} </a>: (
+                        <Modal.Body>{referralLink !== '' ? <a target="_blank" href={referralLink}> {referralLink} </a> : (
                             <Spinner animation="border" variant="success" />
 
                         )}</Modal.Body>
@@ -113,7 +130,7 @@ export const Personal = withRouter((props) => {
                         </Modal.Footer>
                     </Modal>
                     {props.HideMembers ? (null) : (
-                        <div  className={membersLoading ? "text-center scroller" : "scroller"}>
+                        <div className={membersLoading ? "text-center scroller" : "scroller"}>
                             {membersLoading ? (
 
                                 <Spinner animation="border" variant="success" />

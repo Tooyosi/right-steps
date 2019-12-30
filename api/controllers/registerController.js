@@ -20,8 +20,8 @@ const sendMail = async (email, username, password) => {
                 Username: ${username}
                 Password: ${password} `
     };
-    let info =  smtpTransport.sendMail(mailOptions, (err, res)=>{
-        if(err){
+    let info = smtpTransport.sendMail(mailOptions, (err, res) => {
+        if (err) {
             logger.error(`${username} with email: ${email} mail sending failed,
                           Error: ${err.toString()}`)
 
@@ -54,43 +54,67 @@ module.exports = {
                 })
                 // check if upline exists
                 if (userUpline !== null && userUpline !== undefined) {
-
-                    let newUser = await models.User.build({
-                        firstname: firstname,
-                        lastname: lastname,
-                        username: username,
-                        email_address: email,
-                        role_id: role,
-                        gender: gender,
-                        dob: dob,
-                        phone_no: phone,
-                        country: country,
-                        state: state,
-                        status: 0,
-                        password: ts,
-                        date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                        last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                    }).save()
-                    if(newUser){
-                        let newMember = await models.Members.create({
-                            user_id: newUser.dataValues.user_id,
+                    // check if upline has more than 2 direct downlines
+                    let membersCheck = await models.Members.findAll({
+                        where: {
                             upline_id: userUpline.dataValues.user_id,
-                            sponsor_id: userSponsor.dataValues.user_id,
-                            current_stage: 1,
-                            referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
-                        })
-                    let mail = await sendMail(email, username, ts);
-                    let successMsg
-                    if(mail){
-                        successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
-                    } else{
-                        successMsg = `A network error occured while sending mail to ${email}.
-                         Login with the following credentials
-                         Username: ${username}
-                         Password: ${ts}`;
-                    }
-                    res.status(201)
-                        .send(successMsg);
+                        }
+                    })
+
+                    // if direct downlines is less than 2, add more
+                    if (membersCheck.length < 2) {
+                        let newUser = await models.User.build({
+                            firstname: firstname,
+                            lastname: lastname,
+                            username: username,
+                            email_address: email,
+                            role_id: role,
+                            gender: gender,
+                            dob: dob,
+                            phone_no: phone,
+                            country: country,
+                            state: state,
+                            status: 0,
+                            password: ts,
+                            date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                            last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                        }).save()
+                        if (newUser) {
+                            let userAccount = await models.Account.create({
+                                user_id: newUser.dataValues.user_id,
+                                balance: 200,
+                                date_updated: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                            })
+
+                            let newMember = await models.Members.create({
+                                user_id: newUser.dataValues.user_id,
+                                upline_id: userUpline.dataValues.user_id,
+                                sponsor_id: userSponsor.dataValues.user_id,
+                                current_stage: 1,
+                                account_id: userAccount.dataValues.account_id,
+                                referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
+                            })
+
+                            
+
+                            let mail = await sendMail(email, username, ts);
+                            let successMsg
+                            if (mail) {
+                                successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
+                            } else {
+                                successMsg = `A network error occured while sending mail to ${email}.
+                             Login with the following credentials
+                             Username: ${username}
+                             Password: ${ts}`;
+                            }
+                            res.status(201)
+                                .send(successMsg);
+                        }
+
+                    } else {
+                        let errorMsg = `User Creation Failed, ${upline} Can not have more than 2 direct downlines`;
+                        logger.error(errorMsg);
+                        return res.status(400).send(errorMsg);
                     }
                 } else {
                     let errorMsg = `User Creation Failed, ${upline} does not exist`;
