@@ -7,8 +7,8 @@ const BonusTypesModel = require("../models/bonus_types");
 const MembersModel = require("../models/members");
 const AccountModel = require("../models/account");
 
-const sequelize = new Sequelize('right_steps', 'root', '', {
-    host: 'localhost',
+const sequelize = new Sequelize((process.env.DB_NAME).trim(), (process.env.DB_USER).trim(), (process.env.DB_PASSWORD).trim(), {
+    host: process.env.DB_HOST,
     dialect: 'mysql',
     logging: false,
     define: {
@@ -25,6 +25,9 @@ models.Account = AccountModel(sequelize, Sequelize)
 sequelize.sync()
     .then(()=>{
         console.log("Db Connnected")
+    })
+    .catch((err)=>{
+        console.log(err)
     })
 
 module.exports = models;

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { BASE_URL } from './links';
 
 class WebService {
     constructor() {
-        this.url = "http://localhost:3001/"
+        this.url = BASE_URL
         this.headers = {
             'Content-type': 'application/json'
         }
