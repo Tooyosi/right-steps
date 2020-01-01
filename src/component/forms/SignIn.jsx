@@ -9,6 +9,7 @@ import { ErrorContext, UserListContext } from '../Context/Context';
 import ErrorDisplay from '../globals/Error';
 import { LOGIN } from '../globals/links';
 import { default as localforage } from 'localforage';
+import { useEffect } from 'react'
 
 
 const SignInForm = (props) => {
@@ -17,7 +18,15 @@ const SignInForm = (props) => {
     const [loading, updateLoading] = useState(false)
     const [error, setError] = useContext(ErrorContext);
     const [user, setUser] = useContext(UserListContext);
-
+    
+    useEffect(()=>{
+        console.log(window.history)
+        if(window.history.state !== null){
+            console.log(window.history.state)
+            setError(window.history.state)
+            window.history.pushState(null, "error")
+        }
+    }, [])
     let service = new WebService()
     const submitForm = async ({ target }) => {
         let { id } = target
@@ -39,9 +48,10 @@ const SignInForm = (props) => {
                     updateLoading(true)
                     try {
                         let result = await service.sendPost(LOGIN, {
-                            username,
-                            password
+                            username: username.trim(),
+                            password: password.trim()
                         })
+                        console.log(result)
                         if (result.status == 200) {
                             let { data } = result;
                             localforage.setItem('user', data)

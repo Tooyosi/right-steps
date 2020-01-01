@@ -2,36 +2,7 @@ const express = require('express');
 const models = require('../connections/sequelize')
 const { logger } = require('./../loggers/logger')
 const nodemailer = require("nodemailer");
-const sendMail = async (email, username, password) => {
-    var smtpTransport = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-            user: process.env.EMAIL,
-            pass: process.env.EMAIL_PASSWORD
-        }
-    });
 
-    var mailOptions = {
-        to: email,
-        from: "Right Steps",
-        subject: "Right-Steps Registeration Complete",
-        text: `Congratulations!! You've been successfully registered to Right-steps
-                Kindly signin the website with the following credentials:
-                Username: ${username}
-                Password: ${password} `
-    };
-    let info = smtpTransport.sendMail(mailOptions, (err, res) => {
-        if (err) {
-            logger.error(`${username} with email: ${email} mail sending failed,
-                          Error: ${err.toString()}`)
-
-            return false
-        }
-        logger.info(`Registeration mail successfully sent to user: ${username} with email: ${email}`)
-        return true
-    });
-    return info;
-}
 module.exports = {
     post: ('/', async (req, res) => {
         let { firstname, lastname, phone, email, gender, dob, country, state, username, sponsor, upline, role } = req.body;
@@ -95,20 +66,63 @@ module.exports = {
                                 referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
                             })
 
-                            
-
-                            let mail = await sendMail(email, username, ts);
-                            let successMsg
-                            if (mail) {
-                                successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
-                            } else {
-                                successMsg = `A network error occured while sending mail to ${email}.
-                             Login with the following credentials
-                             Username: ${username}
-                             Password: ${ts}`;
+                            // check if user exist on referral table and add upline to referral table
+                            let updateDownlines = await models.Downlines.findOne({
+                                where:{
+                                    user_id: userUpline.dataValues.user_id
+                                }
+                            })
+                            if(updateDownlines == null){
+                                // create and add the fight leg
+                                let newReferral = await models.Downlines.create({
+                                    user_id: userUpline.dataValues.user_id,
+                                    right_leg_id: newUser.dataValues.user_id
+                                })
+                            } else if(updateDownlines.dataValues.right_leg_id !== null){
+                                // update with the second leg
+                                let secondReferralUpdate = await updateDownlines.update({
+                                    left_leg_id: newUser.dataValues.user_id
+                                })
                             }
-                            res.status(201)
-                                .send(successMsg);
+                            
+                            var smtpTransport = nodemailer.createTransport({
+                                service: "Gmail",
+                                auth: {
+                                    user: process.env.EMAIL,
+                                    pass: process.env.EMAIL_PASSWORD
+                                }
+                            });
+
+                            var mailOptions = {
+                                to: email,
+                                from: "Right Steps",
+                                subject: "Right-Steps Registeration Complete",
+                                text: `Congratulations!! You've been successfully registered to Right-steps
+                                            Kindly signin the website with the following credentials:
+                                            Username: ${username}
+                                            Password: ${ts} `
+                            };
+                            smtpTransport.sendMail(mailOptions, (err) => {
+                                let successMsg
+                                if (err) {
+                                    logger.error(`${username} with email: ${email} mail sending failed,
+                                                      Error: ${err.toString()}`)
+                                    successMsg = `A network error occured while sending mail to ${email}.
+                                                  Login with the following credentials
+                                                  Username: ${username}
+                                                  Password: ${ts}`;
+
+                                    return res.status(201)
+                                        .send(successMsg);
+                                } else {
+                                    logger.info(`Registeration mail successfully sent to user: ${username} with email: ${email}`)
+                                    successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
+
+                                    return res.status(201)
+                                        .send(successMsg);
+                                }
+                            });
+
                         }
 
                     } else {

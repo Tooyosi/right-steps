@@ -16,11 +16,12 @@ const Skeleton = (props) => {
     useEffect(() => {
         const getUser = async () => {
             let userDetails = await localforage.getItem('user')
-            if (userDetails !== null || userDetails !== undefined) {
+            if (userDetails !== null && userDetails !== undefined) {
                 setUser(userDetails)
+                console.log("here")
                 updateIsLoading(false)
             } else {
-                props.history.push('/')
+                return props.history.push('/')
             }
         };
         getUser();

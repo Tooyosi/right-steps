@@ -3,7 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { PersonalStyle, ButtonStyle } from '../styles/style'
 import { Spinner, Row, Col, Modal, Button, Form } from 'react-bootstrap'
 import { Members } from './Members';
-import { MEMBERS_LINK, REFERRAL_LINK } from './links'
+import { MEMBERS_LINK, REFERRAL_LINK, ADMIN_MEMBERS_LINK, ADMIN_REFERRAL_LINK } from './links'
 import { UserListContext } from '../Context/Context';
 import WebService from './WebService';
 
@@ -32,8 +32,8 @@ export const Personal = withRouter((props) => {
         }
     }
 
-    const fetchDetails = async (id) => {
-        let result = await service.sendGet(`${MEMBERS_LINK}/${id}`)
+    const fetchDetails = async (url) => {
+        let result = await service.sendGet(url)
         let { data } = result;
         updatePersonalDetails(data)
         updatePersonalDataLoading(false)
@@ -43,14 +43,25 @@ export const Personal = withRouter((props) => {
             userId: user.user_id,
             date: ""
         });
-        fetchDetails(user.user_id)
+        if(user.role.name == "Admin"){
+            fetchDetails(`${ADMIN_MEMBERS_LINK}/${user.user_id}`)
+
+        }else{
+            fetchDetails(`${MEMBERS_LINK}/${user.user_id}`)
+        }
     }, [])
 
     const generateReferral = async () => {
         updateShowModal(true)
-
-        let result = await service.sendPost(REFERRAL_LINK, { userId: user.user_id })
         try {
+            let result 
+            if(user.role.name == "Admin"){
+                result = await service.sendGet(`${ADMIN_REFERRAL_LINK}/${user.user_id }`)
+    
+            }else{
+                result = await service.sendPost(REFERRAL_LINK, { userId: user.user_id })
+    
+            }
             if (result.status == 200) {
                 let { data } = result
                 updateReferralLink(`${window.location.origin}/referral/${data}`)

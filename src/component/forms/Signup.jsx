@@ -125,8 +125,11 @@ export const SignupForm = (props) => {
                         updateDOB('');
                         updateCountry('');
                         updateSponsor('');
+                        updateUpline('');
                         updateEmail('');
                         updatePhone('');
+                        updateLoading(false)
+
                     } else {
                         setError({
                             show: true,

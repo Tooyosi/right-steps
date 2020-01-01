@@ -61,7 +61,7 @@ module.exports = function(sequelize, DataTypes) {
       comment: "(1=>active,0=>inactive)"
     },
     'date_created': {
-      type: DataTypes.DATE,
+      type: DataTypes.DATEONLY,
       allowNull: false,
       comment: "null"
     },
@@ -87,6 +87,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     'state': {
       type: DataTypes.STRING(255),
+      allowNull: false,
+      comment: "null"
+    },
+    'dob': {
+      type: DataTypes.DATEONLY,
       allowNull: false,
       comment: "null"
     }

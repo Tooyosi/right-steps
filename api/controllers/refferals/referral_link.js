@@ -1,8 +1,8 @@
 const models = require('../../connections/sequelize')
 const { logger } = require('../../loggers/logger')
 module.exports = {
-    post: ('/', async (req, res) => {
-        let { userId } = req.body;
+    get: ('/', async (req, res) => {
+        let  userId  = req.params.id;
         try {
             let members = await models.Members.findOne({
                 where: {

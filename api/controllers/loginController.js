@@ -6,12 +6,17 @@ const { logger } = require('./../loggers/logger')
 module.exports = {
     post: ('/', async (req, res) => {
         let { username, password } = req.body;
+        models.User.belongsTo(models.Role, { foreignKey: "role_id" })
+
         try {
             let user = await models.User.findOne({
                 where: {
                     username: username,
                     password: password
-                }
+                },
+                include: [{
+                    model: models.Role,
+                }]
             })
             if (user != null || user != undefined) {
                 const token = jwt.sign(
@@ -22,7 +27,7 @@ module.exports = {
                 let updatedUser = await user.update({
                     last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' ')
                 })
-                return res.cookie('token', token, { httpOnly: true })
+                return res.cookie('token', token, {maxAge: 33360000, httpOnly: true })
                     .status(200)
                     .send(user.dataValues);
             } else {

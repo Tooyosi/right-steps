@@ -26,10 +26,10 @@ export const Body = () => {
             updateMembers(data)
             updateMembersLoading(false)
         }
-    }
-    useEffect(() => {
-        fetchMembers("")
-    }, [])
+        }
+        useEffect(() => {
+            fetchMembers("")
+        }, [])
 
     const handleDateChange = ({target})=>{
         let {name, value} = target;
