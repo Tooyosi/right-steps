@@ -32,7 +32,7 @@ module.exports = {
                     .send(user.dataValues);
             } else {
                 logger.error(`Username: ${username} logged in with invalid credentials`)
-                return res.status(401).send("Username Or Password Incorrect")
+                return res.status(400).send("Username Or Password Incorrect")
             }
 
         } catch (error) {

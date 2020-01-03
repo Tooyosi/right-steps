@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from './links';
+import { default as localforage } from 'localforage';
 
 class WebService {
     constructor() {
@@ -11,9 +12,11 @@ class WebService {
 
     errorHandler(result) {
         if (result.response && result.response.status == 401) {
-            window.history.replaceState({message:"Session Time Out", isError: true, show: true}, "error", "/signin")
-            window.location.replace('/signin')
-            return false
+            localforage.removeItem('user').then((res)=>{
+                window.history.replaceState({message:"Session Time Out", isError: true, show: true}, "error", "/signin")
+                window.location.replace('/signin')
+                return false
+            })
         } else {
             return result
         }

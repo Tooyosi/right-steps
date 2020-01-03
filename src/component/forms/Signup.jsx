@@ -5,11 +5,12 @@ import { longArrowRight } from 'react-icons-kit/fa/longArrowRight';
 import { longArrowLeft } from 'react-icons-kit/fa/longArrowLeft';
 import { Spinner, Row, Col, Nav, Button, Carousel, Image, Navbar, Form, Accordion, Card } from 'react-bootstrap';
 import ErrorDisplay from '../globals/Error';
-import { ErrorContext, UserListContext } from '../Context/Context';
+import { ErrorContext, UserListContext, ReferralLiinkContext } from '../Context/Context';
 import WebService from '../globals/WebService';
 import { REGISTER } from '../globals/links';
 import { withRouter } from 'react-router-dom'
 import { default as localforage } from 'localforage';
+import { useEffect } from 'react';
 
 export const SignupForm = (props) => {
     const [error, setError] = useContext(ErrorContext);
@@ -27,9 +28,12 @@ export const SignupForm = (props) => {
     const [password, updatePassword] = useState('')
     const [confPassword, updateConfPassword] = useState('')
     const [upline, updateUpline] = useState('')
-    const [sponsor, updateSponsor] = useState('')
+    // const [sponsor, updateSponsor] = useState('')
     const [loading, updateLoading] = useState(false)
 
+    // for the referral url
+    const [referralID, updateReferralID] = useContext(ReferralLiinkContext);
+ 
     let service = new WebService()
     const submitForm = async ({ target }) => {
         let { id } = target
@@ -75,7 +79,7 @@ export const SignupForm = (props) => {
                     username.trim() == "" ||
                     upline.trim() == "" ||
                     // confPassword.trim() == "" ||
-                    sponsor.trim() == ""
+                    referralID.trim() == ""
                 ) {
                     setError({
                         show: true,
@@ -103,7 +107,7 @@ export const SignupForm = (props) => {
                         country: country,
                         state: state,
                         upline: upline,
-                        sponsor: sponsor
+                        sponsor: referralID
                     });
                     try{
                         console.log(result)
@@ -124,7 +128,7 @@ export const SignupForm = (props) => {
                         updateGender('');
                         updateDOB('');
                         updateCountry('');
-                        updateSponsor('');
+                        updateReferralID('');
                         updateUpline('');
                         updateEmail('');
                         updatePhone('');
@@ -194,7 +198,7 @@ export const SignupForm = (props) => {
                 updateUpline(value);
                 break;
             case "sponsor":
-                updateSponsor(value);
+                updateReferralID(value);
                 break;
             default:
                 break;
@@ -293,7 +297,7 @@ export const SignupForm = (props) => {
                     <Col lg={12}>
                         <Form.Group>
                             <Form.Label>Sponsor Username</Form.Label>
-                            <Form.Control value={sponsor} onChange={handleChange} type="text" placeholder="Sponsor Username" name="sponsor" />
+                            <Form.Control value={referralID} onChange={handleChange} type="text" placeholder="Sponsor Username" name="sponsor" />
                         </Form.Group>
                     </Col>
                 </Row>

@@ -69,7 +69,7 @@ const config = {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
+            template: './src/index.html',
             // favicon: 'src/favicon.ico',
         }),
         // new webpack.DefinePlugin(envKeys),

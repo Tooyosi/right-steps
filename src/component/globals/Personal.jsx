@@ -59,7 +59,7 @@ export const Personal = withRouter((props) => {
                 result = await service.sendGet(`${ADMIN_REFERRAL_LINK}/${user.user_id }`)
     
             }else{
-                result = await service.sendPost(REFERRAL_LINK, { userId: user.user_id })
+                result = await service.sendGet(`${REFERRAL_LINK}/${user.user_id }`)
     
             }
             if (result.status == 200) {

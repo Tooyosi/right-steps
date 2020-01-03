@@ -40,11 +40,20 @@ export const ErrorProvider = (props) => {
 export const UserListContext = createContext();
 
 export const UserListProvider = (props) => {
-    // const [filtered, setFiltered] = useState([])
     const [userList, setUserList] = useState('')
     return (
         <UserListContext.Provider value={[userList, setUserList]}>
             {props.children}
         </UserListContext.Provider>
+    );
+}
+export const ReferralLiinkContext = createContext();
+
+export const ReferralLiinkProvider = (props) => {
+    const [referralID, updateReferralID] = useState('')
+    return (
+        <ReferralLiinkContext.Provider value={[referralID, updateReferralID]}>
+            {props.children}
+        </ReferralLiinkContext.Provider>
     );
 }
