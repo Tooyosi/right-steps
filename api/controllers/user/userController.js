@@ -29,6 +29,23 @@ module.exports = {
             // let dataToSend = {
             //     balance: balance.dataValues.balance
             // }
+            if(member !== null){
+                let rightLegArr = [];
+                let leftLegArr = [];
+                let leftMember = await models.Downlines.findOne({
+                    where:{
+                        user_id: member.dataValues.left_leg_id
+                    }
+                })
+
+                let rightMember = await models.Downlines.findOne({
+                    where:{
+                        user_id: member.dataValues.right_leg_id
+                    }
+                })
+            } else{
+                // send back member doesnt exist
+            }
             return res.status(200).json(member)
         } catch (error) {
             logger.error(error.toString())
