@@ -2,11 +2,12 @@ const express = require('express');
 const models = require('../connections/sequelize')
 const { logger } = require('./../loggers/logger')
 const nodemailer = require("nodemailer");
-
+const notificationCreate = require('./functions/createNotification')
 module.exports = {
     post: ('/', async (req, res) => {
         let { firstname, lastname, phone, email, gender, dob, country, state, username, sponsor, upline, role } = req.body;
         var ts = new Date().getTime()
+        let dateValue = new Date().toISOString().slice(0, 19).replace('T', ' ');
         try {
             // get the sponsor details
             let userSponsor = await models.User.findOne({
@@ -47,16 +48,19 @@ module.exports = {
                             state: state,
                             status: 0,
                             password: ts,
-                            date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                            last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                            date_created: dateValue,
+                            last_login_date: dateValue,
                         }).save()
                         if (newUser) {
+                            const signupFee = 30;
+                            // create an account for newly registered member
                             let userAccount = await models.Account.create({
                                 user_id: newUser.dataValues.user_id,
-                                balance: 200,
-                                date_updated: new Date().toISOString().slice(0, 19).replace('T', ' '),
+                                balance: signupFee,
+                                date_updated: dateValue,
                             })
 
+                            // create a member table newly registered member
                             let newMember = await models.Members.create({
                                 user_id: newUser.dataValues.user_id,
                                 upline_id: userUpline.dataValues.user_id,
@@ -65,25 +69,55 @@ module.exports = {
                                 account_id: userAccount.dataValues.account_id,
                                 referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
                             })
+                            // Update Sponsors Bonus
+                            const bonusAmount = (Number(signupFee) * 0.2)
+
+                            let sponsorBonus = await models.Bonus.create({
+                                user_id: userSponsor.dataValues.user_id,
+                                bonus_type_id: 1,
+                                amount: bonusAmount,
+                                date: dateValue, 
+                            })
+                            console.log(sponsorBonus.dataValues)
+                            let sponsorAccount = await models.Account.findOne({
+                                where:{
+                                    user_id: userSponsor.dataValues.user_id,
+                                }
+                            })
+
+                            let newBalance = bonusAmount + Number(sponsorAccount.dataValues.balance)
+
+                            // update the sponsor account balance with the newly summed up balance
+                            let updatedSponsorAccount  = await sponsorAccount.update({
+                                balance: newBalance,
+                                date: dateValue,
+                            })
 
                             // check if user exist on referral table and add upline to referral table
                             let updateDownlines = await models.Downlines.findOne({
-                                where:{
+                                where: {
                                     user_id: userUpline.dataValues.user_id
                                 }
                             })
-                            if(updateDownlines == null){
-                                // create and add the fight leg (left)
+                            if (updateDownlines == null) {
+                                // create and add the first leg (left)
                                 let newReferral = await models.Downlines.create({
                                     user_id: userUpline.dataValues.user_id,
                                     left_leg_id: newUser.dataValues.user_id
                                 })
-                            } else if(updateDownlines.dataValues.left_leg_id !== null){
+                            } else if (updateDownlines.dataValues.left_leg_id !== null) {
                                 // update with the second leg
                                 let secondReferralUpdate = await updateDownlines.update({
                                     right_leg_id: newUser.dataValues.user_id
                                 })
                             }
+                            
+                            let newSponsorNotification = await notificationCreate(userSponsor.dataValues.user_id, `Received Referral Bonus of $${bonusAmount}, from new user: ${firstname} ${lastname}'s registeration.New Balance is $${newBalance}`, dateValue)
+                            if(userSponsor.dataValues.user_id !== userUpline.dataValues.user_id){
+                                let newUplineNotification = await notificationCreate(userUpline.dataValues.user_id, `New Downline registered by user ${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, dateValue)
+                            }
+                            
+
                             
                             var smtpTransport = nodemailer.createTransport({
                                 service: "Gmail",
@@ -142,6 +176,7 @@ module.exports = {
             }
 
         } catch (error) {
+            console.log(error)
             logger.error(error.original ? error.original.toString() : error.toString())
             return res.status(400).send(error.original ? error.original.toString() : error.toString())
         }

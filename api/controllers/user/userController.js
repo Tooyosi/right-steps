@@ -87,5 +87,28 @@ module.exports = {
             logger.error(error.toString())
             return res.status(400).json(error.toString())
         }
+    }),
+
+    notificationsPost: ('/', async (req, res)=>{
+        let {userId, date} = req.body;
+        let whereObj = {
+            user_id: userId
+        };
+        if (date !== "") {   
+                
+            whereObj.date = date
+
+        }
+        try {
+            let userNotification = await models.Notifications.findAll({
+                where: whereObj
+            })
+            
+            return res.status(200).json(userNotification)
+        } catch (error) {
+            logger.error(error.toString())
+            return res.status(400).json(error.toString())
+        }
+        
     })
 };

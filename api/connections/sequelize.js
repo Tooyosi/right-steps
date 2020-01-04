@@ -9,6 +9,7 @@ const AdminMembersModel = require("../models/admin_members");
 const AccountModel = require("../models/account");
 const RoleModel = require("../models/role");
 const DownlinesModel = require("../models/downlines");
+const NotificatiosnModel = require("../models/notifications");
 
 const sequelize = require('./connection')
 
@@ -20,6 +21,7 @@ models.AdminMembers = AdminMembersModel(sequelize, Sequelize)
 models.BonusTypes = BonusTypesModel(sequelize, Sequelize)
 models.Account = AccountModel(sequelize, Sequelize)
 models.Role = RoleModel(sequelize, Sequelize)
+models.Notifications = NotificatiosnModel(sequelize, Sequelize)
 models.Downlines = DownlinesModel(sequelize, Sequelize)
 models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg", })
 models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg", })

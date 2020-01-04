@@ -17,16 +17,8 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'users',
         key: 'user_id'
-      }
-    },
-    'right_leg_id': {
-      type: DataTypes.INTEGER(11),
-      allowNull: true,
-      comment: "null",
-      references: {
-        model: 'users',
-        key: 'user_id'
-      }
+      },
+      unique: true
     },
     'left_leg_id': {
       type: DataTypes.INTEGER(11),
@@ -35,7 +27,18 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'users',
         key: 'user_id'
-      }
+      },
+      unique: true
+    },
+    'right_leg_id': {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      comment: "null",
+      references: {
+        model: 'users',
+        key: 'user_id'
+      },
+      unique: true
     }
   }, {
     tableName: 'downlines'

@@ -3,7 +3,7 @@ import { Container, Row, Col, Image, Spinner, Form } from 'react-bootstrap'
 import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
-import { MEMBERS_LINK } from '../globals/links'
+import { MEMBERS_LINK, USER_NOTIFICATION_LINK } from '../globals/links'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import { UserListContext } from '../Context/Context'
@@ -14,6 +14,9 @@ export const Body = () => {
     let [members, updateMembers] = useState('')
     let [membersDate, updateMembersDate] = useState('')
     let [membersLoading, updateMembersLoading] = useState(true)
+    let [notificationsDate, updateNotificationsDate] = useState('')
+    let [notifications, updateNotifications] = useState('')
+    let [notificationsLoading, updateNotificationsLoading] = useState(true)
     let service = new WebService()
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
@@ -26,17 +29,35 @@ export const Body = () => {
             updateMembers(data)
             updateMembersLoading(false)
         }
-        }
-        useEffect(() => {
-            fetchMembers("")
-        }, [])
+    }
 
-    const handleDateChange = ({target})=>{
-        let {name, value} = target;
-        switch(name){
+    const fetchNotifications = async (date) => {
+        updateNotificationsLoading(true);
+        let result = await service.sendPost(USER_NOTIFICATION_LINK, {
+            userId: user.user_id,
+            date: date
+        })
+        if (result.status == 200) {
+            let { data } = result
+            updateNotifications(data)
+            updateNotificationsLoading(false)
+        }
+    }
+    useEffect(() => {
+        fetchMembers("")
+        fetchNotifications("")
+    }, [])
+
+    const handleDateChange = ({ target }) => {
+        let { name, value } = target;
+        switch (name) {
             case "members":
                 updateMembersDate(value)
                 fetchMembers(new Date(value).toISOString())
+                break;
+            case "notifications":
+                updateNotificationsDate(value)
+                fetchNotifications(new Date(value).toISOString())
                 break;
         }
     }
@@ -121,16 +142,16 @@ export const Body = () => {
                                                 </Form.Group>
                                             </Form>
                                         </Col>
-                                        <Col lg={12} className={membersLoading? "text-center" : ""}>
+                                        <Col lg={12} className={membersLoading ? "text-center" : ""}>
                                             {membersLoading ? (
 
-                                                <Spinner  animation="border" variant="success" />
+                                                <Spinner animation="border" variant="success" />
                                             ) : (
-                                                <>
-                                                {members.length> 0? (
-                                                    <Members Data={members} />
-                                                    ): ("No Referrals")}
-                                                </>
+                                                    <>
+                                                        {members.length > 0 ? (
+                                                            <Members Data={members} />
+                                                        ) : ("No Referrals")}
+                                                    </>
                                                 )}
                                         </Col>
                                     </Row>
@@ -148,10 +169,30 @@ export const Body = () => {
                                                     <Form.Label column lg={2} md={2} sm={2} xs={2}>for</Form.Label>
 
                                                     <Col sm={10}>
-                                                        <Form.Control type="date" />
+                                                        <Form.Control type="date" name="notifications" value={notificationsDate} onChange={handleDateChange} />
                                                     </Col>
                                                 </Form.Group>
                                             </Form>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col lg={12}>
+                                            {notificationsLoading ? (
+
+                                                <Spinner animation="border" variant="success" />
+                                            ) : (
+                                                    <>
+                                                        {notifications.length > 0 ? (
+                                                            <>
+                                                                {notifications.map((notification, i)=>(
+                                                                    <p key={i}>
+                                                                        {notification.message}
+                                                                    </p>
+                                                                ))}
+                                                            </>
+                                                        ) : ("No Notifications To Display")}
+                                                    </>
+                                                )}
                                         </Col>
                                     </Row>
                                 </Container>
