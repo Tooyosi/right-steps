@@ -73,15 +73,15 @@ module.exports = {
                                 }
                             })
                             if(updateDownlines == null){
-                                // create and add the fight leg
+                                // create and add the fight leg (left)
                                 let newReferral = await models.Downlines.create({
                                     user_id: userUpline.dataValues.user_id,
-                                    right_leg_id: newUser.dataValues.user_id
+                                    left_leg_id: newUser.dataValues.user_id
                                 })
-                            } else if(updateDownlines.dataValues.right_leg_id !== null){
+                            } else if(updateDownlines.dataValues.left_leg_id !== null){
                                 // update with the second leg
                                 let secondReferralUpdate = await updateDownlines.update({
-                                    left_leg_id: newUser.dataValues.user_id
+                                    right_leg_id: newUser.dataValues.user_id
                                 })
                             }
                             

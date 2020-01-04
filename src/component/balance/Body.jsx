@@ -1,14 +1,52 @@
-import React, { Fragment, useState } from 'react'
-import { Container, Row, Col, Image, Button, Form } from 'react-bootstrap'
+import React, { useEffect, useState, useContext } from 'react'
+import { Container, Row, Col, Spinner, Button, Form } from 'react-bootstrap'
 import { EarningStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
+import WebService from '../globals/WebService'
+import { MEMBERS_LINK } from '../globals/links'
+import { UserListContext } from '../Context/Context'
 
 export const Body = () => {
+    let [user] = useContext(UserListContext)
+    let [members1, updateMembers1] = useState('')
+    let [membersLength, updateMembersLength] = useState('')
+    let [members2, updateMembers2] = useState('')
+    let [membersDate, updateMembersDate] = useState('')
+    let [membersLoading, updateMembersLoading] = useState(true)
+    let service = new WebService()
+    const fetchMembers = async (date) => {
+        updateMembersLoading(true);
+        let result = await service.sendPost(MEMBERS_LINK, {
+            userId: user.user_id,
+            date: date
+        })
+        if (result.status == 200) {
+            let { data } = result
+            let len = (data.length) / 2;
+            let array1 = data.slice(0, len);
+            let array2 = data.slice(len);
+            updateMembersLength(data.length);
+            updateMembers1(array1)
+            updateMembers2(array2)
+            updateMembersLoading(false)
+        }
+    }
+    useEffect(() => {
+        fetchMembers("")
+    }, [])
 
-
+    const handleDateChange = ({ target }) => {
+        let { name, value } = target;
+        switch (name) {
+            case "members":
+                updateMembersDate(value)
+                fetchMembers(new Date(value).toISOString())
+                break;
+        }
+    }
     return (
         <Row>
             <Col lg={12}>
@@ -33,18 +71,20 @@ export const Body = () => {
                                                         </Col>
                                                         <Col lg={7} md={7} sm={7} xs={7}>
                                                             <table>
-                                                                <tr>
-                                                                    <td>Referal Bonus</td>
-                                                                    <td><b>$5000</b></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Matrix Bonus</td>
-                                                                    <td><b>$15000</b></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Matching Bonus</td>
-                                                                    <td><b>$15000</b></td>
-                                                                </tr>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>Referal Bonus</td>
+                                                                        <td><b>$5000</b></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Matrix Bonus</td>
+                                                                        <td><b>$15000</b></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>Matching Bonus</td>
+                                                                        <td><b>$15000</b></td>
+                                                                    </tr>
+                                                                </tbody>
                                                             </table>
                                                         </Col>
                                                         <Col style={{ position: "relative", top: "100px" }} lg={3} md={3} sm={3} xs={3}>
@@ -59,67 +99,33 @@ export const Body = () => {
                                         </Col>
                                         <Col className="referral" lg={12}>
                                             <Container fluid={true}>
-                                                <Row>
-                                                    <Col lg={12}>
-                                                        <h3>Members</h3>
-                                                    </Col>
-                                                    <Col lg={6}>
+                                                {membersLoading ? (
+                                                    <Row>
+                                                        <Col lg={12} className="text-center">
+                                                            <Spinner animation="border" variant="success" />
+                                                        </Col>
+                                                    </Row>
+                                                ) : (
+                                                        <>
+                                                            {membersLength > 0 ? (
 
-                                                        <Members Data={[{
-                                                            name: "Mr Tega",
-                                                            state: "Lagos",
-                                                            stage: "3"
-                                                        },
-                                                        {
-                                                            name: "Mr Robo",
-                                                            state: "Lagos",
-                                                            stage: "4"
-                                                        },
-                                                        {
-                                                            name: "Mr Chibu",
-                                                            state: "Lagos",
-                                                            stage: "5"
-                                                        },
-                                                        {
-                                                            name: "Mr Chris",
-                                                            state: "Lagos",
-                                                            stage: "2"
-                                                        },
-                                                        {
-                                                            name: "Mr Dammy",
-                                                            state: "Lagos",
-                                                            stage: "1"
-                                                        },]} />
-                                                    </Col>
-                                                    <Col lg={6}>
+                                                                <Row>
+                                                                    <Col lg={12}>
+                                                                        <h3>Members</h3>
+                                                                    </Col>
+                                                                    <Col lg={6}>
 
-                                                        <Members Data={[{
-                                                            name: "Mr Tega",
-                                                            state: "Lagos",
-                                                            stage: "3"
-                                                        },
-                                                        {
-                                                            name: "Mr Robo",
-                                                            state: "Lagos",
-                                                            stage: "4"
-                                                        },
-                                                        {
-                                                            name: "Mr Chibu",
-                                                            state: "Lagos",
-                                                            stage: "5"
-                                                        },
-                                                        {
-                                                            name: "Mr Chris",
-                                                            state: "Lagos",
-                                                            stage: "2"
-                                                        },
-                                                        {
-                                                            name: "Mr Dammy",
-                                                            state: "Lagos",
-                                                            stage: "1"
-                                                        },]} />
-                                                    </Col>
-                                                </Row>
+                                                                        <Members Data={members1} />
+                                                                    </Col>
+                                                                    <Col lg={6}>
+
+                                                                        <Members Data={members2} />
+                                                                    </Col>
+                                                                </Row>
+                                                                // <Members Data={members} />
+                                                            ) : ("No Referrals")}
+                                                        </>
+                                                    )}
                                             </Container>
                                         </Col>
                                     </Row>

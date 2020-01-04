@@ -21,6 +21,9 @@ models.BonusTypes = BonusTypesModel(sequelize, Sequelize)
 models.Account = AccountModel(sequelize, Sequelize)
 models.Role = RoleModel(sequelize, Sequelize)
 models.Downlines = DownlinesModel(sequelize, Sequelize)
+models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg", })
+models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg", })
+
 sequelize.sync()
     .then((res) => {
 

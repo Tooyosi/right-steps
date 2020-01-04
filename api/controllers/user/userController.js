@@ -3,58 +3,89 @@ const connection = require('../../connections/connection')
 const { logger } = require('../../loggers/logger')
 module.exports = {
     get: ('/', async (req, res) => {
+        let i = 0;
+
         const fetchDownlines = async (id) => {
-            try {
-                models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg" })
-                models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg" })
-                // models.User.hasMany(models.Downlines, {as: "user1", foreignKey: "right_leg_id" })
-                // let member = await connection.query(`SELECT d.user_id, d.right_leg_id, d.left_leg_id, u.firstname, r.firstname, l.firstname FROM Downlines d JOIN Users u  on d.user_id = u.user_id, JOIN Users l on d.user_id = l.user_id JOIN Users r  on d.user_id = r.user_id WHERE user_id=${userId}`)
+            let member = await models.Downlines.findOne({
+                where: {
+                    user_id: id
+                },
+                include: [ {
+                    model: models.User,
+                    required: false,
+                    as: "left_leg"
+                },{
+                    model: models.User,
+                    // to print values where one parameter is null
+                    required: false,
+                    as: "right_leg"
+                },]
+            })
+            let obj = {}
+            if (member !== null && member.left_leg !== null) {
+                // for (let i ; i < 5; i++) {
 
-                let member = await models.Downlines.findOne({
-                    where: {
-                        user_id: userId
-                    },
-                    include: [{
-                        model: models.User,
-                        where: {
-                            // user_id: {$col: "left_leg_Id"}
-                        },
-                        as: "right_leg"
-                    }, {
-                        model: models.User,
-                        where: {
-                            // user_id: {$col: "left_leg_Id"}
-                        },
-                        as: "left_leg"
-                    },]
-                })
-                // let dataToSend = {
-                //     balance: balance.dataValues.balance
+                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+                //     member.left = leftMember;
+                //     let newMember = member;
+                //     i++;
+                //     console.log (leftMember, "herrrr")
                 // }
-                if (member !== null) {
-                    let rightLegArr = [];
-                    let leftLegArr = [];
-                    let leftMember = await models.Downlines.findOne({
-                        where: {
-                            user_id: member.dataValues.left_leg_id
-                        }
-                    })
+                // let arrayLoop = new Array(5); 
+                // arrayLoop.forEach( async (element) => {
+                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+                //     member.left = leftMember;
+                //     let newMember = member;
+                //     i++;
+                //     console.log (leftMember, "herrrr")
+                // });
+                // if (i == 1) {
+                //     return member
+                // } else {
+                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+                //     member.left = leftMember;
+                //     let newMember = member;
+                //     i++;
+                //     console.log(leftMember, "here")
+                //     return (leftMember)
+                // }
 
-                    let rightMember = await models.Downlines.findOne({
-                        where: {
-                            user_id: member.dataValues.right_leg_id
-                        }
-                    })
-                } else {
-                    // send back member doesnt exist
-                }
-                return res.status(200).json(member)
-            } catch (error) {
-                logger.error(error.toString())
-                return res.status(400).json(error.toString())
             }
+            return member
+
         }
         let userId = req.params.id;
+        try {
+            let resToSend = {
+                result: await fetchDownlines(userId)
+            };
+            for (i; i < 5; i++) {
+                if (i == 4) {
+                    // console.log(result, "here")
+                    return res.status(200).json(resToSend)
+                } else {
+                    if (resToSend.result.left_leg !== null) {
+                        resToSend.result.dataValues.left_leg.dataValues['members'] = await fetchDownlines(resToSend.result.left_leg.user_id)
+                        if (resToSend.result.right_leg !== null) {
+                            resToSend.result.dataValues.right_leg.dataValues['members'] = await fetchDownlines(resToSend.result.right_leg.user_id)
+                            // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
+                            console.log(resToSend.result.right_leg.user_id)
+                            
+                        }
+                    }else if (resToSend.result.right_leg !== null) {
+                        resToSend.result.dataValues.right_leg.dataValues['members'] = await fetchDownlines(resToSend.result.right_leg.user_id)
+                        if (resToSend.result.left_leg !== null) {
+                            resToSend.result.dataValues.left_leg.dataValues['members'] = await fetchDownlines(resToSend.result.left_leg.user_id)
+                            
+                        }
+                    }
+                }
+            }
 
+        } catch (error) {
+            console.log(error)
+            logger.error(error.toString())
+            return res.status(400).json(error.toString())
+        }
     })
 };
