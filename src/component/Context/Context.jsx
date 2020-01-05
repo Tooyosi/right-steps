@@ -1,24 +1,17 @@
 import React, { useState, createContext } from 'react';
 
-export const RegisterContext = createContext();
+export const MemberIdContext = createContext();
 
 
-export const RegisterProvider = (props) => {
-        const [register, updateRegister] = useState({
-            name: '',
-            email: '',
-            gender: '',
-            dob: '',
-            country: '',
-            state: '',
-            username: '',
-            password: '',
-            sponsor: ''
+export const MemberIdProvider = (props) => {
+        const [memberId, updateMemberId] = useState({
+            id: '',
+            loading: false
         });
         return (
-            <RegisterContext.Provider value={[register, updateRegister]}>
+            <MemberIdContext.Provider value={[memberId, updateMemberId]}>
                 {props.children}
-            </RegisterContext.Provider>
+            </MemberIdContext.Provider>
         );
 }
 

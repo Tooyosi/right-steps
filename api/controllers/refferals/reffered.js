@@ -34,6 +34,7 @@ module.exports = {
             if (members.length > 0) {
                 for (i = 0; i < members.length; i++) {
                     let member = {
+                        user_id: members[i].dataValues.user_id,
                         id: members[i].dataValues.member_id,
                         name: `${members[i].dataValues.user.dataValues.firstname} ${members[i].dataValues.user.dataValues.lastname}`,
                         state: `${members[i].dataValues.user.dataValues.state}`,

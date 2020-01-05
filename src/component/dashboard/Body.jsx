@@ -6,7 +6,7 @@ import Courses2 from './../../../assets/courses2.png'
 import { MEMBERS_LINK, USER_NOTIFICATION_LINK } from '../globals/links'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
-import { UserListContext } from '../Context/Context'
+import { UserListContext, MemberIdContext } from '../Context/Context'
 import WebService from '../globals/WebService'
 
 export const Body = () => {
@@ -17,6 +17,7 @@ export const Body = () => {
     let [notificationsDate, updateNotificationsDate] = useState('')
     let [notifications, updateNotifications] = useState('')
     let [notificationsLoading, updateNotificationsLoading] = useState(true)
+    let [memberId, updateMemberId] = useContext(MemberIdContext)
     let service = new WebService()
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
@@ -44,6 +45,11 @@ export const Body = () => {
         }
     }
     useEffect(() => {
+        // glitch to prevent the balance display from hiding on the personal details component 
+        updateMemberId({
+            id: '',
+            loading: false
+        })
         fetchMembers("")
         fetchNotifications("")
     }, [])

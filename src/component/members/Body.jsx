@@ -7,7 +7,7 @@ import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
 import { MEMBERS_LINK } from '../globals/links'
-import { UserListContext } from '../Context/Context'
+import { UserListContext, MemberIdContext } from '../Context/Context'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
@@ -16,8 +16,9 @@ export const Body = () => {
     let [members2, updateMembers2] = useState('')
     let [membersDate, updateMembersDate] = useState('')
     let [membersLoading, updateMembersLoading] = useState(true)
+    let [memberId, updateMemberId] = useContext(MemberIdContext)
     let service = new WebService()
-
+    
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
         let result = await service.sendPost(MEMBERS_LINK, {
@@ -36,6 +37,11 @@ export const Body = () => {
         }
     }
     useEffect(() => {
+        // glitch to prevent the balance display from hiding on the personal details component 
+        updateMemberId({
+            id: '',
+            loading: false
+        })
         fetchMembers("")
     }, [])
 
@@ -110,7 +116,7 @@ export const Body = () => {
                 </DashboardStyle>
             </Col>
             <Col lg={{ span: 3, order: 12 }} md={{ span: 4, order: 12 }} xs={{ span: 12, order: 1 }}>
-                <Personal Data={{ name: "Mr. Tega Osemudiamen", balance: "25,000", stage: "4" }} />
+                <Personal  />
             </Col>
         </Row>
 

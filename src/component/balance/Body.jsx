@@ -7,10 +7,12 @@ import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
 import { MEMBERS_LINK } from '../globals/links'
-import { UserListContext } from '../Context/Context'
+import { UserListContext, MemberIdContext } from '../Context/Context'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
+    let [memberId, updateMemberId] = useContext(MemberIdContext)
+
     let [members1, updateMembers1] = useState('')
     let [membersLength, updateMembersLength] = useState('')
     let [members2, updateMembers2] = useState('')
@@ -35,6 +37,11 @@ export const Body = () => {
         }
     }
     useEffect(() => {
+        // glitch to prevent the balance display from hiding on the personal details component 
+        updateMemberId({
+            id:'',
+            loading: false
+        })
         fetchMembers("")
     }, [])
 

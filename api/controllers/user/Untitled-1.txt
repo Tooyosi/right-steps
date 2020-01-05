@@ -61,25 +61,41 @@ module.exports = {
             };
             // return res.status(200).json(resToSend)
 
+            let rightIds = [resToSend.result.right_leg.user_id]
+            let leftIds = [resToSend.result.left_leg.user_id]
             for (i; i < 5; i++) {
                 if (i == 4) {
                     // console.log(result, "here")
-                    return res.status(200).json(resToSend)
+                    // return res.status(200).json(resToSend)
                 } else {
-                    if (resToSend.result.left_leg !== null) {
-                        resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.left_leg.user_id)
-                        if (resToSend.result.right_leg !== null) {
-                            resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.right_leg.user_id)
-                            // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
-                            console.log(resToSend.result.right_leg.user_id)
+                    if (rightIds[i] !== null && rightIds[i] !== undefined) {
+                        let rightRes =  await fetchDownlines(rightIds[i])
+                        rightIds.push(rightRes.right_leg_id)
+                        // resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(rightIds[i])
+                        // if (leftIds[i] !== null && leftIds[i] !== undefined) {
+                        //     let leftRes= await fetchDownlines(leftIds[i])
+                        //     // resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(leftIds[i])
+                        //     // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
+                        //     console.log(resToSend.result.right_leg.user_id)
 
-                        }
-                    }else if (resToSend.result.right_leg !== null) {
-                        resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.right_leg.user_id)
-                        if (resToSend.result.left_leg !== null) {
-                            resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.left_leg.user_id)
+                        // }
+                    }
+                    // else if (resToSend.result.right_leg !== null) {
+                    //     resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.right_leg.user_id)
+                    //     if (resToSend.result.left_leg !== null) {
+                    //         resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.left_leg.user_id)
 
-                        }
+                    //     }
+                    // }
+
+                    if (leftIds[i] !== null && leftIds[i] !== undefined) {
+                        let leftRes= await fetchDownlines(leftIds[i])
+                        leftIds.push(leftRes.right_leg_id)
+
+                        // resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(leftIds[i])
+                        // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
+                        console.log(resToSend.result.right_leg.user_id)
+
                     }
                 }
             }

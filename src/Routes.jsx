@@ -1,7 +1,7 @@
 import React, { Fragment, Component } from 'react'
 import { Router, Route, Switch, BrowserRouter, Redirect } from 'react-router-dom';
 import Landing from './Landing';
-import { ErrorProvider, UserListProvider, ReferralLiinkProvider } from './component/Context/Context';
+import { ErrorProvider, UserListProvider, ReferralLiinkProvider, MemberIdProvider } from './component/Context/Context';
 import { Signup } from './registeration/Signup';
 import { Login } from './registeration/Login';
 import { Dashboard } from './component/dashboard/Dashboard';
@@ -16,6 +16,7 @@ const Routes = () => (
   <ErrorProvider>
     <UserListProvider>
       <ReferralLiinkProvider>
+        <MemberIdProvider>
         <BrowserRouter>
           <Switch>
             <Route exact path="/" component={Landing}></Route>
@@ -28,6 +29,7 @@ const Routes = () => (
             <Route exact path="/referral/:id" component={Referral}></Route>
           </Switch>
         </BrowserRouter>
+        </MemberIdProvider>
       </ReferralLiinkProvider>
     </UserListProvider>
   </ErrorProvider>
