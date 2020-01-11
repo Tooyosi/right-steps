@@ -15,7 +15,7 @@ export const Members = (props) => {
     let service = new WebService();
     const memberClick = async({target})=>{
         let {id} = target;
-        updateMemberId({id, loading: true})
+        updateMemberId({id, loading: true, offset: 0})
         
         // let result = await service.sendGet(`${MEMBERS_LINK}/${id}`)
         
@@ -23,6 +23,9 @@ export const Members = (props) => {
     useEffect(()=>{
         
     }, [memberId])
+
+    
+
     return (
         <Col lg={12}>
             {Data.map((item, i) => (

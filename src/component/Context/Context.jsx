@@ -6,7 +6,8 @@ export const MemberIdContext = createContext();
 export const MemberIdProvider = (props) => {
         const [memberId, updateMemberId] = useState({
             id: '',
-            loading: false
+            loading: false,
+            offset: 0
         });
         return (
             <MemberIdContext.Provider value={[memberId, updateMemberId]}>

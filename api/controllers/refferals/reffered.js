@@ -5,7 +5,7 @@ const { logger } = require('../../loggers/logger')
 const Op = require('sequelize').Op
 module.exports = {
     post: ('/', async (req, res) => {
-        let { userId, date } = req.body;
+        let { userId, date, offset } = req.body;
         try {
             // based on date input
             let includeArr = []
@@ -27,30 +27,38 @@ module.exports = {
             }
             models.Members.belongsTo(models.User, { foreignKey: "user_id" })
 
-            let members = await models.Members.findAll({
+            let members = await models.Members.findAndCountAll({
                 where: {
                     [Op.or]: [{
                         sponsor_id: userId,
                     }, { upline_id: userId, }]
                 },
+                offset: offset,
+                limit: 10,
+                order: [['member_id', 'DESC']],
                 include: includeArr
             })
             let dataToSend = []
-            if (members.length > 0) {
-                for (i = 0; i < members.length; i++) {
-                    if (members[i].dataValues.user !== null) {
+            let {rows, count} = members;
+            if (rows.length > 0) {
+                for (i = 0; i < rows.length; i++) {
+                    if (rows[i].dataValues.user !== null) {
                         let member = {
-                            user_id: members[i].dataValues.user_id,
-                            id: members[i].dataValues.member_id,
-                            name:  `${members[i].dataValues.user.dataValues.firstname} ${members[i].dataValues.user.dataValues.lastname}` ,
-                            state: `${members[i].dataValues.user.dataValues.state}` ,
-                            stage: `${members[i].dataValues.current_stage}  ` 
+                            user_id: rows[i].dataValues.user_id,
+                            id: rows[i].dataValues.member_id,
+                            name:  `${rows[i].dataValues.user.dataValues.firstname} ${rows[i].dataValues.user.dataValues.lastname}` ,
+                            state: `${rows[i].dataValues.user.dataValues.state}` ,
+                            stage: `${rows[i].dataValues.current_stage}  ` 
                         }
                         dataToSend.push(member)
                     }
                 }
             }
-            return res.status(200).json(dataToSend)
+            let sendObj = {
+                count,
+                row: dataToSend
+            }
+            return res.status(200).json(sendObj)
         } catch (error) {
             console.log(error)
             return res.status(400).json(error.toString())

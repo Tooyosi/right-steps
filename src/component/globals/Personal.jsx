@@ -27,8 +27,8 @@ export const Personal = withRouter((props) => {
         let result = await service.sendPost(MEMBERS_LINK, data)
         try {
             if (result.status == 200) {
-                let { data } = result
-                updateMembers(data)
+                let { data: {row, count} } = result
+                updateMembers(row)
                 updateMembersLoading(false)
             }
 
@@ -50,7 +50,8 @@ export const Personal = withRouter((props) => {
 
             fetchMembers({
                 userId: user.user_id,
-                date: ""
+                date: "",
+                offset: 0
             });
             if (user.role.name == "Admin") {
                 fetchDetails(`${ADMIN_MEMBERS_LINK}/${user.user_id}`)
@@ -63,7 +64,8 @@ export const Personal = withRouter((props) => {
             fetchDetails(`${MEMBERS_LINK}/${memberId.id}`)
             fetchMembers({
                 userId: memberId.id,
-                date: ""
+                date: "",
+                offset: 0
             });
             updateShowUserMemberDetails(false)
         }

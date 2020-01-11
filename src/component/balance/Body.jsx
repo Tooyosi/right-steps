@@ -25,14 +25,15 @@ export const Body = () => {
         updateMembersLoading(true);
         let result = await service.sendPost(MEMBERS_LINK, {
             userId: user.user_id,
-            date: date
+            date: date,
+            offset: 0
         })
         if (result.status == 200) {
-            let { data } = result
-            let len = (data.length) / 2;
-            let array1 = data.slice(0, len);
-            let array2 = data.slice(len);
-            updateMembersLength(data.length);
+            let { data: {row, count} } = result
+            let len = (row.length) / 2;
+            let array1 = row.slice(0, len);
+            let array2 = row.slice(len);
+            updateMembersLength(row.length);
             updateMembers1(array1)
             updateMembers2(array2)
             updateMembersLoading(false)
@@ -50,7 +51,8 @@ export const Body = () => {
         // glitch to prevent the balance display from hiding on the personal details component 
         updateMemberId({
             id: '',
-            loading: false
+            loading: false,
+            offset: 0
         })
         fetchMembers("")
         fetchBalance();

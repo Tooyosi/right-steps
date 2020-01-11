@@ -50,7 +50,7 @@ module.exports = {
         }
     }),
     notificationsPost: ('/', async (req, res) => {
-        let { userId, date } = req.body;
+        let { userId, date, offset } = req.body;
         let whereObj = {
             user_id: userId
         };
@@ -60,8 +60,11 @@ module.exports = {
 
         }
         try {
-            let userNotification = await models.Notifications.findAll({
-                where: whereObj
+            let userNotification = await models.Notifications.findAndCountAll({
+                where: whereObj,
+                offset: offset,
+                limit: 10,
+                order: [['notification_id', 'DESC']]
             })
 
             return res.status(200).json(userNotification)
