@@ -18,7 +18,7 @@ module.exports = {
                     model: models.Role,
                 }]
             })
-            if (user != null || user != undefined) {
+            if (user != null && user != undefined) {
                 const token = jwt.sign(
                     user.dataValues,
                     'userdetails',

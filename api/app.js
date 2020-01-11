@@ -7,22 +7,22 @@ const { logger } = require('./loggers/logger');
 require('dotenv').config()
 
 app.use(express.json())
-app.use(express.urlencoded({extended: true}))
+app.use(express.urlencoded({ extended: true }))
 app.use(
-    cors({
-      credentials: true,
-      origin: 'http://localhost:8080',
-    })
-  );
+  cors({
+    credentials: true,
+    origin: 'http://localhost:8080',
+  })
+);
 
-  // var allowCrossDomain = function(req, res, next) {
-  //   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
-  //   res.header('Access-Control-Allow-Credentials', true);
-  //   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  //   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  //   next();
-  // };
-  // app.use(allowCrossDomain)
+// var allowCrossDomain = function(req, res, next) {
+//   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+//   res.header('Access-Control-Allow-Credentials', true);
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// };
+// app.use(allowCrossDomain)
 app.use(cookieParser());
 
 // app.use(httpLogger);  
@@ -39,9 +39,15 @@ app.use('/members', refferedUsers);
 app.use('/referral', referralLink);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
-app.post('/logout', (req, res)=>{
-  
+app.post('/logout', (req, res) => {
+
 })
-app.listen(process.env.API_PORT, ()=>{
-    logger.info(`Server listening on port ${process.env.API_PORT}`);
+const models = require('./connections/sequelize');
+
+// models.Members.findAll({ hierarchy: true}).then((result)=>{
+//   console.log(result)
+// })
+
+app.listen(process.env.API_PORT, () => {
+  logger.info(`Server listening on port ${process.env.API_PORT}`);
 })

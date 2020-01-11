@@ -23,8 +23,21 @@ models.Account = AccountModel(sequelize, Sequelize)
 models.Role = RoleModel(sequelize, Sequelize)
 models.Notifications = NotificatiosnModel(sequelize, Sequelize)
 models.Downlines = DownlinesModel(sequelize, Sequelize)
+models.Members.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
 models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg", })
 models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg", })
+// onDelete: 'CASCADE',
+//       foreignKey: 'parent',
+//       as: 'children'
+// models.Members.hasMany(models.Members, {
+//     onDelete: 'CASCADE',
+//     foreignKey: 'upline_id',
+//     as: 'children'
+//   });
+models.Members.isHierarchy();
+models.Members.sync().then((res)=>{
+    // console.log(res)
+});
 
 sequelize.sync()
     .then((res) => {

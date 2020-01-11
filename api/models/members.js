@@ -28,6 +28,10 @@ module.exports = function(sequelize, DataTypes) {
         key: 'user_id'
       }
     },
+    'parentId': {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+    },
     'current_stage': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -56,7 +60,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     'sponsor_id': {
       type: DataTypes.INTEGER(11),
-      allowNull: false,
+      allowNull: true,
       comment: "null",
       references: {
         model: 'users',

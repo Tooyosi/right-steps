@@ -2,131 +2,138 @@ const models = require('../../connections/sequelize')
 const sequelize = require('../../connections/connection')
 const { logger } = require('../../loggers/logger')
 module.exports = {
-    get: ('/', async (req, res) => {
-        let i = 0;
+    // get: ('/', async (req, res) => {
 
-        const fetchDownlines = async (id) => {
-            let member = await models.Downlines.findOne({
+    //     const fetchDownlines = async (id) => {
+    //         let member = await models.Downlines.findOne({
+    //             where: {
+    //                 user_id: id
+    //             },
+    //             include: [{
+    //                 model: models.User,
+    //                 required: false,
+    //                 as: "left_leg"
+    //             }, {
+    //                 model: models.User,
+    //                 // to print values where one parameter is null
+    //                 required: false,
+    //                 as: "right_leg"
+    //             },]
+    //         })
+    //         let obj = {}
+    //         if (member !== null && member.left_leg !== null) {
+    //             // for (let i ; i < 5; i++) {
+
+    //             //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+    //             //     member.left = leftMember;
+    //             //     let newMember = member;
+    //             //     i++;
+    //             //     console.log (leftMember, "herrrr")
+    //             // }
+    //             // let arrayLoop = new Array(5); 
+    //             // arrayLoop.forEach( async (element) => {
+    //             //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+    //             //     member.left = leftMember;
+    //             //     let newMember = member;
+    //             //     i++;
+    //             //     console.log (leftMember, "herrrr")
+    //             // });
+    //             // if (i == 1) {
+    //             //     return member
+    //             // } else {
+    //             //     let leftMember = await fetchDownlines(member.left_leg.user_id)
+    //             //     member.left = leftMember;
+    //             //     let newMember = member;
+    //             //     i++;
+    //             //     console.log(leftMember, "here")
+    //             //     return (leftMember)
+    //             // }
+
+    //         }
+    //         return member
+
+    //     }
+    //     let userId = req.params.id;
+    //     let i = 0;
+    //     try {
+    //         let result = await fetchDownlines(userId)
+    //         // return res.status(200).json(resToSend)
+    //         if(result !== null){
+    //         let right = [{ position: i, left: false, id: result.right_leg.user_id, parentId: result.user_id, details: result.dataValues.right_leg }]
+    //         let left = [{ position: i, left: true,id: result.left_leg.user_id, parentId: result.user_id, details: result.dataValues.left_leg }]
+    //         while (right[i] !== undefined || left[i] !== undefined) {
+    //             if (left[i] !== undefined && left[i].id !== null) {
+    //                 let resp = await fetchDownlines(left[i].id)
+    //                 if (resp !== null) {
+    //                     left.push({ position: (i + 1),left: true, id: resp.dataValues.left_leg.user_id,parentId: resp.dataValues.user_id, details: resp.dataValues.left_leg })
+    //                 } if (right[i] !== undefined && right[i].id !== null) {
+    //                     let res1 = await fetchDownlines(right[i].id)
+    //                     if (res1 !== null) {
+    //                         right.push({ position: (i + 1),left: false, id: res1.dataValues.right_leg.user_id, parentId: res1.dataValues.user_id ,details: res1.dataValues.right_leg })
+    //                     }
+    //                 }
+    //             } else if (right[i] !== undefined && right[i].id !== null) {
+    //                 let res1 = await fetchDownlines(right[i].id)
+    //                 if (res1 !== null) {
+
+    //                     right.push({ position: (i + 1),left: false, id: res1.dataValues.right_leg.user_id, parentId: res1.dataValues.user_id, details: res1.dataValues.right_leg })
+    //                 }
+    //                 if (left[i] !== undefined && left[i] !== null) {
+    //                     let resp = await fetchDownlines(left[i].id)
+    //                     if (resp !== null) {
+    //                         left.push({ position: (i + 1),left: true, id: resp.dataValues.left_leg.user_id,parentId: resp.dataValues.user_id, details: resp.dataValues.left_leg })
+    //                     }
+    //                 }
+    //             }
+    //             i++;
+    //         }
+    //         return res.status(200).send({
+    //             right,
+    //             left}
+    //         )
+    //     } else {
+    //         return res.status(200).send({})
+
+    //     }
+    //     } catch (error) {
+    //         console.log(error)
+    //         logger.error(error.toString())
+    //         return res.status(400).json(error.toString())
+    //     }
+    // }),
+
+    get: ('/', async (req, res) => {
+        let { id } = req.params
+        try {
+            const members = await models.Members.findAll({
                 where: {
                     user_id: id
                 },
-                include: [ {
+                // order: [ [ { model: models.Members, as: 'ancestors' }, 'hierarchyLevel' ] ],
+                include: [{
+                    model: models.Members,
+                    as: 'ancestors',
+                    include: [{
+                        model: models.Members,
+                        hierachy: true,
+                        as: 'children',
+                        // attributes: ['firstname', 'lastname', 'username']
+                    }]
+                }, {
                     model: models.User,
-                    required: false,
-                    as: "left_leg"
-                },{
-                    model: models.User,
-                    // to print values where one parameter is null
-                    required: false,
-                    as: "right_leg"
-                },]
+                    as: 'attributes',
+                    attributes: ['firstname', 'lastname', 'username']
+
+                }],
             })
-            let obj = {}
-            if (member !== null && member.left_leg !== null) {
-                // for (let i ; i < 5; i++) {
-
-                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
-                //     member.left = leftMember;
-                //     let newMember = member;
-                //     i++;
-                //     console.log (leftMember, "herrrr")
-                // }
-                // let arrayLoop = new Array(5); 
-                // arrayLoop.forEach( async (element) => {
-                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
-                //     member.left = leftMember;
-                //     let newMember = member;
-                //     i++;
-                //     console.log (leftMember, "herrrr")
-                // });
-                // if (i == 1) {
-                //     return member
-                // } else {
-                //     let leftMember = await fetchDownlines(member.left_leg.user_id)
-                //     member.left = leftMember;
-                //     let newMember = member;
-                //     i++;
-                //     console.log(leftMember, "here")
-                //     return (leftMember)
-                // }
-
-            }
-            return member
-
-        }
-        let userId = req.params.id;
-        try {
-            let resToSend = {
-                result: await fetchDownlines(userId)
-            };
-            // return res.status(200).json(resToSend)
-
-            let rightIds = [resToSend.result.right_leg.user_id]
-            let leftIds = [resToSend.result.left_leg.user_id]
-            for (i; i < 5; i++) {
-                if (i == 4) {
-                    // console.log(result, "here")
-                    // return res.status(200).json(resToSend)
-                } else {
-                    if (rightIds[i] !== null && rightIds[i] !== undefined) {
-                        let rightRes =  await fetchDownlines(rightIds[i])
-                        rightIds.push(rightRes.right_leg_id)
-                        // resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(rightIds[i])
-                        // if (leftIds[i] !== null && leftIds[i] !== undefined) {
-                        //     let leftRes= await fetchDownlines(leftIds[i])
-                        //     // resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(leftIds[i])
-                        //     // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
-                        //     console.log(resToSend.result.right_leg.user_id)
-
-                        // }
-                    }
-                    // else if (resToSend.result.right_leg !== null) {
-                    //     resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.right_leg.user_id)
-                    //     if (resToSend.result.left_leg !== null) {
-                    //         resToSend.result.dataValues.left_leg.dataValues[`members${i}`] = await fetchDownlines(resToSend.result.left_leg.user_id)
-
-                    //     }
-                    // }
-
-                    if (leftIds[i] !== null && leftIds[i] !== undefined) {
-                        let leftRes= await fetchDownlines(leftIds[i])
-                        leftIds.push(leftRes.right_leg_id)
-
-                        // resToSend.result.dataValues.right_leg.dataValues[`members${i}`] = await fetchDownlines(leftIds[i])
-                        // console.log(resToSend.result.dataValues.right_leg.dataValues.right_members)
-                        console.log(resToSend.result.right_leg.user_id)
-
-                    }
-                }
-            }
-
+            return res.status(200).send(members)
         } catch (error) {
-            console.log(error)
             logger.error(error.toString())
             return res.status(400).json(error.toString())
+            
         }
+        
     }),
-    
-    // get: ('/', async (req, res) => {
-    //     let { id } = req.params
-    //     const fetchUser = async (id) => {
-    //         let parent = await sequelize.query("SELECT * FROM `downlines` WHERE user_id=" + id + "", { type: sequelize.QueryTypes.SELECT })
-    //         return parent
-    //     }
-    //     let parentData = await fetchUser(id)
-    //     // res.send(parentData)
-    //     let idArr = [parentData[0].left_leg_id]
-    //     if(parentData.length > 0 ){
-    //         for (let i = 0; i < 5; i++) {
-    //             let id;
-    //             let leftUser = await fetchUser( )
-    //             let rightUser = await fetchUser(parentData[0].right_leg_id)
-    //             console.log(rightUser)
-    //         }
-    //         res.send(parentData[0])
-    //     }
-
-    // }),
     notificationsPost: ('/', async (req, res) => {
         let { userId, date } = req.body;
         let whereObj = {

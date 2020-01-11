@@ -1,74 +1,70 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
-import { Container, Row, Col, Spinner, Button, Form } from 'react-bootstrap'
-import { DashboardStyle, ButtonStyle, UserTreeStyle, StageDivStyle, PersonalStyle } from '../styles/style'
-import Courses1 from './../../../assets/courses1.png'
-import Courses2 from './../../../assets/courses2.png'
+import { withRouter } from 'react-router-dom';
+import { Container, Row, Col, Spinner } from 'react-bootstrap'
+import { DashboardStyle, StageDivStyle } from '../styles/style'
 import { Members } from '../globals/Members'
-import { Personal } from '../globals/Personal'
 import { MEMBERS_LINK, USER_LINK } from '../globals/links'
 import { UserListContext, MemberIdContext } from '../Context/Context'
 import WebService from '../globals/WebService'
+import Tree from 'react-hierarchy-tree';
 
-export const Body = () => {
+const Body = (props) => {
+    console.log(props)
     let [user] = useContext(UserListContext);
     let [members, updateMembers] = useState('');
-    let [rightMembers, updateRihtMembers] = useState([]);
-    let [leftMembers, updateLeftMembers] = useState([]);
+    let [totalDecendants, updateTotalDecendants] = useState([]);
+    let [decendantsLoading, updateDecendantsLoading] = useState(true);
     let [memberId, updateMemberId] = useContext(MemberIdContext);
     let [membersLoading, updateMembersLoading] = useState(true)
     let [loading, updateLoading] = useState(true)
     let service = new WebService();
+    const svgSquare = {
+        shape: 'rect',
+        shapeProps: {
+            width: 20,
+            height: 20,
+            x: -10,
+            y: -10,
+        }
+    }
+
+
     const fetchMembers = async (date) => {
-        updateLoading(true);
+        updateMembersLoading(true);
         let result = await service.sendPost(MEMBERS_LINK, {
-            userId: user.user_id,
-            date: date
+            userId: date.id,
+            date: date.date
         })
         if (result.status == 200) {
             let { data } = result
             updateMembers(data)
-            updateLoading(false)
+            updateMembersLoading(false)
         }
     }
 
     const fetchDownline = async (id) => {
-        let res = await service.sendGet(`${USER_LINK}/${id}`)
-        let { data: { result } } = res
-        return result
+        updateDecendantsLoading(true)
+
+        let result = await service.sendGet(`${USER_LINK}/${id}`)
+        let { data } = result
+        let dataArr = [data]
+        updateTotalDecendants(dataArr)
+        updateDecendantsLoading(false)
     }
     useEffect(() => {
-        if (memberId.loading == false) {
-            fetchMembers("")
-            let downlines = async () => {
-                let result = await fetchDownline(user.user_id)
-
-                if (result.right_leg_id !== null) {
-                    let rigtIds = [{ position: 0, id: result.right_leg_id, details: result.right_leg }]
-                    let leftIds = [{ position: 0, id: result.left_leg_id, details: result.left_leg }]
-                    for (let i = 0; i < 5; i++) {
-                        if (rigtIds[i] !== null && rigtIds[i] !== undefined) {
-                            let rightLeg = await fetchDownline(rigtIds[i].id)
-                            let leftLeg = await fetchDownline(leftIds[i].id)
-                            if (rightLeg !== null) {
-                                rigtIds.push({ position: (i + 1), id: rightLeg.right_leg_id, details: rightLeg.right_leg })
-                            }
-                            if (leftLeg !== null) {
-                                leftIds.push({ position: (i + 1), id: leftLeg.left_leg_id, details: leftLeg.left_leg })
-                            }
-                        }
-                    }
-                    updateRihtMembers(rigtIds)
-                    updateLeftMembers(leftIds)
-                }
-            }
-            // downlines()
+        updateLoading(false)
+        if (props.location && props.location.state !== undefined) {
+            fetchDownline(props.location.state)
+            fetchMembers({ id: props.location.state, date: '' })
+        } else if (memberId.loading == false) {
+        fetchMembers({ id: user.user_id, date: '' })
+        fetchDownline(user.user_id)
         }
         else {
-            fetchDownline(memberId)
+        fetchMembers({ id: user.user_id, date: '' })
+        fetchDownline(memberId.id)
         }
     }, [memberId])
-    console.log(rightMembers, "right")
-    console.log(leftMembers, "left")
     return (
         <Row>
             {loading ? (
@@ -83,13 +79,21 @@ export const Body = () => {
                             <DashboardStyle>
                                 <Container fluid={true}>
                                     <Row>
-                                        <Col className="stages" style={{ backgroundColor: "white" }} lg={12}>
-                                            <h4>MEMBERS</h4>
+                                        {membersLoading ? (
+                                            <Col lg={12} className="text-center">
+                                                <Spinner animation="border" variant="success" />
+                                            </Col>
 
-                                            <Members Data={members} />
+                                        ) : (
+                                                <Col className="stages" style={{ backgroundColor: "white" }} lg={12}>
+                                                    <h4>MEMBERS</h4>
 
-                                        </Col>
+                                                    <Members Data={members} />
+
+                                                </Col>
+                                            )}
                                     </Row>
+
                                 </Container>
                             </DashboardStyle>
                         </Col>
@@ -100,65 +104,30 @@ export const Body = () => {
                                     <Col lg={12}>
                                         <h3>Progress</h3>
                                     </Col>
-                                    <Col lg={12}>
-                                        <StageDivStyle style={{ height: "13px" }} Color={4}>
-                                            <div></div>
-                                        </StageDivStyle>
-                                    </Col>
-                                    <Col lg={12}>
-                                        <h3>Stage 5</h3>
-                                    </Col>
-                                    <Col lg={12}>
-                                        <UserTreeStyle>
-                                        <div className="tree">
-                                            <ul>
-                                                <li>
-                                                    <a href="#">{user.user_id}</a>
-                                                    <ul>
-                                                        <li>
-                                                            <a href="#">{leftMembers.length > 0 && leftMembers[0].details.user_id !== null ? leftMembers[0].details.user_id : '2'}</a>
-                                                            {leftMembers.length > 0? (
-                                                            <ul>
-                                                                {leftMembers.map((member, i)=>(
-                                                                <li key={i}>
-                                                                    <a href="#">{member.details.username}</a>
-                                                                    
-                                                                </li>
-                                                                ))}
-                                                                <li>
-                                                                    {/* <a href="#">2.2</a> */}
-                                                                </li>
-                                                            </ul>
-                                                            ): ('')}
-                                                        </li>
-                                                        <li>
-                                                            <a href="#">3</a>
-                                                            <ul>
-                                                                <ul>
-                                                                    <li>
-                                                                        <a href="#">3.1</a>
-                                                                        <ul>
-                                                                            <li>
-                                                                                <a href="#">3.1.1</a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <a href="#">3.1.2</a>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a href="#">3.2</a>
-                                                                    </li>
-                                                                </ul>
-                                                            </ul>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        </UserTreeStyle>
-                                    </Col>
+
                                 </Row>
+
+                                {decendantsLoading ? (
+                                    <Spinner animation="border" variant="success" />
+
+                                ) : (
+                                        <Row>
+                                            <Col lg={12}>
+                                                <StageDivStyle style={{ height: "13px" }} Color={totalDecendants[0].current_stage}>
+                                                    <div></div>
+                                                </StageDivStyle>
+                                            </Col>
+                                            <Col lg={12}>
+                                                <h3>Stage {totalDecendants[0].current_stage}</h3>
+                                            </Col>
+                                            <Col lg={12}>
+                                                <div id="treeWrapper" style={{ width: '100%', height: '100vh' }}>
+                                                    <Tree data={totalDecendants} nodeSvgShape={svgSquare} collapsible={false} orientation="vertical" translate={{ x: 220, y: 20 }} pathFunc="elbow" nodeSvgShape={{ shape: 'circle', shapeProps: { r: 10 } }} />
+                                                </div>
+                                            </Col>
+                                        </Row>
+                                    )}
+
                             </Container>
                         </Col>
                     </>
@@ -167,3 +136,5 @@ export const Body = () => {
 
     )
 }
+
+export default withRouter(Body);

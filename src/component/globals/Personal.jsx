@@ -1,5 +1,5 @@
 import React, { Fragment, useState, useEffect, useContext } from 'react'
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, Redirect } from 'react-router-dom';
 import { PersonalStyle, ButtonStyle } from '../styles/style'
 import { Spinner, Row, Col, Modal, Button, Form } from 'react-bootstrap'
 import { Members } from './Members';
@@ -18,6 +18,9 @@ export const Personal = withRouter((props) => {
     let [showModal, updateShowModal] = useState(false)
     let [referralLink, updateReferralLink] = useState('')
     let [memberId] = useContext(MemberIdContext)
+    let [redirect, updateRedirect] = useState(false)
+    let [idToSend, updateIdToSend] = useState()
+
     let service = new WebService()
     const fetchMembers = async (data) => {
         updateMembersLoading(true);
@@ -25,7 +28,6 @@ export const Personal = withRouter((props) => {
         try {
             if (result.status == 200) {
                 let { data } = result
-                console.log(data)
                 updateMembers(data)
                 updateMembersLoading(false)
             }
@@ -57,7 +59,7 @@ export const Personal = withRouter((props) => {
                 fetchDetails(`${MEMBERS_LINK}/${user.user_id}`)
             }
         }
-        else if(window.location.pathname !== "/balance") {
+        else if (window.location.pathname !== "/balance") {
             fetchDetails(`${MEMBERS_LINK}/${memberId.id}`)
             fetchMembers({
                 userId: memberId.id,
@@ -89,6 +91,12 @@ export const Personal = withRouter((props) => {
     }
     const handleClose = () => {
         updateShowModal(false)
+    }
+
+    const matrixRedirect = ({ target: {id} }) => {
+        console.log(id)
+        updateIdToSend(id)
+        updateRedirect(true)
     }
     return (
         <Fragment>
@@ -148,7 +156,7 @@ export const Personal = withRouter((props) => {
                                 <Row>
                                     <Col lg={12}>
                                         <Link to="#">
-                                            <ButtonStyle style={{ width: "100%" }} className="btn">
+                                            <ButtonStyle style={{ width: "100%" }} className="btn" id={personalDetails.user_id} onClick={matrixRedirect}>
                                                 View Matrix
                                             </ButtonStyle>
                                         </Link>
@@ -187,6 +195,14 @@ export const Personal = withRouter((props) => {
                     )}
                 </Row>
                 {/* </Container> */}
+                {redirect ? (
+                    <Redirect
+                        to={{
+                            pathname: `/stages`,
+                            state: idToSend
+                        }} />
+
+                ) : ''}
             </PersonalStyle>
 
         </Fragment>

@@ -3,11 +3,13 @@ const models = require('../connections/sequelize')
 const { logger } = require('./../loggers/logger')
 const nodemailer = require("nodemailer");
 const notificationCreate = require('./functions/createNotification')
+const dateValue = require('./functions/dateValue')
+const updateAccount = require('./functions/updateAccount')
+const updateAncestors = require('./functions/getAncestors')
 module.exports = {
     post: ('/', async (req, res) => {
         let { firstname, lastname, phone, email, gender, dob, country, state, username, sponsor, upline, role } = req.body;
         var ts = new Date().getTime()
-        let dateValue = new Date().toISOString().slice(0, 19).replace('T', ' ');
         try {
             // get the sponsor details
             let userSponsor = await models.User.findOne({
@@ -32,7 +34,13 @@ module.exports = {
                             upline_id: userUpline.dataValues.user_id,
                         }
                     })
-
+                    console.log(userUpline.dataValues.user_id)
+                    let userUplineId = await models.Members.findOne({
+                        where:{
+                            user_id: userUpline.dataValues.user_id
+                        }
+                    })
+                    console.log(membersCheck.length)
                     // if direct downlines is less than 2, add more
                     if (membersCheck.length < 2) {
                         let newUser = await models.User.build({
@@ -59,15 +67,17 @@ module.exports = {
                                 balance: signupFee,
                                 date_updated: dateValue,
                             })
-
+                            
                             // create a member table newly registered member
                             let newMember = await models.Members.create({
                                 user_id: newUser.dataValues.user_id,
                                 upline_id: userUpline.dataValues.user_id,
+                                parentId: userUplineId? userUplineId.dataValues.member_id: null,
                                 sponsor_id: userSponsor.dataValues.user_id,
                                 current_stage: 1,
                                 account_id: userAccount.dataValues.account_id,
-                                referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
+                                referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`,
+                                parentMember_id: userUplineId? userUplineId.dataValues.member_id: null
                             })
                             // Update Sponsors Bonus
                             const bonusAmount = (Number(signupFee) * 0.2)
@@ -78,20 +88,17 @@ module.exports = {
                                 amount: bonusAmount,
                                 date: dateValue, 
                             })
-                            console.log(sponsorBonus.dataValues)
+                            
                             let sponsorAccount = await models.Account.findOne({
                                 where:{
                                     user_id: userSponsor.dataValues.user_id,
                                 }
                             })
-
                             let newBalance = bonusAmount + Number(sponsorAccount.dataValues.balance)
 
                             // update the sponsor account balance with the newly summed up balance
-                            let updatedSponsorAccount  = await sponsorAccount.update({
-                                balance: newBalance,
-                                date: dateValue,
-                            })
+                            let updatedSponsorAccount = await updateAccount(sponsorAccount, newBalance, dateValue )
+                            
 
                             // check if user exist on referral table and add upline to referral table
                             let updateDownlines = await models.Downlines.findOne({
@@ -118,7 +125,7 @@ module.exports = {
                             }
                             
 
-                            
+                            let ancestorsUpdate = await updateAncestors(userUpline.dataValues.user_id)
                             var smtpTransport = nodemailer.createTransport({
                                 service: "Gmail",
                                 auth: {
