@@ -47,7 +47,7 @@ let ancestors = async (id) => {
         } else if (parent.children !== undefined && parent.children.length == 2) {
             a++;
 
-            console.log(`depth is ${a}`)
+            // console.log(`depth is ${a}`)
 
             let newAncestorStage, bonusAmount;
             // check the depth and assign the appropriate stages
@@ -61,6 +61,7 @@ let ancestors = async (id) => {
                     break;
                 case 3:
                     if (ancestor.current_stage == 2) {
+                        // console.log(ancestor.user_id)
                         newAncestorStage = 3;
                         bonusAmount = 1000;
 
@@ -105,7 +106,7 @@ let ancestors = async (id) => {
                     }
                 })
                 let ancestorBonus = await models.Bonus.create({
-                    user_id: ancestor.upline_id,
+                    user_id: ancestor.user_id,
                     bonus_type_id: 2,
                     amount: bonusAmount,
                     date: dateValue
@@ -119,7 +120,7 @@ let ancestors = async (id) => {
                     })
                     let newBal = uplineBonus + Number(ancestorUplineAccount.dataValues.balance)
                     let ancestorUplineBonus = await models.Bonus.create({
-                        user_id: ancestorUpline.upline_id,
+                        user_id: ancestorUpline.user_id,
                         bonus_type_id: 3,
                         amount: uplineBonus,
                         date: dateValue

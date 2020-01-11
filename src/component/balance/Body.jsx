@@ -6,7 +6,7 @@ import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
-import { MEMBERS_LINK } from '../globals/links'
+import { MEMBERS_LINK, USER_LINK } from '../globals/links'
 import { UserListContext, MemberIdContext } from '../Context/Context'
 
 export const Body = () => {
@@ -17,7 +17,9 @@ export const Body = () => {
     let [membersLength, updateMembersLength] = useState('')
     let [members2, updateMembers2] = useState('')
     let [membersDate, updateMembersDate] = useState('')
+    let [userBonus, updateUserBonus] = useState(null)
     let [membersLoading, updateMembersLoading] = useState(true)
+    let [bonusLoading, updateBonusLoading] = useState(true)
     let service = new WebService()
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
@@ -36,13 +38,22 @@ export const Body = () => {
             updateMembersLoading(false)
         }
     }
+    const fetchBalance = async () => {
+        let result = await service.sendGet(`${USER_LINK}/bonus/${user.user_id}`)
+        if (result.status == 200) {
+            let { data } = result;
+            updateUserBonus(data)
+            updateBonusLoading(false)
+        }
+    }
     useEffect(() => {
         // glitch to prevent the balance display from hiding on the personal details component 
         updateMemberId({
-            id:'',
+            id: '',
             loading: false
         })
         fetchMembers("")
+        fetchBalance();
     }, [])
 
     const handleDateChange = ({ target }) => {
@@ -76,28 +87,39 @@ export const Body = () => {
 
                                                             <h4>Earning Breakdown</h4>
                                                         </Col>
-                                                        <Col lg={7} md={7} sm={7} xs={7}>
-                                                            <table>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <td>Referal Bonus</td>
-                                                                        <td><b>$5000</b></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Matrix Bonus</td>
-                                                                        <td><b>$15000</b></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>Matching Bonus</td>
-                                                                        <td><b>$15000</b></td>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </Col>
-                                                        <Col style={{ position: "relative", top: "100px" }} lg={3} md={3} sm={3} xs={3}>
-                                                            <p><b>Total</b></p>
-                                                            <p><b>$25000</b></p>
-                                                        </Col>
+                                                        {bonusLoading ? (
+                                                            <Col lg={7} md={7} sm={7} xs={7}>
+                                                                <Spinner animation="border" variant="warning" />
+                                                            </Col>
+
+                                                        ) : (
+                                                                <>
+                                                                    <Col lg={7} md={7} sm={7} xs={7}>
+
+                                                                        <table>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td>Referal Bonus</td>
+                                                                                    <td><b>${userBonus.referral}</b></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Matrix Bonus</td>
+                                                                                    <td><b>${userBonus.matrix}</b></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>Matching Bonus</td>
+                                                                                    <td><b>${userBonus.matching}</b></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </Col>
+                                                                    <Col style={{ position: "relative", top: "100px" }} lg={3} md={3} sm={3} xs={3}>
+                                                                        <p><b>Total</b></p>
+                                                                        <p><b>${userBonus.total}</b></p>
+                                                                    </Col>
+                                                                </>
+                                                            )}
+
                                                     </Row>
 
                                                 </Container>

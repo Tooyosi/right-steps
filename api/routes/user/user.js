@@ -5,7 +5,8 @@ const memberController = require("../../controllers/refferals/member")
 const middleware = require("../../middleware/middleware")
 const ancestors = require('../../controllers/functions/getAncestors')
 
-router.get('/:id', userController.get)
+router.get('/:id', middleware.withAuth, userController.get)
+router.get('/bonus/:id',middleware.withAuth, userController.bonus)
 router.get('/ancestor/:id', async (req, res)=>{
     let ancest = await ancestors(req.params.id)
     res.send(ancest)
