@@ -9,12 +9,12 @@ module.exports = {
             models.AdminMembers.belongsTo(models.Account, { foreignKey: "account_id" })
             models.AdminMembers.belongsTo(models.User, { foreignKey: "user_id" })
             let member = await models.AdminMembers.findOne({
-                where:{
+                where: {
                     user_id: userId
                 },
                 include: [{
                     model: models.Account,
-                },{
+                }, {
                     model: models.User,
                 },]
             })
@@ -112,8 +112,8 @@ module.exports = {
 
     }),
 
-    referral: ('/', async(req, res)=>{
-        let userId  = req.params.id;
+    referral: ('/', async (req, res) => {
+        let userId = req.params.id;
         try {
             let members = await models.AdminMembers.findOne({
                 where: {
@@ -129,6 +129,61 @@ module.exports = {
             logger.error(error.toString())
             return res.status(400).json(error.toString())
 
+        }
+    }),
+
+    getAllMembers: ('/', async (req, res) => {
+        let {offset, date} = req.body
+        let includeArr = []
+            if (date !== "") {
+                includeArr.push({
+                    model: models.User,
+                    where: {
+                        date_created: date,
+                    },
+                    required: false,
+
+                })
+            } else {
+
+                includeArr.push({
+                    model: models.User,
+                    required: false,
+                })
+            }
+            models.Members.belongsTo(models.User, { foreignKey: "user_id" })
+
+        try {
+            let members = await models.Members.findAndCountAll({
+                offset: offset,
+                limit: 10,
+                order: [['member_id', 'DESC']],
+                include: includeArr
+            })
+            let dataToSend = []
+            let { rows, count } = members;
+            if (rows.length > 0) {
+                for (i = 0; i < rows.length; i++) {
+                    if (rows[i].dataValues.user !== null) {
+                        let member = {
+                            user_id: rows[i].dataValues.user_id,
+                            id: rows[i].dataValues.member_id,
+                            name: `${rows[i].dataValues.user.dataValues.firstname} ${rows[i].dataValues.user.dataValues.lastname}`,
+                            state: `${rows[i].dataValues.user.dataValues.state}`,
+                            stage: `${rows[i].dataValues.current_stage}  `
+                        }
+                        dataToSend.push(member)
+                    }
+                }
+            }
+            let sendObj = {
+                count,
+                row: dataToSend
+            }
+            return res.status(200).json(sendObj)
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json(error.toString())
         }
     })
 };

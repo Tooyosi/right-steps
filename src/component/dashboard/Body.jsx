@@ -3,7 +3,7 @@ import { Container, Row, Col, Image, Spinner, Form, Pagination } from 'react-boo
 import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
-import { MEMBERS_LINK, USER_NOTIFICATION_LINK } from '../globals/links'
+import { MEMBERS_LINK, USER_NOTIFICATION_LINK, ADMIN_MEMBERS_LINK } from '../globals/links'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import { UserListContext, MemberIdContext } from '../Context/Context'
@@ -197,7 +197,9 @@ export const Body = () => {
 
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, {
+        let link
+        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
+        let result = await service.sendPost(link, {
             userId: user.user_id,
             date: date,
             offset: memberOffset

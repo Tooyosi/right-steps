@@ -24,7 +24,9 @@ export const Personal = withRouter((props) => {
     let service = new WebService()
     const fetchMembers = async (data) => {
         updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, data)
+        let link
+        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
+        let result = await service.sendPost(link, data)
         try {
             if (result.status == 200) {
                 let { data: {row, count} } = result

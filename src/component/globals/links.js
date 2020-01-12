@@ -1,5 +1,5 @@
-export const BASE_URL = "https://right-steps.theideamen.tech/"
-// export const BASE_URL = "http://localhost:3001/"
+// export const BASE_URL = "https://right-steps.theideamen.tech/"
+export const BASE_URL = "http://localhost:3001/"
 export const LOGIN = "login"
 export const REGISTER = "register"
 export const MEMBERS_LINK = "members"

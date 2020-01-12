@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { Container, Row, Col, Spinner } from 'react-bootstrap'
 import { DashboardStyle, StageDivStyle } from '../styles/style'
 import { Members } from '../globals/Members'
-import { MEMBERS_LINK, USER_LINK } from '../globals/links'
+import { MEMBERS_LINK, USER_LINK, ADMIN_MEMBERS_LINK } from '../globals/links'
 import { UserListContext, MemberIdContext } from '../Context/Context'
 import WebService from '../globals/WebService'
 import Tree from 'react-hierarchy-tree';
@@ -170,8 +170,10 @@ const Body = (props) => {
 
 
     const fetchMembers = async (date) => {
-        updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, {
+        updateMembersLoading(true); 
+        let link
+        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
+        let result = await service.sendPost(link, {
             userId: date.id,
             date: date.date,
             offset: memberOffset
@@ -192,7 +194,14 @@ const Body = (props) => {
         let result = await service.sendGet(`${USER_LINK}/${id}`)
         let { data } = result
         let dataArr = [data]
-        updateTotalDecendants(dataArr)
+        if (typeof data !== 'object') {
+            updateTotalDecendants([])
+
+        } else {
+            updateTotalDecendants(dataArr)
+
+        }
+
         updateDecendantsLoading(false)
     }
     useEffect(() => {
@@ -288,19 +297,24 @@ const Body = (props) => {
 
                                 ) : (
                                         <Row>
-                                            <Col lg={12}>
-                                                <StageDivStyle style={{ height: "13px" }} Color={totalDecendants[0].current_stage}>
-                                                    <div></div>
-                                                </StageDivStyle>
-                                            </Col>
-                                            <Col lg={12}>
-                                                <h3>Stage {totalDecendants[0].current_stage}</h3>
-                                            </Col>
-                                            <Col lg={12}>
-                                                <div id="treeWrapper" style={{ width: '100%', height: '100vh' }}>
-                                                    <Tree data={totalDecendants} nodeSvgShape={svgSquare} collapsible={false} orientation="vertical" translate={{ x: 250, y: 20 }} pathFunc="elbow" nodeSvgShape={{ shape: 'circle', shapeProps: { r: 10 } }} />
-                                                </div>
-                                            </Col>
+                                            {totalDecendants.length > 0 ? (
+                                                <>
+                                                    <Col lg={12}>
+                                                        <StageDivStyle style={{ height: "13px" }} Color={totalDecendants[0].current_stage}>
+                                                            <div></div>
+                                                        </StageDivStyle>
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <h3>Stage {totalDecendants[0].current_stage}</h3>
+                                                    </Col>
+                                                    <Col lg={12}>
+                                                        <div id="treeWrapper" style={{ width: '100%', height: '100vh' }}>
+                                                            <Tree data={totalDecendants} nodeSvgShape={svgSquare} collapsible={false} orientation="vertical" translate={{ x: 250, y: 20 }} pathFunc="elbow" nodeSvgShape={{ shape: 'circle', shapeProps: { r: 10 } }} />
+                                                        </div>
+                                                    </Col>
+                                                </>
+                                            ) : ('No tree view for Logged in User')}
+
                                         </Row>
                                     )}
 

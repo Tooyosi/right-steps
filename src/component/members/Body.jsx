@@ -6,7 +6,7 @@ import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
-import { MEMBERS_LINK } from '../globals/links'
+import { MEMBERS_LINK, ADMIN_MEMBERS_LINK } from '../globals/links'
 import { UserListContext, MemberIdContext } from '../Context/Context'
 
 export const Body = () => {
@@ -179,7 +179,7 @@ export const Body = () => {
                     let newSkipValue = 10 * (newPageNo - 1)
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
+                    // fetchMembers("")
                 }
                 break;
         }
@@ -188,12 +188,15 @@ export const Body = () => {
     const memberPages = fetchPageNumbers(memberTotalPages, memberStartPage, memberEndPage);
 
     const fetchMembers = async (date) => {
-        updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, {
-            userId: user.user_id,
+        let link
+        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
+        let result = await service.sendPost(link, {
             date: date,
             offset: memberOffset
         })
+
+        updateMembersLoading(true);
+
         if (result.status == 200) {
             let { data: { row, count } } = result
             let len = (row.length) / 2;
@@ -216,7 +219,7 @@ export const Body = () => {
             offset: 0
         })
         fetchMembers("")
-    }, [])
+    }, [memberOffset])
 
     const handleDateChange = ({ target }) => {
         let { name, value } = target;

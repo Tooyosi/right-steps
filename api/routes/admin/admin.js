@@ -6,5 +6,5 @@ const middleware = require("../../middleware/middleware")
 router.post('/register', adminController.post)
 router.get('/members/:id', adminController.get)
 router.get('/referral/:id', adminController.referral)
-
+router.post('/members', adminController.getAllMembers)
 module.exports = router;

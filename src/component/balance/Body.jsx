@@ -6,7 +6,7 @@ import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
-import { MEMBERS_LINK, USER_LINK } from '../globals/links'
+import { MEMBERS_LINK, USER_LINK, ADMIN_MEMBERS_LINK } from '../globals/links'
 import { UserListContext, MemberIdContext } from '../Context/Context'
 
 export const Body = () => {
@@ -23,7 +23,9 @@ export const Body = () => {
     let service = new WebService()
     const fetchMembers = async (date) => {
         updateMembersLoading(true);
-        let result = await service.sendPost(MEMBERS_LINK, {
+        let link
+        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
+        let result = await service.sendPost(link, {
             userId: user.user_id,
             date: date,
             offset: 0
