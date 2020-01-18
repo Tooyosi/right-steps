@@ -10,6 +10,7 @@ const AccountModel = require("../models/account");
 const RoleModel = require("../models/role");
 const DownlinesModel = require("../models/downlines");
 const NotificatiosnModel = require("../models/notifications");
+const RequestModel = require("../models/requests");
 
 const sequelize = require('./connection')
 
@@ -23,6 +24,10 @@ models.Account = AccountModel(sequelize, Sequelize)
 models.Role = RoleModel(sequelize, Sequelize)
 models.Notifications = NotificatiosnModel(sequelize, Sequelize)
 models.Downlines = DownlinesModel(sequelize, Sequelize)
+models.Requests = RequestModel(sequelize, Sequelize);
+
+models.Requests.belongsTo(models.User, { foreignKey: "user_id", as: "requester", })
+
 models.Members.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
 models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg", })
 models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg", })

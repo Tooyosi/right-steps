@@ -8,6 +8,7 @@ require('dotenv').config()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use('/uploads', express.static('uploads'))
 app.use(
   cors({
     credentials: true,
@@ -32,6 +33,7 @@ const refferedUsers = require('./routes/referrals/reffered')
 const referralLink = require('./routes/referrals/referral_link')
 const adminRoutes = require('./routes/admin/admin')
 const userRoutes = require('./routes/user/user')
+const requestRoutes = require('./routes/requests/requests')
 
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
@@ -39,6 +41,7 @@ app.use('/members', refferedUsers);
 app.use('/referral', referralLink);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
+app.use('/requests', requestRoutes)
 app.post('/logout', (req, res) => {
 
 })

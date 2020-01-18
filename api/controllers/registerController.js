@@ -20,162 +20,183 @@ module.exports = {
 
             // check if sponsor exists
             if (userSponsor !== null && userSponsor !== undefined) {
-                // get upline details
-                let userUpline = await models.User.findOne({
+                // get sponsor account details and deduct #30 from it if balance is greater than #30 
+
+                let sponsorAccount = await models.Account.findOne({
                     where: {
-                        username: upline
+                        user_id: userSponsor.dataValues.user_id,
                     }
                 })
-                // check if upline exists
-                if (userUpline !== null && userUpline !== undefined) {
-                    // check if upline has more than 2 direct downlines
-                    let membersCheck = await models.Members.findAll({
+                if (Number(sponsorAccount.dataValues.balance) >= 30 || userSponsor.role_id == 1) {
+
+                    // get upline details
+                    let userUpline = await models.User.findOne({
                         where: {
-                            upline_id: userUpline.dataValues.user_id,
+                            username: upline
                         }
                     })
-                    console.log(userUpline.dataValues.user_id)
-                    let userUplineId = await models.Members.findOne({
-                        where:{
-                            user_id: userUpline.dataValues.user_id
-                        }
-                    })
-                    console.log(membersCheck.length)
-                    // if direct downlines is less than 2, add more
-                    if (membersCheck.length < 2) {
-                        let newUser = await models.User.build({
-                            firstname: firstname,
-                            lastname: lastname,
-                            username: username,
-                            email_address: email,
-                            role_id: role,
-                            gender: gender,
-                            dob: dob,
-                            phone_no: phone,
-                            country: country,
-                            state: state,
-                            status: 0,
-                            password: ts,
-                            date_created: dateValue,
-                            last_login_date: dateValue,
-                        }).save()
-                        if (newUser) {
-                            const signupFee = 30;
-                            // create an account for newly registered member
-                            let userAccount = await models.Account.create({
-                                user_id: newUser.dataValues.user_id,
-                                balance: signupFee,
-                                date_updated: dateValue,
-                            })
-                            
-                            // create a member table newly registered member
-                            let newMember = await models.Members.create({
-                                user_id: newUser.dataValues.user_id,
+                    // check if upline exists
+                    if (userUpline !== null && userUpline !== undefined) {
+                        // check if upline has more than 2 direct downlines
+                        let membersCheck = await models.Members.findAll({
+                            where: {
                                 upline_id: userUpline.dataValues.user_id,
-                                parentId: userUplineId? userUplineId.dataValues.member_id: null,
-                                sponsor_id: userSponsor.dataValues.user_id,
-                                current_stage: 1,
-                                account_id: userAccount.dataValues.account_id,
-                                referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`,
-                                parentMember_id: userUplineId? userUplineId.dataValues.member_id: null
-                            })
-                            // Update Sponsors Bonus
-                            const bonusAmount = (Number(signupFee) * 0.2)
+                            }
+                        })
+                        let userUplineId = await models.Members.findOne({
+                            where: {
+                                user_id: userUpline.dataValues.user_id
+                            }
+                        })
+                        // console.log(membersCheck.length)
+                        // if direct downlines is less than 2, add more
+                        if (membersCheck.length < 2 || userUpline.role_id == 1) {
+                            let newUser = await models.User.build({
+                                firstname: firstname,
+                                lastname: lastname,
+                                username: username,
+                                email_address: email,
+                                role_id: role,
+                                gender: gender,
+                                dob: dob,
+                                phone_no: phone,
+                                country: country,
+                                state: state,
+                                status: 0,
+                                password: ts,
+                                date_created: dateValue,
+                                last_login_date: dateValue,
+                            }).save()
+                            if (newUser) {
+                                const signupFee = 30;
+                                // create an account for newly registered member
+                                let userAccount = await models.Account.create({
+                                    user_id: newUser.dataValues.user_id,
+                                    balance: signupFee,
+                                    date_updated: dateValue,
+                                })
 
-                            let sponsorBonus = await models.Bonus.create({
-                                user_id: userSponsor.dataValues.user_id,
-                                bonus_type_id: 1,
-                                amount: bonusAmount,
-                                date: dateValue, 
-                            })
-                            
-                            let sponsorAccount = await models.Account.findOne({
-                                where:{
+                                // create a member table newly registered member
+                                let newMember = await models.Members.create({
+                                    user_id: newUser.dataValues.user_id,
+                                    upline_id: userUpline.dataValues.user_id,
+                                    parentId: userUplineId ? userUplineId.dataValues.member_id : null,
+                                    sponsor_id: userSponsor.dataValues.user_id,
+                                    current_stage: 1,
+                                    account_id: userAccount.dataValues.account_id,
+                                    referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`,
+                                    parentMember_id: userUplineId ? userUplineId.dataValues.member_id : null
+                                })
+                                // Update Sponsors Bonus
+                                const bonusAmount = (Number(signupFee) * 0.2)
+
+                                let sponsorBonus = await models.Bonus.create({
                                     user_id: userSponsor.dataValues.user_id,
-                                }
-                            })
-                            let newBalance = bonusAmount + Number(sponsorAccount.dataValues.balance)
-
-                            // update the sponsor account balance with the newly summed up balance
-                            let updatedSponsorAccount = await updateAccount(sponsorAccount, newBalance, dateValue )
-                            
-
-                            // check if user exist on referral table and add upline to referral table
-                            let updateDownlines = await models.Downlines.findOne({
-                                where: {
-                                    user_id: userUpline.dataValues.user_id
-                                }
-                            })
-                            if (updateDownlines == null) {
-                                // create and add the first leg (left)
-                                let newReferral = await models.Downlines.create({
-                                    user_id: userUpline.dataValues.user_id,
-                                    left_leg_id: newUser.dataValues.user_id
+                                    bonus_type_id: 1,
+                                    amount: bonusAmount,
+                                    date: dateValue,
                                 })
-                            } else if (updateDownlines.dataValues.left_leg_id !== null) {
-                                // update with the second leg
-                                let secondReferralUpdate = await updateDownlines.update({
-                                    right_leg_id: newUser.dataValues.user_id
+
+                                let balance 
+                                userUpline.role_id == 1 ? balance = Number(sponsorAccount.dataValues.balance) : balance = Number(sponsorAccount.dataValues.balance) - 30;
+
+                                let newBalance = bonusAmount + balance
+
+                                // update the sponsor account balance with the newly summed up balance
+                                let updatedSponsorAccount = await updateAccount(sponsorAccount, newBalance, dateValue)
+
+
+                                // check if user exist on referral table and add upline to referral table
+                                let updateDownlines = await models.Downlines.findOne({
+                                    where: {
+                                        user_id: userUpline.dataValues.user_id
+                                    }
                                 })
-                            }
-                            
-                            let newSponsorNotification = await notificationCreate(userSponsor.dataValues.user_id, `Received Referral Bonus of $${bonusAmount}, from new user: ${firstname} ${lastname}'s registeration.New Balance is $${newBalance}`, dateValue)
-                            if(userSponsor.dataValues.user_id !== userUpline.dataValues.user_id){
-                                let newUplineNotification = await notificationCreate(userUpline.dataValues.user_id, `New Downline registered by user ${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, dateValue)
-                            }
-                            
-
-                            let ancestorsUpdate = await updateAncestors(userUpline.dataValues.user_id)
-                            var smtpTransport = nodemailer.createTransport({
-                                service: "Gmail",
-                                auth: {
-                                    user: process.env.EMAIL,
-                                    pass: process.env.EMAIL_PASSWORD
+                                if (updateDownlines == null) {
+                                    // create and add the first leg (left)
+                                    let newReferral = await models.Downlines.create({
+                                        user_id: userUpline.dataValues.user_id,
+                                        left_leg_id: newUser.dataValues.user_id
+                                    })
+                                } else if (updateDownlines.dataValues.left_leg_id !== null) {
+                                    // update with the second leg
+                                    let secondReferralUpdate = await updateDownlines.update({
+                                        right_leg_id: newUser.dataValues.user_id
+                                    })
                                 }
-                            });
 
-                            var mailOptions = {
-                                to: email,
-                                from: "Right Steps",
-                                subject: "Right-Steps Registeration Complete",
-                                text: `Congratulations!! You've been successfully registered to Right-steps
+                                let newSponsorNotification
+                                userUpline.role_id == 1 ? 
+                                newSponsorNotification = await notificationCreate(userSponsor.dataValues.user_id, `Received Referral Bonus of $${bonusAmount}, from new user: ${firstname} ${lastname}'s registeration.New Balance is $${newBalance}`, dateValue)
+                                :
+                                newSponsorNotification = await notificationCreate(userSponsor.dataValues.user_id, `Registeration fee of $30 deducted, Received Referral Bonus of $${bonusAmount}, from new user: ${firstname} ${lastname}'s registeration. New Balance is $${newBalance}`, dateValue);
+                                if (userSponsor.dataValues.user_id !== userUpline.dataValues.user_id) {
+                                    let newUplineNotification = await notificationCreate(userUpline.dataValues.user_id, `New Downline registered by user ${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, dateValue)
+                                }
+                                
+
+                                // to go through all stages atleast 4 times
+                                // for (let i = 0; i < 3; i++) {
+                                    updateAncestors(userUpline.dataValues.user_id)
+                                    // updateAncestors(newUser.dataValues.user_id)
+                                    
+                                // }
+                                var smtpTransport = nodemailer.createTransport({
+                                    service: "Gmail",
+                                    auth: {
+                                        user: process.env.EMAIL,
+                                        pass: process.env.EMAIL_PASSWORD
+                                    }
+                                });
+
+                                var mailOptions = {
+                                    to: email,
+                                    from: "Right Steps",
+                                    subject: "Right-Steps Registeration Complete",
+                                    text: `Congratulations!! You've been successfully registered to Right-steps
                                             Kindly signin the website with the following credentials:
                                             Username: ${username}
                                             Password: ${ts} `
-                            };
-                            smtpTransport.sendMail(mailOptions, (err) => {
-                                let successMsg
-                                if (err) {
-                                    logger.error(`${username} with email: ${email} mail sending failed,
+                                };
+                                smtpTransport.sendMail(mailOptions, (err) => {
+                                    let successMsg
+                                    if (err) {
+                                        logger.error(`${username} with email: ${email} mail sending failed,
                                                       Error: ${err.toString()}`)
-                                    successMsg = `A network error occured while sending mail to ${email}.
+                                        successMsg = `A network error occured while sending mail to ${email}.
                                                   Login with the following credentials
                                                   Username: ${username}
                                                   Password: ${ts}`;
 
-                                    return res.status(201)
-                                        .send(successMsg);
-                                } else {
-                                    logger.info(`Registeration mail successfully sent to user: ${username} with email: ${email}`)
-                                    successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
+                                        return res.status(201)
+                                            .send(successMsg);
+                                    } else {
+                                        logger.info(`Registeration mail successfully sent to user: ${username} with email: ${email}`)
+                                        successMsg = `User Created Successfully, An email has been sent to ${email} with login credentials`;
 
-                                    return res.status(201)
-                                        .send(successMsg);
-                                }
-                            });
+                                        return res.status(201)
+                                            .send(successMsg);
+                                    }
+                                });
 
+                            }
+
+                        } else {
+                            let errorMsg = `User Creation Failed, ${upline} Can not have more than 2 direct downlines`;
+                            logger.error(errorMsg);
+                            return res.status(400).send(errorMsg);
                         }
-
                     } else {
-                        let errorMsg = `User Creation Failed, ${upline} Can not have more than 2 direct downlines`;
+                        let errorMsg = `User Creation Failed, ${upline} does not exist`;
                         logger.error(errorMsg);
                         return res.status(400).send(errorMsg);
                     }
                 } else {
-                    let errorMsg = `User Creation Failed, ${upline} does not exist`;
+                    let errorMsg = `User Creation Failed, ${sponsor} does not have enough balance to register. Kindly Top-up account to continue`;
                     logger.error(errorMsg);
                     return res.status(400).send(errorMsg);
                 }
+
             } else {
                 let errorMsg = `User Creation Failed, ${sponsor} does not exist`;
                 logger.error(errorMsg);

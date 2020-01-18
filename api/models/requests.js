@@ -1,8 +1,8 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('bonus', {
-    'bonus_id': {
+  return sequelize.define('requests', {
+    'request_id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
@@ -19,14 +19,25 @@ module.exports = function(sequelize, DataTypes) {
         key: 'user_id'
       }
     },
-    'bonus_type_id': {
-      type: DataTypes.INTEGER(11),
+    'trans_reference': {
+      type: DataTypes.STRING(255),
       allowNull: false,
-      comment: "null",
-      references: {
-        model: 'bonus_types',
-        key: 'bonus_type_id'
-      }
+      comment: "null"
+    },
+    'request_type': {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      comment: "null"
+    },
+    'proof': {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: "null"
+    },
+    'status': {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      comment: "null"
     },
     'amount': {
       type: DataTypes.STRING(255),
@@ -39,6 +50,6 @@ module.exports = function(sequelize, DataTypes) {
       comment: "null"
     }
   }, {
-    tableName: 'bonus'
+    tableName: 'requests'
   });
 };

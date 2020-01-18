@@ -22,15 +22,12 @@ module.exports = function(sequelize, DataTypes) {
     'upline_id': {
       type: DataTypes.INTEGER(11),
       allowNull: false,
-      comment: "null",
-      references: {
-        model: 'users',
-        key: 'user_id'
-      }
+      comment: "null"
     },
     'parentId': {
       type: DataTypes.INTEGER(11),
       allowNull: true,
+      comment: "null"
     },
     'current_stage': {
       type: DataTypes.INTEGER(11),
@@ -74,6 +71,20 @@ module.exports = function(sequelize, DataTypes) {
       references: {
         model: 'account',
         key: 'account_id'
+      }
+    },
+    'hierarchyLevel': {
+      type: DataTypes.INTEGER(10).UNSIGNED,
+      allowNull: true,
+      comment: "null"
+    },
+    'parentMember_id': {
+      type: DataTypes.INTEGER(11),
+      allowNull: true,
+      comment: "null",
+      references: {
+        model: 'members',
+        key: 'member_id'
       }
     }
   }, {

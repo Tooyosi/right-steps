@@ -11,6 +11,7 @@ import { REGISTER } from '../globals/links';
 import { withRouter } from 'react-router-dom'
 import { default as localforage } from 'localforage';
 import { useEffect } from 'react';
+import { States } from '../globals/States';
 
 export const SignupForm = (props) => {
     const [error, setError] = useContext(ErrorContext);
@@ -22,6 +23,7 @@ export const SignupForm = (props) => {
     const [email, updateEmail] = useState('')
     const [gender, updateGender] = useState('')
     const [dob, updateDOB] = useState('')
+    const [lgas, updateLgas] = useState([])
     const [country, updateCountry] = useState('')
     const [state, updateState] = useState('')
     const [username, updateUsername] = useState('')
@@ -35,6 +37,16 @@ export const SignupForm = (props) => {
     const [referralID, updateReferralID] = useContext(ReferralLiinkContext);
  
     let service = new WebService()
+
+    useEffect(()=>{
+        // let fetchStates = async ()=>{
+        //     let token = await service.sendGet(`https://www.universal-tutorial.com/api/getaccesstoken`)
+        //     console.log(token)
+        //     let newService = new WebService()
+        // } 
+
+        // fetchStates()
+    }, [])
     const submitForm = async ({ target }) => {
         let { id } = target
         switch (id) {

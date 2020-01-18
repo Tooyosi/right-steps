@@ -2,5 +2,8 @@ node_modules
 api/node_modules
 api/env
 api/logs
+api/uploads/requests/*.jpg
+api/uploads/requests/*.jpeg
+api/uploads/requests/*.png
 .env
 docs

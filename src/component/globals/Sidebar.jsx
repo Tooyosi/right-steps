@@ -78,6 +78,14 @@ export const Sidebar = () => {
                                     <p>Members</p>
                                 </Link>
                             </li>
+                            <li className={window.location.pathname == "/transactions" ? "active" : ""}>
+                                <i>
+                                    <Image src={Settings} />
+                                </i>
+                                <Link to="/transactions">
+                                    <p>Transactions</p>
+                                </Link>
+                            </li>
                             <li className={window.location.pathname == "/settings" ? "active" : ""}>
                                 <i>
                                     <Image src={Settings} />
