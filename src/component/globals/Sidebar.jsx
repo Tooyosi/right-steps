@@ -10,6 +10,7 @@ import Settings from '../../../assets/settings.png'
 import Logout from '../../../assets/logout.png'
 import { SidebarStyle, ToggleStyle, BackdropStyle } from '../styles/style'
 import { UserListContext } from '../Context/Context'
+import { BASE_URL } from './links'
 
 export const Sidebar = () => {
     let [toggle, updateToggle] = useState(false)
@@ -36,10 +37,10 @@ export const Sidebar = () => {
                         <Image src={Logo} fluid width="100px" />
                     </Col>
                     <Col lg={12} className="text-center">
-                        {user.passport !== null ? (
-                            <Image src={user.passport} roundedCircle width="120px" />
+                        {user.passport !== null && user.passport !== 'null' ? (
+                                <Image src={`${BASE_URL}${user.passport}`} roundedCircle width="70px" height="70px" />
                         ) : (
-                                <Image src={Logo} roundedCircle width="120px" />
+                                <Image src={Logo} roundedCircle fluid width="120px" />
 
                             )}
                         <h6>{user.gender == "Male" ? "Mr" : "Mrs"} {user.firstname} {user.lastname}</h6>

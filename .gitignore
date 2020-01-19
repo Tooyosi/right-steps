@@ -5,5 +5,8 @@ api/logs
 api/uploads/requests/*.jpg
 api/uploads/requests/*.jpeg
 api/uploads/requests/*.png
+api/uploads/profile/*.jpg
+api/uploads/profile/*.jpeg
+api/uploads/profile/*.png
 .env
 docs

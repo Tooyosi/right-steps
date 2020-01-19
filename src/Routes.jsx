@@ -10,6 +10,7 @@ import { MembersPage } from './component/members/MembersPage';
 import { Balance } from './component/balance/Balance';
 import { Referral } from './component/referral/Referral';
 import { TransactionsPage } from './component/transactions/Transactions';
+import { Settings } from './component/settings/Settings';
 
 
 
@@ -18,19 +19,20 @@ const Routes = () => (
     <UserListProvider>
       <ReferralLiinkProvider>
         <MemberIdProvider>
-        <BrowserRouter>
-          <Switch>
-            <Route exact path="/" component={Landing}></Route>
-            <Route exact path="/signup" component={Signup}></Route>
-            <Route exact path="/signin" component={Login}></Route>
-            <Route exact path="/dashboard" component={Dashboard}></Route>
-            <Route exact path="/stages" component={Stages}></Route>
-            <Route exact path="/members" component={MembersPage}></Route>
-            <Route exact path="/balance" component={Balance}></Route>
-            <Route exact path="/transactions" component={TransactionsPage}></Route>
-            <Route exact path="/referral/:id" component={Referral}></Route>
-          </Switch>
-        </BrowserRouter>
+          <BrowserRouter>
+            <Switch>
+              <Route exact path="/" component={Landing}></Route>
+              <Route exact path="/signup" component={Signup}></Route>
+              <Route exact path="/signin" component={Login}></Route>
+              <Route exact path="/dashboard" component={Dashboard}></Route>
+              <Route exact path="/stages" component={Stages}></Route>
+              <Route exact path="/members" component={MembersPage}></Route>
+              <Route exact path="/balance" component={Balance}></Route>
+              <Route exact path="/settings" component={Settings}></Route>
+              <Route exact path="/transactions" component={TransactionsPage}></Route>
+              <Route exact path="/referral/:id" component={Referral}></Route>
+            </Switch>
+          </BrowserRouter>
         </MemberIdProvider>
       </ReferralLiinkProvider>
     </UserListProvider>

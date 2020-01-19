@@ -119,11 +119,11 @@ export const Body = () => {
                 break;
             case 'member':
                 if (memberCurrentPage > !memberStartPage) {
-                    let newPageNo = notificationCurrentPage + 1
-                    let newSkipValue = 10 + notificationOffset
+                    let newPageNo = memberCurrentPage + 1
+                    let newSkipValue = 10 + memberOffset
                     updateMemberCurrentPage(newPageNo)
+                    updateMembersLoading(true)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
                 }
                 break;
             default:
@@ -148,10 +148,10 @@ export const Body = () => {
             case 'member':
                 if (memberStartPage > !memberCurrentPage) {
                     let newPageNo = memberCurrentPage - 1
-                    let newSkipValue = notificationOffset - 10
+                    let newSkipValue = memberOffset - 10
                     updateMemberCurrentPage(newPageNo)
+                    updateMembersLoading(true)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
                 }
                 break;
             default:
@@ -178,6 +178,7 @@ export const Body = () => {
                     let newPageNo = Number(id)
                     let newSkipValue = 10 * (newPageNo - 1)
                     updateMemberCurrentPage(newPageNo)
+                    updateMembersLoading(true)
                     updateMemberOffset(newSkipValue)
                     // fetchMembers("")
                 }
@@ -284,7 +285,7 @@ export const Body = () => {
                                                                         {memberPages.map((page, index) => {
 
                                                                             if (page === LEFT_PAGE) return (
-                                                                                <li key={index} className="page-item">
+                                                                                <li key={index} className="page-item" onClick={handleMoveLeft} name="member">
                                                                                     <a className="page-link" aria-label="Previous" onClick={handleMoveLeft} name="member">
                                                                                         <span aria-hidden="true">&laquo;</span>
                                                                                         <span className="sr-only">Previous</span>
@@ -293,7 +294,7 @@ export const Body = () => {
                                                                             );
 
                                                                             if (page === RIGHT_PAGE) return (
-                                                                                <li key={index} className="page-item">
+                                                                                <li key={index} className="page-item" onClick={handleMoveRight} name="member">
                                                                                     <a className="page-link" aria-label="Next" onClick={handleMoveRight} name="member">
                                                                                         <span aria-hidden="true">&raquo;</span>
                                                                                         <span className="sr-only">Next</span>

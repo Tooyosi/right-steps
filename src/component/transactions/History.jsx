@@ -144,6 +144,7 @@ export const History = (props) => {
             let { data: { rows, count } } = result
             let pages = Math.ceil(Number(count) / 10)
             updateTotalPages(pages)
+            console.log(rows)
             updateHistory(rows)
             updateLoading(false)
         } else {
@@ -158,9 +159,13 @@ export const History = (props) => {
     }
     useEffect(() => {
 
-
+        setError({
+            show: false,
+            isError: false,
+            message: ''
+        })
         fetchHistory(props.type)
-    }, [offset, date, error])
+    }, [offset, date])
 
     const handleClose = () => {
         updateShowModal(false)
@@ -230,8 +235,16 @@ export const History = (props) => {
                                             <th>Amount</th>
                                             <th>Reference</th>
                                             <th>Status</th>
+                                                {user.role.name == "Admin" ? (
+                                                    <>
+                                                        <th>Bank</th>
+                                                        <th>Account Name</th>
+                                                        <th>Account Number</th>
+                                                    </>
+                                                ):(null)}
                                             <th>Proof</th>
                                             <th>Date</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -242,6 +255,14 @@ export const History = (props) => {
                                                 <td>${request.amount}</td>
                                                 <td>{request.trans_reference}</td>
                                                 <td>{request.status}</td>
+                                                {user.role.name == "Admin" ? (
+                                                    <>
+                                                        <td>{request.account.bank_name !== null? (request.account.bank_name): (<i>None</i>)}</td>
+                                                        <td>{request.account.account_name !== null? (request.account.account_name): (<i>None</i>)}</td>
+                                                        <td>{request.account.account_number !== null? (request.account.account_number): (<i>None</i>)}</td>
+                                                    </>
+                                                ):(null)}
+
                                                 {request.proof !== null ? (
                                                     <td id={request.proof} onClick={displayModal}>
                                                         <Image

@@ -44,4 +44,36 @@ module.exports = {
             return res.status(400).json(error.toString())
         }
     }),
+
+    put: ('/', async (req, res)=>{
+        let {accountName, accountNumber, bankName, userId} = req.body
+        try {
+            let member = await models.Members.findOne({
+                where: {
+                    user_id: userId
+                }
+            })
+            if(member !== null){
+                let updateObj = {}
+                if(accountName !== ''){
+                    updateObj.account_name = accountName 
+                }
+                if(accountNumber !== ''){
+                    updateObj.account_number = accountNumber
+                }
+                
+                if(bankName !== ''){
+                    updateObj.bank_name = bankName
+                }
+
+                let updatedMember = await member.update(updateObj)
+                return res.status(200).send(updatedMember)
+            }else {
+                logger.error('User doesnt exist')
+                return res.status(400).send('User doesnt exist')
+            }
+        } catch (error) {
+            
+        }
+    })
 };

@@ -120,8 +120,8 @@ const Body = (props) => {
         switch (name) {
             case 'member':
                 if (memberCurrentPage > !memberStartPage) {
-                    let newPageNo = notificationCurrentPage + 1
-                    let newSkipValue = 10 + notificationOffset
+                    let newPageNo = memberCurrentPage + 1
+                    let newSkipValue = 10 + memberOffset
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
                 }
@@ -139,7 +139,7 @@ const Body = (props) => {
             case 'member':
                 if (memberStartPage > !memberCurrentPage) {
                     let newPageNo = memberCurrentPage - 1
-                    let newSkipValue = notificationOffset - 10
+                    let newSkipValue = memberOffset - 10
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
                 }

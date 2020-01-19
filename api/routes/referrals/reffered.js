@@ -6,6 +6,7 @@ const middleware = require("../../middleware/middleware")
 
 router.post('/', middleware.withAuth, refferedController.post)
 router.get('/:id',middleware.withAuth, memberController.get)
+router.put('/',middleware.withAuth, memberController.put)
 router.get('/referral/:id',middleware.withAuth, memberController.referral)
 
 module.exports = router;

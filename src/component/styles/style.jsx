@@ -223,6 +223,9 @@ export const RegisterFormStyle = styled.div`
     width: 80%;
     border-radius: 5px;
     background: white;
+    @media(max-width: 770px){
+        width: 100%; 
+    }
     form{
         margin: 20px 0;
     }

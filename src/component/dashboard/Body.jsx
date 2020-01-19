@@ -127,11 +127,11 @@ export const Body = () => {
                 break;
             case 'member':
                 if (memberCurrentPage > !memberStartPage) {
-                    let newPageNo = notificationCurrentPage + 1
-                    let newSkipValue = 10 + notificationOffset
+                    let newPageNo = memberCurrentPage + 1
+                    let newSkipValue = 10 + memberOffset
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
+                    // fetchMembers("")
                 }
                 break;
             default:
@@ -156,10 +156,10 @@ export const Body = () => {
             case 'member':
                 if (memberStartPage > !memberCurrentPage) {
                     let newPageNo = memberCurrentPage - 1
-                    let newSkipValue = notificationOffset - 10
+                    let newSkipValue = memberOffset - 10
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
+                    // fetchMembers("")
                 }
                 break;
             default:
@@ -187,7 +187,6 @@ export const Body = () => {
                     let newSkipValue = 10 * (newPageNo - 1)
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
-                    fetchMembers("")
                 }
                 break;
         }
@@ -231,13 +230,13 @@ export const Body = () => {
     }
     useEffect(() => {
         // glitch to prevent the balance display from hiding on the personal details component 
-        if (notificationOffset === 0) {
+        // if (notificationOffset === 0) {
             updateMemberId({
                 id: '',
                 loading: false
             })
             fetchMembers("")
-        }
+        // }
         fetchNotifications("")
     }, [notificationOffset, memberOffset])
 

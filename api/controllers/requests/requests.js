@@ -3,35 +3,11 @@ const sequelize = require('../../connections/connection')
 const { logger } = require('../../loggers/logger')
 const uuidv1 = require('uuid/v1');
 const multer = require('multer')
+const uploadFunction = require('../functions/multer')
 const notificationCreate = require('../functions/createNotification');
 const dateValue = require('../functions/dateValue');
 
-const fs = require('fs');
-// make this reusable for profile pictures
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/requests')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + file.originalname)
-    }
-})
-
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "image/jpg") {
-        cb(null, true)
-    } else {
-        cb(null, false)
-    }
-}
-
-const upload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 590000
-    },
-    fileFilter: fileFilter
-})
+const upload = uploadFunction('./uploads/requests')
 var uploader = upload.single('proofImage')
 module.exports = {
     getAllRequests: ('/', async (req, res) => {
@@ -40,12 +16,13 @@ module.exports = {
             offset: Number(offset),
             limit: 10,
             order: [['request_id', 'DESC']],
-            include: {
+            include: [{
                 model: models.User,
                 required: false,
                 as: 'requester',
                 attributes: ['firstname', 'lastname', 'username']
             }
+            ]
         }
         let whereObj = {}
         if (date !== "") {
@@ -64,8 +41,24 @@ module.exports = {
 
         try {
             const allRequests = await models.Requests.findAndCountAll(obj)
+            let newRow = []
+            if (allRequests.rows.length > 0) {
+                for (let i = 0; i < allRequests.rows.length; i++) {
+                    let member = await models.Members.findOne({
+                        where: {
+                            user_id: allRequests.rows[i].user_id
+                        }
+                    })
+                    let newItem = allRequests.rows[i].dataValues 
+                    newItem['account'] = member
+                    newRow.push(allRequests.rows[i]);
+                }
+            }
+            allRequests.rows = newRow;
+            
             return res.status(200).send(allRequests)
         } catch (error) {
+            console.log
             logger.error(error.toString())
             return res.status(400).json(error.toString())
 
@@ -81,9 +74,10 @@ module.exports = {
             let { userId, type, amount, date, proof } = req.body
 
             if (err instanceof multer.MulterError) {
+                logger.error(err.message ? err.message : err.toString())
                 return res.status(400).send(err.message ? err.message : err.toString())
             } else if (err) {
-                console.log(err)
+                logger.error(err.toString())
                 return res.status(400).send(err.toString())
             } else {
                 // console.log(req.body[1])
@@ -119,8 +113,8 @@ module.exports = {
     }),
 
     approveRequest: ('/', async (req, res) => {
-        let {role: {name}} = req.user
-        if(name !== 'Admin'){
+        let { role: { name } } = req.user
+        if (name !== 'Admin') {
             return res.status(400).send('You are not authorized to perform this operation')
         }
         let { requestId, type } = req.body
@@ -167,7 +161,7 @@ module.exports = {
                     })
 
                     // if (updatedAccount !== null && updatedAccount == undefined) {
-                        let newNotification = await notificationCreate(request.dataValues.user_id, notificationMessage, dateValue)
+                    let newNotification = await notificationCreate(request.dataValues.user_id, notificationMessage, dateValue)
                     // }
                     msg = 'Request Succesfully Approved'
                 } else if (type == 'Decline') {

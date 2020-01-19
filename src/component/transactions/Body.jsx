@@ -26,11 +26,7 @@ export const Body = () => {
     const [loading, updateLoading] = useState(false)
 
     let [active, updateActive] = useState(1)
-    // for members
-    let [memberOffset, updateMemberOffset] = useState(0)
-    let [memberCurrentPage, updateMemberCurrentPage] = useState(1)
-    let [memberTotalPages, updateMemberTotalPages] = useState('')
-
+   
     const switchTabs = async ({ target }) => {
         let { id } = target;
         switch (id) {
