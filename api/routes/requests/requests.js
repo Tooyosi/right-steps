@@ -29,9 +29,9 @@ const upload = multer({
     },
     fileFilter: fileFilter
 })
-router.post('/',  requestController.addRequest)
-router.get('/',  requestController.getAllRequests)
-router.put('/',  requestController.approveRequest)
+router.post('/',middleware.withAuth,  requestController.addRequest)
+router.get('/', middleware.withAuth, requestController.getAllRequests)
+router.put('/', middleware.withAuth, requestController.approveRequest)
 
 
 module.exports = router;

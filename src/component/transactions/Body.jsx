@@ -1,335 +1,233 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { Container, Row, Col, Spinner, Button, Form } from 'react-bootstrap'
-import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle } from '../styles/style'
+import { SkeletonStyle, DashboardStyle, ButtonStyle, MembersListStyle, StageDivStyle, PersonalStyle, RegisterFormStyle } from '../styles/style'
 import Courses1 from './../../../assets/courses1.png'
 import Courses2 from './../../../assets/courses2.png'
 import { Members } from '../globals/Members'
 import { Personal } from '../globals/Personal'
 import WebService from '../globals/WebService'
-import { MEMBERS_LINK, ADMIN_MEMBERS_LINK } from '../globals/links'
-import { UserListContext, MemberIdContext } from '../Context/Context'
+import { MEMBERS_LINK, REQUEST_LINK } from '../globals/links'
+import { UserListContext, MemberIdContext, ErrorContext } from '../Context/Context'
+import ErrorDisplay from '../globals/Error'
+import { Icon } from 'react-icons-kit'
+import { longArrowRight } from 'react-icons-kit/fa/longArrowRight'
+import { History } from './History'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
-    let [members1, updateMembers1] = useState('')
-    let [membersLength, updateMembersLength] = useState('')
-    let [members2, updateMembers2] = useState('')
+    let [transType, updateTransType] = useState('')
+    let [amount, updateAmount] = useState('')
+    let [proof, updateProof] = useState('')
     let [membersDate, updateMembersDate] = useState('')
     let [membersLoading, updateMembersLoading] = useState(true)
     let [memberId, updateMemberId] = useContext(MemberIdContext)
     let service = new WebService()
+    const [error, setError] = useContext(ErrorContext);
+    const [loading, updateLoading] = useState(false)
 
+    let [active, updateActive] = useState(1)
     // for members
     let [memberOffset, updateMemberOffset] = useState(0)
     let [memberCurrentPage, updateMemberCurrentPage] = useState(1)
     let [memberTotalPages, updateMemberTotalPages] = useState('')
 
-    const LEFT_PAGE = 'LEFT';
-    const RIGHT_PAGE = 'RIGHT';
-
-
-    const range = (from, to, step = 1) => {
-        let i = from;
-        const range = [];
-
-        while (i <= to) {
-            range.push(i);
-            i += step;
+    const switchTabs = async ({ target }) => {
+        let { id } = target;
+        switch (id) {
+            case 'make':
+                active !== 1 ? updateActive(1) : null;
+                break;
+            case 'approve':
+                active !== 2 ? updateActive(2) : null;
+                break;
+            case 'pending':
+                active !== 3 ? updateActive(3) : null;
+                break;
+            case 'history':
+                active !== 4 ? updateActive(4) : null;
+                break;
         }
-
-        return range;
     }
 
-    const getStartPage = (currentPage) => {
-        let startPage = Math.max(2, currentPage - 2);
-        return startPage
-    }
+    const submitForm = async () => {
+        if (transType == 'Deposit' && proof == '') {
+            setError({
+                show: true,
+                isError: true,
+                message: 'Attach Proof of payment for a Deposit transaction'
+            })
+        } else if (amount == '' || transType == '') {
+            setError({
+                show: true,
+                isError: true,
+                message: 'One or more input parameters are missing'
+            })
+        } else {
 
-    const getEndPage = (totalPages, currentPage) => {
-        const endPage = Math.min(totalPages - 1, currentPage + 2);
-        return endPage
-    }
+            setError({
+                show: false,
+                isError: false,
+                message: ''
+            })
+            updateLoading(true)
+            let dataToSend = new FormData()
+            proof !== '' ? dataToSend.append("proofImage", proof) : null
+            dataToSend.append("userId", user.user_id)
+            dataToSend.append("type", transType)
+            dataToSend.append("amount", amount)
+            dataToSend.append("date", new Date().toISOString())
 
-    let memberStartPage = getStartPage(memberCurrentPage)
-    let memberEndPage = getEndPage(memberTotalPages, memberCurrentPage);
-
-    const fetchPageNumbers = (totalPages, startPage, endPage) => {
-        /**
-         * totalNumbers: the total page numbers to show on the control
-         * totalBlocks: totalNumbers + 2 to cover for the left(<) and right(>) controls
-         */
-        const totalNumbers = (2 * 2) + 3;
-        const totalBlocks = totalNumbers + 2;
-
-        if (totalPages > totalBlocks) {
-
-            let pages = range(startPage, endPage);
-
-            /**
-             * hasLeftSpill: has hidden pages to the left
-             * hasRightSpill: has hidden pages to the right
-             * spillOffset: number of hidden pages either to the left or to the right
-             */
-            const hasLeftSpill = startPage > 2;
-            const hasRightSpill = (totalPages - endPage) > 1;
-            const spillOffset = totalNumbers - (pages.length + 1);
-
-            switch (true) {
-                // handle: (1) < {5 6} [7] {8 9} (10)
-                case (hasLeftSpill && !hasRightSpill): {
-                    const extraPages = range(startPage - spillOffset, startPage - 1);
-                    pages = [LEFT_PAGE, ...extraPages, ...pages];
-                    break;
-                }
-
-                // handle: (1) {2 3} [4] {5 6} > (10)
-                case (!hasLeftSpill && hasRightSpill): {
-                    const extraPages = range(endPage + 1, endPage + spillOffset);
-                    pages = [...pages, ...extraPages, RIGHT_PAGE];
-                    break;
-                }
-
-                // handle: (1) < {4 5} [6] {7 8} > (10)
-                case (hasLeftSpill && hasRightSpill):
-                default: {
-                    pages = [LEFT_PAGE, ...pages, RIGHT_PAGE];
-                    break;
-                }
+            let result = await service.sendPost(REQUEST_LINK, dataToSend)
+            // console.log(result)
+            if (result.status == 200) {
+                let { data } = result
+                setError({
+                    show: true,
+                    isError: false,
+                    message: data
+                })
+                updateAmount('')
+                updateTransType('')
+                updateProof('')
+            } else {
+                setError({
+                    show: true,
+                    isError: true,
+                    message: result.response.data ? result.response.data : 'An error occured'
+                })
             }
+            updateLoading(false)
 
-            return [1, ...pages, totalPages];
-
-        }
-
-        return range(1, totalPages);
-
-    }
-
-    const handleMoveRight = evt => {
-        evt.preventDefault();
-        let { name } = evt.target;
-        switch (name) {
-            case 'notification':
-                if (notificationCurrentPage > !notificationStartPage) {
-                    let newPageNo = notificationCurrentPage + 1
-                    let newSkipValue = 10 + notificationOffset
-                    updateNotificationCurrentPage(newPageNo)
-                    updateNotificationOffset(newSkipValue)
-                }
-                break;
-            case 'member':
-                if (memberCurrentPage > !memberStartPage) {
-                    let newPageNo = notificationCurrentPage + 1
-                    let newSkipValue = 10 + notificationOffset
-                    updateMemberCurrentPage(newPageNo)
-                    updateMemberOffset(newSkipValue)
-                    fetchMembers("")
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    const handleMoveLeft = (evt) => {
-        evt.preventDefault();
-        let { name } = evt.target
-        switch (name) {
-            case 'notification':
-                if (notificationStartPage > !notificationCurrentPage) {
-                    let newPageNo = notificationCurrentPage - 1
-                    let newSkipValue = notificationOffset - 10
-                    updateNotificationCurrentPage(newPageNo)
-                    updateNotificationOffset(newSkipValue)
-                    // fetchUsers()
-                }
-                break;
-            case 'member':
-                if (memberStartPage > !memberCurrentPage) {
-                    let newPageNo = memberCurrentPage - 1
-                    let newSkipValue = notificationOffset - 10
-                    updateMemberCurrentPage(newPageNo)
-                    updateMemberOffset(newSkipValue)
-                    fetchMembers("")
-                }
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    const pageClick = (e) => {
-        e.preventDefault();
-
-        let { id, name } = e.target
-        switch (name) {
-            case "notification":
-                if (id != notificationCurrentPage) {
-                    let newPageNo = Number(id)
-                    let newSkipValue = 10 * (newPageNo - 1)
-                    updateNotificationCurrentPage(newPageNo)
-                    updateNotificationOffset(newSkipValue)
-                }
-                break;
-            case "member":
-                if (id != memberCurrentPage) {
-                    let newPageNo = Number(id)
-                    let newSkipValue = 10 * (newPageNo - 1)
-                    updateMemberCurrentPage(newPageNo)
-                    updateMemberOffset(newSkipValue)
-                    // fetchMembers("")
-                }
-                break;
-        }
-    }
-
-    const memberPages = fetchPageNumbers(memberTotalPages, memberStartPage, memberEndPage);
-
-    const fetchMembers = async (date) => {
-        let link
-        user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
-        let result = await service.sendPost(link, {
-            userId: user.user_id, 
-            date: date,
-            offset: memberOffset
-        })
-
-        updateMembersLoading(true);
-
-        if (result.status == 200) {
-            let { data: { row, count } } = result
-            let len = (row.length) / 2;
-            let array1 = row.slice(0, len);
-            let array2 = row.slice(len);
-
-            let pages = Math.ceil(Number(count) / 10)
-            updateMemberTotalPages(pages)
-            updateMembersLength(row.length);
-            updateMembers1(array1)
-            updateMembers2(array2)
-            updateMembersLoading(false)
         }
     }
     useEffect(() => {
         // glitch to prevent the balance display from hiding on the personal details component 
-        updateMemberId({
-            id: '',
-            loading: false,
-            offset: 0
-        })
-        fetchMembers("")
-    }, [memberOffset])
+        if(user.role.name == "Admin"){
+            updateActive(2)
+        }
+    }, [])
 
-    const handleDateChange = ({ target }) => {
+    const handleChange = ({ target }) => {
         let { name, value } = target;
         switch (name) {
-            case "members":
-                updateMembersDate(value)
-                fetchMembers(new Date(value).toISOString())
+            case "amount":
+                updateAmount(value)
+                break;
+            case "transactionType":
+                updateTransType(value)
+                break;
+            case "image":
+                updateProof(target.files[0])
                 break;
         }
     }
-
     return (
-        <Row>
-            <Col lg={{ span: 9, order: 1 }} md={{ span: 8, order: 1 }} xs={{ order: 12 }}>
-                <h3>Members</h3>
-                <DashboardStyle>
-                    <Container fluid={true}>
-                        <Row>
-                            <Col className="referral left" lg={12}>
+        <Container fluid={true}>
+            <Row className="text-center">
+                {user.role.name !== "Admin" ? (
+                    <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="make">Make Request</Col>
+                ) : (null)}
+
+                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="approve">Approved Requests</Col>
+                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="pending">Pending Requests</Col>
+                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 4 ? '#49C5A1' : '#B8C5D3' }} id="history">Transaction History</Col>
+            </Row>
+            <br />
+            {user.role.name !== "Admin" ? (
+
+                <Row style={{ display: active == 1 ? 'block' : 'none' }}>
+                    <Col lg={{ span: 6, offset: 3 }} sm={12}>
+                        <RegisterFormStyle>
+                            <Form>
                                 <Container fluid={true}>
+
                                     <Row>
-                                        <Col lg={6}>
-                                            <h6>Referred members</h6>
+                                        <Col>
+                                            {error.show ? (
+                                                <ErrorDisplay message={error.message} error={error.isError} />
+                                            ) : null}
                                         </Col>
-                                        <Col lg={6} className="text-right">
-                                            <Form>
-                                                <Form.Group as={Row}>
-                                                    <Form.Label column lg={2} md={2} sm={2} xs={2}>for</Form.Label>
+                                        <Col lg={12} >
+                                            <Form.Group>
+                                                <Form.Label>Amount</Form.Label>
+                                                <Form.Control type="number" value={amount} placeholder="amount" name="amount" min="0" onChange={handleChange} />
+                                            </Form.Group>
+                                        </Col>
+                                        <Col lg={12}>
+                                            <Form.Group>
+                                                <Form.Label>Proof</Form.Label>
+                                                <Form.Control type="file" name="image" accept='image/*' onChange={handleChange} />
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col className="text-left" lg={6} md={6} sm={6}>
+                                            <Form.Group>
+                                                <Form.Control as="select" name="transactionType" onChange={handleChange}>
+                                                    <option value="">Transaction Type</option>
+                                                    <option value="Deposit">Deposit</option>
+                                                    <option value="Withdrawal">Withdrawal</option>
+                                                </Form.Control>
+                                            </Form.Group>
+                                        </Col>
 
-                                                    <Col sm={10}>
-                                                        <Form.Control type="date" name="members" value={membersDate} onChange={handleDateChange} />
-                                                    </Col>
-                                                </Form.Group>
-                                            </Form>
-                                        </Col>
-                                        <>
-                                            {membersLoading ? (
-                                                <Row>
-                                                    <Col lg={12} className="text-center">
-                                                        <Spinner animation="border" variant="success" />
-                                                    </Col>
-                                                </Row>
-                                            ) : (
+                                        <Col className="text-right" lg={6} md={6} sm={6}>
+                                            <Button id="Submit">
+                                                {loading ? (
                                                     <>
-                                                        {membersLength > 0 ? (
-
-                                                            <>
-                                                                <Col lg={12}>
-                                                                    <h3>Members</h3>
-                                                                </Col>
-                                                                <Col lg={6}>
-
-                                                                    <Members Data={members1} />
-                                                                </Col>
-                                                                <Col lg={6}>
-
-                                                                    <Members Data={members2} />
-                                                                </Col>
-                                                                <div id="page-numbers" className="pull-right">
-                                                                    <ul className="pagination">
-                                                                        {memberPages.map((page, index) => {
-
-                                                                            if (page === LEFT_PAGE) return (
-                                                                                <li key={index} className="page-item">
-                                                                                    <a className="page-link" aria-label="Previous" onClick={handleMoveLeft} name="member">
-                                                                                        <span aria-hidden="true">&laquo;</span>
-                                                                                        <span className="sr-only">Previous</span>
-                                                                                    </a>
-                                                                                </li>
-                                                                            );
-
-                                                                            if (page === RIGHT_PAGE) return (
-                                                                                <li key={index} className="page-item">
-                                                                                    <a className="page-link" aria-label="Next" onClick={handleMoveRight} name="member">
-                                                                                        <span aria-hidden="true">&raquo;</span>
-                                                                                        <span className="sr-only">Next</span>
-                                                                                    </a>
-                                                                                </li>
-                                                                            );
-
-                                                                            return (
-                                                                                <li key={index} className={`page-item${memberCurrentPage === page ? ' active' : ''}`}>
-                                                                                    <a className="page-link" id={page} onClick={pageClick} name="member">{page}</a>
-                                                                                </li>
-                                                                            );
-
-                                                                        })}
-
-                                                                    </ul>
-                                                                </div>
-
-
-                                                            </>
-                                                            // <Members Data={members} />
-                                                        ) : ("No Referrals")}
+                                                        <Spinner
+                                                            as="span"
+                                                            animation="grow"
+                                                            size="sm"
+                                                            role="status"
+                                                            aria-hidden="true"
+                                                        />
+                                                        <span style={{ marginRight: "5px" }}>
+                                                            Loading ....
+                                         </span>
                                                     </>
-                                                )}
-                                        </>
+                                                ) : (
+                                                        <>
+                                                            <span style={{ marginRight: "5px" }} onClick={submitForm} id="Submit">
+                                                                Apply
+                                         </span>
+                                                            <Icon size={'12px'} icon={longArrowRight} onClick={submitForm} id="Submit" />
+
+                                                        </>
+
+                                                    )}
+                                            </Button>
+                                        </Col>
                                     </Row>
                                 </Container>
-                            </Col>
-                        </Row>
-                    </Container>
-                </DashboardStyle>
-            </Col>
-            <Col lg={{ span: 3, order: 12 }} md={{ span: 4, order: 12 }} xs={{ span: 12, order: 1 }}>
-                <Personal />
-            </Col>
-        </Row>
+                            </Form>
+                        </RegisterFormStyle>
+
+                    </Col>
+                </Row>
+            ) : (null)}
+            <Row style={{ display: active == 2 ? 'block' : 'none' }}>
+                {active == 2 ? (
+                    <Col lg={12}>
+                        <History type='Approved' />
+                    </Col>
+                ) : (null)}
+            </Row>
+            <Row style={{ display: active == 3 ? 'block' : 'none' }}>
+                {active == 3 ? (
+                    <Col lg={12}>
+                        <History type='Pending' />
+                    </Col>
+                ) : (null)}
+            </Row>
+            <Row style={{ display: active == 4 ? 'block' : 'none' }}>
+                {active == 4 ? (
+                    <Col lg={12}>
+                        <History type='' />
+                    </Col>
+                ) : (null)}
+            </Row>
+        </Container>
 
     )
 }

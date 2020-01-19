@@ -59,7 +59,7 @@ class WebService {
         try {
             result = await axios({
                 method: 'PUT',
-                url: `${this.url}${url}/${id}`,
+                url: `${this.url}${url}`,
                 withCredentials: true ,
                 data
             })

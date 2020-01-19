@@ -28,14 +28,14 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 500000
+        fileSize: 590000
     },
     fileFilter: fileFilter
 })
 var uploader = upload.single('proofImage')
 module.exports = {
     getAllRequests: ('/', async (req, res) => {
-        let { offset, date, userId } = req.query
+        let { offset, date, userId, status } = req.query
         let obj = {
             offset: Number(offset),
             limit: 10,
@@ -57,6 +57,10 @@ module.exports = {
             whereObj.user_id = userId
             obj.where = whereObj
         }
+        if (status !== "") {
+            whereObj.status = status
+            obj.where = whereObj
+        }
 
         try {
             const allRequests = await models.Requests.findAndCountAll(obj)
@@ -76,10 +80,10 @@ module.exports = {
         uploader(req, res, async (err) => {
             let { userId, type, amount, date, proof } = req.body
 
-
             if (err instanceof multer.MulterError) {
                 return res.status(400).send(err.message ? err.message : err.toString())
             } else if (err) {
+                console.log(err)
                 return res.status(400).send(err.toString())
             } else {
                 // console.log(req.body[1])
@@ -115,6 +119,10 @@ module.exports = {
     }),
 
     approveRequest: ('/', async (req, res) => {
+        let {role: {name}} = req.user
+        if(name !== 'Admin'){
+            return res.status(400).send('You are not authorized to perform this operation')
+        }
         let { requestId, type } = req.body
         try {
             const request = await models.Requests.findOne({
@@ -150,7 +158,7 @@ module.exports = {
                             notificationMessage = `Sum of $${request.dataValues.amount} has been withdrawn from your account for transaction ${request.dataValues.trans_reference}. New Balance is ${newBalance}`
 
                         } else {
-                            return res.status(400).json('Transaction doesnt exist')
+                            return res.status(400).json('User Balance less than amount')
 
                         }
                     }
@@ -176,6 +184,7 @@ module.exports = {
 
             }
         } catch (error) {
+            console.log(error)
             logger.error(error.toString())
             return res.status(400).json(error.toString())
 

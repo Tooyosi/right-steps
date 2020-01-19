@@ -9,6 +9,7 @@ import { Stages } from './component/Stages/Stages';
 import { MembersPage } from './component/members/MembersPage';
 import { Balance } from './component/balance/Balance';
 import { Referral } from './component/referral/Referral';
+import { TransactionsPage } from './component/transactions/Transactions';
 
 
 
@@ -26,6 +27,7 @@ const Routes = () => (
             <Route exact path="/stages" component={Stages}></Route>
             <Route exact path="/members" component={MembersPage}></Route>
             <Route exact path="/balance" component={Balance}></Route>
+            <Route exact path="/transactions" component={TransactionsPage}></Route>
             <Route exact path="/referral/:id" component={Referral}></Route>
           </Switch>
         </BrowserRouter>

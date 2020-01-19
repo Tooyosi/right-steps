@@ -763,3 +763,13 @@ right connector from last child*/
 	border-color:  #94a0b4;
 }
 `
+
+export const HistoryStyle = styled.div`
+    table{
+        background-color: white;
+        color: #707070;
+        box-shadow: 2px 2px 2px 2px ${BoxShadowColor};
+        
+
+    }
+`
