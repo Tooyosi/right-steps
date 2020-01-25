@@ -62,8 +62,6 @@ module.exports = {
                     referral_id: `${newUser.dataValues.username}${newUser.dataValues.user_id}`
                 })
 
-
-
                 var smtpTransport = nodemailer.createTransport({
                     service: "Gmail",
                     auth: {

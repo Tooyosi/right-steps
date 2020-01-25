@@ -228,7 +228,9 @@ const Body = (props) => {
                             <Container fluid={true}>
                                 <Row >
                                     <Col lg={6} md={6} sm={6} xs={6} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="personal">Personal Details</Col>
-                                    <Col lg={6} md={6} sm={6} xs={6} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="account">Account Details</Col>
+                                    {user.role.name == 'Admin'? (null): (
+                                        <Col lg={6} md={6} sm={6} xs={6} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="account">Account Details</Col>
+                                    )}
                                 </Row>
                                 <br />
                                 <RegisterFormStyle style={{ display: active == 1 ? 'block' : 'none' }}>

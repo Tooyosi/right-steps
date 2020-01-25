@@ -4,6 +4,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const { httpLogger } = require('./loggers/httpLogger');
 const { logger } = require('./loggers/logger');
+const cron = require("node-cron");
+const smtpTransport = require('./controllers/functions/sendMail')
 require('dotenv').config()
 
 app.use(express.json())
@@ -16,14 +18,6 @@ app.use(
   })
 );
 
-// var allowCrossDomain = function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
-//   res.header('Access-Control-Allow-Credentials', true);
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// };
-// app.use(allowCrossDomain)
 app.use(cookieParser());
 
 // app.use(httpLogger);  
@@ -47,10 +41,30 @@ app.post('/logout', (req, res) => {
 })
 const models = require('./connections/sequelize');
 
-// models.Members.findAll({ hierarchy: true}).then((result)=>{
-//   console.log(result)
-// })
+let birthdayMessages = async () => {
+  let users = await models.User.findAll()
+  let date = new Date()
+  if (users.length > 0) {
+    users.forEach((user, i) => {
+      let date2 = new Date(user.dob)
+      if ((date.getMonth() == date2.getMonth()) && (date.getDate() == date2.getDate())) {
 
+
+        smtpTransport(user.email_address, "Right Steps", "Happy Birthday", `To You on your special day, Happy birthday `);
+      }
+    })
+  }
+  // console.log(users.length)
+}
+
+cron.schedule("10 11 * * *", function() {
+  birthdayMessages()
+  console.log("running a task every minute");
+});
+
+
+// call this fn inside the cron-job
+// birthdayMessages()
 app.listen(process.env.API_PORT, () => {
   logger.info(`Server listening on port ${process.env.API_PORT}`);
 })

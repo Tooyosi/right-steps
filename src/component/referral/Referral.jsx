@@ -19,13 +19,13 @@ export const Referral = (props) => {
 
     const fetchReferralDetails = async () => {
         let result = await service.sendGet(`${MEMBERS_REFERRAL_DETAILS}/${id}`)
-        if (result.status == 200) {
+        if (result.status == 200 && result.data != null) {
             let { data: { user: { username } } } = result;
             updateReferralID(username)
             updateLoading(false)
         } else {
             alert("An Error Occured while fetching Referral Details")
-            updateLoading(false)
+            props.history.goBack()
         }
     }
     useEffect(() => {

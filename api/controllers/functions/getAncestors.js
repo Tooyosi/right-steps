@@ -180,6 +180,22 @@ let ancestors = async (id) => {
                 // }
                 if (newAncestorStage !== undefined) {
                     console.log(a, 'dont show twice')
+                    let stageAward
+                    let awards = await models.Awards.findAll()
+                    switch (newAncestorStage) {
+                        case 3:
+                            // completed stage 2
+                            break;
+                        case 4:
+                            // complete stage 3
+                            break;
+                        case 5:
+                            // complete stage 4
+                            break;
+                        case 6:
+                            // complete stage 5
+                            break;
+                    }
                     let updateParent = await parent.update({
                         current_stage: newAncestorStage
                     })
