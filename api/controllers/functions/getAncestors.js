@@ -3,7 +3,8 @@ const getDownlines = require('./getDownlines')
 const notificationCreate = require('../functions/createNotification')
 const updateAccount = require('../functions/updateAccount')
 const dateValue = require('../functions/dateValue')
-
+const uuidv1 = require('uuid/v1');
+const awardTypes = require('./awardTypes')
 let ancestors = async (id) => {
     const members = await models.Members.findOne({
         where: {
@@ -42,6 +43,7 @@ let ancestors = async (id) => {
     }
 
     let updateStage = async (ancestor, parent, n, a) => {
+        let reference = uuidv1();
 
         if (a == n) {
             return a
@@ -179,23 +181,74 @@ let ancestors = async (id) => {
                 //         break;
                 // }
                 if (newAncestorStage !== undefined) {
-                    console.log(a, 'dont show twice')
+                    console.log(newAncestorStage, 'dont show twice')
                     let stageAward
-                    let awards = await models.Awards.findAll()
+                    let awardNotification
+                    let awards
+                    let awardNotificationCreate
+                    let awardObj = {
+                        user_id: parent.user_id,
+                        status: 'Pending',
+                        date: dateValue
+                    }
                     switch (newAncestorStage) {
                         case 3:
                             // completed stage 2
+                            stageAward = await awardTypes(2);
+                            let randomId = Math.floor((Math.random() * stageAward.length) + 1);
+                            awardObj.award_type_id = randomId
+                            let id
+                            stageAward.forEach(award=>{
+                                if(randomId == award.award_type_id){
+                                    id= award
+                                }
+                            })
+                            awardNotification = `Congratulations, you have received award of ${id.name} for completing stage ${newAncestorStage}.`
+                            // create new award
+                            awards = await models.Awards.create(awardObj);
+
+                            // add notification for award
+                            awardNotificationCreate = await notificationCreate(parent.user_id, awardNotification, dateValue);
+
                             break;
                         case 4:
                             // complete stage 3
+                            stageAward = await awardTypes(3);
+                            awardObj.award_type_id = stageAward[0].award_type_id
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            // create new award
+                            awards = await models.Awards.create(awardObj);
+
+                            // add notification for award
+                            awardNotificationCreate = await notificationCreate(parent.user_id, awardNotification, dateValue);
+
                             break;
                         case 5:
                             // complete stage 4
+                            stageAward = await awardTypes(4);
+                            awardObj.award_type_id = stageAward[0].award_type_id
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            // create new award
+                            awards = await models.Awards.create(awardObj);
+
+                            // add notification for award
+                            awardNotificationCreate = await notificationCreate(parent.user_id, awardNotification, dateValue);
+
                             break;
                         case 6:
                             // complete stage 5
+                            stageAward = await awardTypes(5);
+                            awardObj.award_type_id = stageAward[0].award_type_id
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            // create new award
+                            awards = await models.Awards.create(awardObj);
+
+                            // add notification for award
+                            awardNotificationCreate = await notificationCreate(parent.user_id, awardNotification, dateValue);
+
                             break;
                     }
+
                     let updateParent = await parent.update({
                         current_stage: newAncestorStage
                     })

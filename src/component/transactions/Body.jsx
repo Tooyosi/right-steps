@@ -12,6 +12,7 @@ import ErrorDisplay from '../globals/Error'
 import { Icon } from 'react-icons-kit'
 import { longArrowRight } from 'react-icons-kit/fa/longArrowRight'
 import { History } from './History'
+import { Awards } from './Awards'
 
 export const Body = () => {
     let [user] = useContext(UserListContext)
@@ -41,6 +42,9 @@ export const Body = () => {
                 break;
             case 'history':
                 active !== 4 ? updateActive(4) : null;
+                break;
+            case 'awards':
+                active !== 5 ? updateActive(5) : null;
                 break;
         }
     }
@@ -121,12 +125,13 @@ export const Body = () => {
         <Container fluid={true}>
             <Row className="text-center">
                 {user.role.name !== "Admin" ? (
-                    <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="make">Make Request</Col>
+                    <Col lg={2} md={2} sm={2} xs={2} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="make">Make Request</Col>
                 ) : (null)}
 
-                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="approve">Approved Requests</Col>
-                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="pending">Pending Requests</Col>
-                <Col lg={3} md={3} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 4 ? '#49C5A1' : '#B8C5D3' }} id="history">Transaction History</Col>
+                <Col lg={2} md={2} sm={2} xs={2} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="approve">Approved Requests</Col>
+                <Col lg={2} md={2} sm={2} xs={2} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="pending">Pending Requests</Col>
+                <Col lg={2} md={2} sm={2} xs={2} onClick={switchTabs} style={{ color: active == 4 ? '#49C5A1' : '#B8C5D3' }} id="history">Transaction History</Col>
+                <Col lg={2} md={2} sm={2} xs={2} onClick={switchTabs} style={{ color: active == 5 ? '#49C5A1' : '#B8C5D3' }} id="awards">Awards</Col>
             </Row>
             <br />
             {user.role.name !== "Admin" ? (
@@ -223,6 +228,14 @@ export const Body = () => {
                     </Col>
                 ) : (null)}
             </Row>
+            <Row style={{ display: active == 5 ?'block' : 'none' }}>
+                {active == 5 ? (
+                    <Col lg={12}>
+                        <Awards />
+                    </Col>
+                ) : (null)}
+            </Row>
+       
         </Container>
 
     )

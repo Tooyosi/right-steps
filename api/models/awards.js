@@ -28,6 +28,11 @@ module.exports = function(sequelize, DataTypes) {
         key: 'user_id'
       }
     },
+    'status': {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+      comment: "null"
+    },
     'date': {
       type: DataTypes.DATEONLY,
       allowNull: false,

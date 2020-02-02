@@ -18,7 +18,6 @@ const Skeleton = (props) => {
             let userDetails = await localforage.getItem('user')
             if (userDetails !== null && userDetails !== undefined) {
                 setUser(userDetails)
-                console.log("here")
                 updateIsLoading(false)
             } else {
                 return props.history.push('/')

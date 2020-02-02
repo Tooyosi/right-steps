@@ -28,6 +28,7 @@ const referralLink = require('./routes/referrals/referral_link')
 const adminRoutes = require('./routes/admin/admin')
 const userRoutes = require('./routes/user/user')
 const requestRoutes = require('./routes/requests/requests')
+const awardsRoutes = require('./routes/awards/awards')
 
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
@@ -36,6 +37,7 @@ app.use('/referral', referralLink);
 app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/requests', requestRoutes)
+app.use('/awards', awardsRoutes)
 app.post('/logout', (req, res) => {
 
 })
