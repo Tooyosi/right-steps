@@ -2,6 +2,7 @@ import React, { Fragment, useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { Col, Row, Image, Container } from 'react-bootstrap'
 import Logo from '../../../assets/logo.png'
+import PlacehlderImage from '../../../assets/userplaceholder.png'
 import Dashboard from '../../../assets/dashboard.png'
 import Stages from '../../../assets/stages.png'
 import Balance from '../../../assets/balance.png'
@@ -38,9 +39,10 @@ export const Sidebar = () => {
                     </Col>
                     <Col lg={12} className="text-center">
                         {user.passport !== null && user.passport !== 'null' ? (
-                                <Image src={`${BASE_URL}${user.passport}`} roundedCircle width="70px" height="70px" />
+                                <Image src={`${BASE_URL}${user.passport}`} roundedCircle width="70px" height="70px" />                               
                         ) : (
-                                <Image src={Logo} roundedCircle fluid width="120px" />
+                                <Image src={PlacehlderImage} roundedCircle width="70px" height="70px" />
+
 
                             )}
                         <h6>{user.gender == "Male" ? "Mr" : "Mrs"} {user.firstname} {user.lastname}</h6>
