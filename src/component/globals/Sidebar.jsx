@@ -11,7 +11,9 @@ import Settings from '../../../assets/settings.png'
 import Logout from '../../../assets/logout.png'
 import { SidebarStyle, ToggleStyle, BackdropStyle } from '../styles/style'
 import { UserListContext } from '../Context/Context'
-import { BASE_URL } from './links'
+import { BASE_URL, LOGOUT_URL } from './links'
+import WebService from './WebService'
+import { default as localforage } from 'localforage';
 
 export const Sidebar = () => {
     let [toggle, updateToggle] = useState(false)
@@ -23,6 +25,17 @@ export const Sidebar = () => {
         } else {
             updateToggle(true)
 
+        }
+    }
+
+    const doLogout = async ()=>{
+        let service = new WebService()
+        let result = await service.sendPost(LOGOUT_URL, {userId: user.user_id})
+        if(result){
+            console.log(result)
+            localforage.removeItem('user', (data)=>{
+                window.location.replace('/')
+            })
         }
     }
     return (
@@ -101,7 +114,7 @@ export const Sidebar = () => {
                                 <i>
                                     <Image src={Logout} />
                                 </i>
-                                <Link to="">
+                                <Link to="#" onClick={doLogout}>
                                     <p>Log Out</p>
                                 </Link>
                             </li>

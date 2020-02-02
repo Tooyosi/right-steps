@@ -7,14 +7,13 @@ import { Spinner, Row, Col, Nav, Button, Carousel, Image, Navbar, Form, Accordio
 import WebService from '../globals/WebService';
 import { ErrorContext, UserListContext } from '../Context/Context';
 import ErrorDisplay from '../globals/Error';
-import { LOGIN } from '../globals/links';
+import { LOGIN, FORGOT_PASSWORD } from '../globals/links';
 import { default as localforage } from 'localforage';
 import { useEffect } from 'react'
 
 
 const SignInForm = (props) => {
     const [username, updateUsername] = useState('')
-    const [password, updatePassword] = useState('')
     const [loading, updateLoading] = useState(false)
     const [error, setError] = useContext(ErrorContext);
     const [user, setUser] = useContext(UserListContext);
@@ -33,7 +32,7 @@ const SignInForm = (props) => {
         switch (id) {
             case "Submit":
                 // submit the form
-                if (username.trim() == "" || password.trim() == "") {
+                if (username.trim() == "") {
                     setError({
                         show: true,
                         isError: true,
@@ -47,17 +46,21 @@ const SignInForm = (props) => {
                     })
                     updateLoading(true)
                     try {
-                        let result = await service.sendPost(LOGIN, {
-                            username: username.trim(),
-                            password: password.trim()
+                        let result = await service.sendPost(FORGOT_PASSWORD, {
+                            username: username.trim()
                         })
                         console.log(result)
-                        if (result.status == 200) {
+                        if (result.status == 201) {
                             let { data } = result;
-                            localforage.setItem('user', data)
+                            localforage.removeItem('user', data)
                                 .then((value) => {
-                                    setUser(data)
-                                    props.history.replace('/dashboard');
+                                    setError({
+                                        show: true,
+                                        isError: false,
+                                        message: data
+                                    })
+                                    updateLoading(false)
+                                    updateUsername('')
                                 })
                         } else {
                             setError({
@@ -88,9 +91,6 @@ const SignInForm = (props) => {
             case "name":
                 updateUsername(value)
                 break;
-            case "password":
-                updatePassword(value)
-                break;
             default:
                 break;
         }
@@ -108,19 +108,9 @@ const SignInForm = (props) => {
                     <Col lg={12} >
                         <Form.Group>
                             <Form.Label>Username</Form.Label>
-                            <Form.Control type="text" onChange={handleChange} placeholder="Username" name="name" />
+                            <Form.Control type="text" onChange={handleChange} placeholder="Username" name="name" value={username}/>
                         </Form.Group>
                     </Col>
-                    <Col lg={12}>
-                        <Form.Group>
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" onChange={handleChange} name="password" />
-                        </Form.Group>
-                        <Link to="/forgot" style={{ float: "right" }}>Forgot password ?</Link>
-                    </Col>
-
-
-
                 </Row>
                 <Row>
                     <Col className="text-right">
@@ -141,7 +131,7 @@ const SignInForm = (props) => {
                             ) : (
                                     <>
                                         <span style={{ marginRight: "5px" }} onClick={submitForm} id="Submit">
-                                            LOG IN
+                                            Reset Password
                                          </span>
                                         <Icon size={'15px'} icon={longArrowRight} onClick={submitForm} id="Submit" />
                                     </>

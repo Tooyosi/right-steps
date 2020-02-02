@@ -13,3 +13,5 @@ export const USER_NOTIFICATION_LINK = "user/notifications"
 export const ADMIN_MEMBERS_LINK = "admin/members"
 export const ADMIN_REFERRAL_LINK = "admin/referral"
 export const AWARDS_LINK = "awards";
+export const FORGOT_PASSWORD = "forgot";
+export const LOGOUT_URL = "logout";

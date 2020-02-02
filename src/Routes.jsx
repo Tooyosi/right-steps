@@ -11,6 +11,8 @@ import { Balance } from './component/balance/Balance';
 import { Referral } from './component/referral/Referral';
 import { TransactionsPage } from './component/transactions/Transactions';
 import { Settings } from './component/settings/Settings';
+import { ForgotPassword } from './registeration/ForgotPassword';
+import NoMatch from './component/globals/NoMatch';
 
 
 
@@ -30,7 +32,9 @@ const Routes = () => (
               <Route exact path="/balance" component={Balance}></Route>
               <Route exact path="/settings" component={Settings}></Route>
               <Route exact path="/transactions" component={TransactionsPage}></Route>
+              <Route exact path="/forgot" component={ForgotPassword}></Route>
               <Route exact path="/referral/:id" component={Referral}></Route>
+              <Route render={NoMatch} />
             </Switch>
           </BrowserRouter>
         </MemberIdProvider>
