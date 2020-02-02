@@ -94,6 +94,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATEONLY,
       allowNull: false,
       comment: "null"
+    },
+    'token': {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: "null"
     }
   }, {
     tableName: 'users'

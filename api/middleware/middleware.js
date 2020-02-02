@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-
+const models = require('../connections/sequelize')
 module.exports = {
     validateBody: (req, res, next) => {
         let err = []
@@ -24,15 +24,25 @@ module.exports = {
             req.headers['x-access-token'] ||
             req.cookies.token;
 
-            jwt.verify(token, 'userdetails', (err, decoded) => {
+            jwt.verify(token, 'userdetails', async (err, decoded) => {
                 if (err) {
                   return res.status(401).send({
                     message: 'Unauthorized User',
                   });
                 }
-                req.user = decoded;
-                req.token = token;
-                next();
+                let user = await models.User.findOne({
+                    where: {
+                        user_id: decoded.user_id
+                    }
+                })
+
+                if(token.substring(0, 200) == user.token){
+                    req.user = decoded;
+                    req.token = token;
+                    next();
+                } else {
+                    res.status(401).send('Invalid Session')
+                }
               });
     }
 }

@@ -203,7 +203,7 @@ let ancestors = async (id) => {
                                     id= award
                                 }
                             })
-                            awardNotification = `Congratulations, you have received award of ${id.name} for completing stage ${newAncestorStage}.`
+                            awardNotification = `Congratulations, you have received award of ${id.name} for completing stage ${(Number(newAncestorStage) -1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
 
@@ -215,7 +215,7 @@ let ancestors = async (id) => {
                             // complete stage 3
                             stageAward = await awardTypes(3);
                             awardObj.award_type_id = stageAward[0].award_type_id
-                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${(Number(newAncestorStage) -1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
 
@@ -227,7 +227,7 @@ let ancestors = async (id) => {
                             // complete stage 4
                             stageAward = await awardTypes(4);
                             awardObj.award_type_id = stageAward[0].award_type_id
-                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${(Number(newAncestorStage) -1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
 
@@ -239,7 +239,7 @@ let ancestors = async (id) => {
                             // complete stage 5
                             stageAward = await awardTypes(5);
                             awardObj.award_type_id = stageAward[0].award_type_id
-                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${newAncestorStage}.`
+                            awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${(Number(newAncestorStage) -1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
 

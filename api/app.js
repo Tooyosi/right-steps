@@ -29,6 +29,8 @@ const adminRoutes = require('./routes/admin/admin')
 const userRoutes = require('./routes/user/user')
 const requestRoutes = require('./routes/requests/requests')
 const awardsRoutes = require('./routes/awards/awards')
+const forgotRoute = require('./routes/forgotpassword/forgotPassword')
+const logoutRoute = require("./routes/logout")
 
 app.use('/login', loginRoute);
 app.use('/register', registerRoute);
@@ -38,9 +40,8 @@ app.use('/admin', adminRoutes);
 app.use('/user', userRoutes);
 app.use('/requests', requestRoutes)
 app.use('/awards', awardsRoutes)
-app.post('/logout', (req, res) => {
-
-})
+app.use('/forgot', forgotRoute)
+app.use ('/logout', logoutRoute)
 const models = require('./connections/sequelize');
 
 let birthdayMessages = async () => {
