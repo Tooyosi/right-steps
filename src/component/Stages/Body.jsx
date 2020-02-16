@@ -9,7 +9,6 @@ import WebService from '../globals/WebService'
 import Tree from 'react-hierarchy-tree';
 
 const Body = (props) => {
-    console.log(props)
     let [user] = useContext(UserListContext);
     let [members, updateMembers] = useState('');
     let [totalDecendants, updateTotalDecendants] = useState([]);
@@ -170,7 +169,7 @@ const Body = (props) => {
 
 
     const fetchMembers = async (date) => {
-        updateMembersLoading(true); 
+        updateMembersLoading(true);
         let link
         user.role.name == "Admin" ? link = ADMIN_MEMBERS_LINK : link = MEMBERS_LINK;
         let result = await service.sendPost(link, {
@@ -180,7 +179,6 @@ const Body = (props) => {
         })
         if (result.status == 200) {
             let { data: { row, count } } = result
-
             let pages = Math.ceil(Number(count) / 10)
             updateMemberTotalPages(pages)
             updateMembers(row)
@@ -190,19 +188,25 @@ const Body = (props) => {
 
     const fetchDownline = async (id) => {
         updateDecendantsLoading(true)
+        if (user.isCompleted == 0) {
+            let result = await service.sendGet(`${USER_LINK}/${id}`)
+            let { data } = result
 
-        let result = await service.sendGet(`${USER_LINK}/${id}`)
-        let { data } = result
-        let dataArr = [data]
-        if (typeof data !== 'object') {
+            let dataArr = [data]
+            if (typeof data !== 'object') {
+                updateTotalDecendants([])
+
+            } else {
+                updateTotalDecendants(dataArr)
+
+            }
+
+        }else{
             updateTotalDecendants([])
 
-        } else {
-            updateTotalDecendants(dataArr)
-
         }
-
         updateDecendantsLoading(false)
+
     }
     useEffect(() => {
         updateLoading(false)

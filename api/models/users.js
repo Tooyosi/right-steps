@@ -99,6 +99,12 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(255),
       allowNull: true,
       comment: "null"
+    },
+    'isCompleted': {
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: '0',
+      comment: "null"
     }
   }, {
     tableName: 'users'

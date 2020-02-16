@@ -13,5 +13,8 @@ router.get('/ancestor/:id', async (req, res)=>{
     res.send(ancest)
 })
 router.post('/notifications', middleware.withAuth, userController.notificationsPost)
+router.get('/search/:searchTerm', middleware.withAuth, userController.search)
+router.get('/transfer/:userId', middleware.withAuth, userController.getTransfers)
+router.post('/transfer/:userId', middleware.withAuth, userController.transfer)
 
 module.exports = router;

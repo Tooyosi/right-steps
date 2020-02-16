@@ -6,6 +6,7 @@ const notificationCreate = require('./functions/createNotification')
 const dateValue = require('./functions/dateValue')
 const updateAccount = require('./functions/updateAccount')
 const updateAncestors = require('./functions/getAncestors')
+const transferCreate = require('./functions/createTransfer')
 module.exports = {
     post: ('/', async (req, res) => {
         let { firstname, lastname, phone, email, gender, dob, country, state, username, sponsor, upline, role } = req.body;
@@ -98,10 +99,23 @@ module.exports = {
                                 })
 
                                 let balance 
-                                userUpline.role_id == 1 ? balance = Number(sponsorAccount.dataValues.balance) : balance = Number(sponsorAccount.dataValues.balance) - 30;
+                                if(userSponsor.role_id == 1) { 
+                                    balance = Number(sponsorAccount.dataValues.balance)
+                                } else {
+                                     balance = Number(sponsorAccount.dataValues.balance) - 30
+
+                                    // add to sponsors transaction list 
+                                    await transferCreate(userSponsor.dataValues.user_id, 'Registration fee deduction', dateValue, 30, `${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, `${firstname} ${lastname}` )
+
+                                };
+                                // add to new users transaction list
+                                await transferCreate(newUser.dataValues.user_id, 'Registration fee', dateValue, 30, `${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, `${firstname} ${lastname}` )
 
                                 let newBalance = bonusAmount + balance
 
+                                // add to bonus sponsors transaction list 
+                                await transferCreate(userSponsor.dataValues.user_id, 'Registeration Bonus', dateValue, bonusAmount, `${firstname} ${lastname}`, `${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}` )
+                                
                                 // update the sponsor account balance with the newly summed up balance
                                 let updatedSponsorAccount = await updateAccount(sponsorAccount, newBalance, dateValue)
 

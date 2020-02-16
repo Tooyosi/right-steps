@@ -10,7 +10,7 @@ const logger = createLogger({
   ),
   transports: [
     new transports.File({
-      filename: `./logs/${date}.log`,
+      filename: `./logs/logfile.log`,
       json: false,
       maxsize: 5242880,
       maxFiles: 2,

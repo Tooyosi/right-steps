@@ -13,6 +13,11 @@ const NotificatiosnModel = require("../models/notifications");
 const RequestModel = require("../models/requests");
 const AwardsModel = require("../models/awards");
 const AwardsTypeModel = require("../models/awards_types");
+const TransferModel = require("../models/transfers");
+const Stage2Model = require("../models/stage_2");
+const Stage3Model = require("../models/stage_3");
+const Stage4Model = require("../models/stage_4");
+const Stage5Model = require("../models/stage_5");
 
 const sequelize = require('./connection')
 
@@ -29,12 +34,20 @@ models.Downlines = DownlinesModel(sequelize, Sequelize)
 models.Requests = RequestModel(sequelize, Sequelize);
 models.Awards = AwardsModel(sequelize, Sequelize);
 models.AwardTypes = AwardsTypeModel(sequelize, Sequelize)
-
+models.Transfers = TransferModel(sequelize, Sequelize)
+models.Stage2 = Stage2Model(sequelize, Sequelize)
+models.Stage3 = Stage3Model(sequelize, Sequelize)
+models.Stage4 = Stage4Model(sequelize, Sequelize)
+models.Stage5 = Stage5Model(sequelize, Sequelize)
 // associations
 models.Requests.belongsTo(models.User, { foreignKey: "user_id", as: "requester", })
 models.Awards.belongsTo(models.AwardTypes, { foreignKey: "award_type_id", as: "type", })
 
 models.Members.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
+models.Stage2.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
+models.Stage3.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
+models.Stage4.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
+models.Stage5.belongsTo(models.User, { foreignKey: "user_id", as: "attributes", })
 models.Downlines.belongsTo(models.User, { foreignKey: "right_leg_id", as: "right_leg", })
 models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_leg", })
 // onDelete: 'CASCADE',
@@ -46,6 +59,10 @@ models.Downlines.belongsTo(models.User, { foreignKey: "left_leg_id", as: "left_l
 //     as: 'children'
 //   });
 models.Members.isHierarchy();
+models.Stage2.isHierarchy()
+models.Stage3.isHierarchy()
+models.Stage4.isHierarchy()
+models.Stage5.isHierarchy()
 models.Members.sync().then((res)=>{
     // console.log(res)
 });
