@@ -20,8 +20,7 @@ let sendMail = async (email, from, subject, text) => {
     let response = await smtpTransport.sendMail(mailOptions, (err) => {
         if (err) {
             console.log(err)
-            logger.error(`${user.username} with email: ${user.email_address} mail sending failed,
-                          Error: ${err.toString()}`)
+            logger.error(err.toString())
             return false
         } else {
             console.log('success')

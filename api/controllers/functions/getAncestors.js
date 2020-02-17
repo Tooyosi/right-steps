@@ -5,6 +5,8 @@ const updateAccount = require('./updateAccount')
 const dateValue = require('./dateValue')
 const uuidv1 = require('uuid/v1');
 const awardTypes = require('./awardTypes')
+let sendMail = require('./sendMail')
+let transferCreate = require('./createTransfer')
 let ancestors = async (id, stage) => {
     let members
     members = await models.Members.findOne({
@@ -387,9 +389,7 @@ let ancestors = async (id, stage) => {
                     }
                 }
 
-                if (newAncestorStage !== undefined) {
-                    console.log(newAncestorStage, 'dont show twice')
-                    let stageAward
+                if (newAncestorStage !== undefined) {let stageAward
                     let awardNotification
                     let awards
                     let awardNotificationCreate
@@ -398,6 +398,11 @@ let ancestors = async (id, stage) => {
                         status: 'Pending',
                         date: dateValue
                     }
+                    let updatedUserTable = await models.User.findOne({
+                        where: {
+                            user_id: parent.user_id
+                        }
+                    })
                     switch (newAncestorStage) {
                         case 3:
                             // completed stage 2
@@ -449,11 +454,7 @@ let ancestors = async (id, stage) => {
                             awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${(Number(newAncestorStage) - 1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
-                            let updatedUserTable = await models.User.findOne({
-                                where: {
-                                    user_id: parent.user_id
-                                }
-                            })
+                            
                             await updatedUserTable.update({
                                 isCompleted: 1
                             })
@@ -488,8 +489,7 @@ let ancestors = async (id, stage) => {
                         amount: bonusAmount,
                         date: dateValue
                     })
-
-
+                    await transferCreate(updatedUserTable.user_id, `Stage ${newAncestorStage} Matrix bonus`, dateValue, bonusAmount, 'Right Steps', `${updatedUserTable.firstname} ${updatedUserTable.lastname}`)
 
                     if (ancestorUpline !== null) {
                         let uplineBonus = (bonusAmount * 0.1)
@@ -500,9 +500,10 @@ let ancestors = async (id, stage) => {
                             date: dateValue
                         })
                         let parentUplineNotification = await notificationAndAccount(ancestorUpline.user_id, `Congratulations, You have received a bonus of $${uplineBonus} for the upgrade of your downline ${parent.attributes.username} to stage ${newAncestorStage}`, uplineBonus, dateValue)
+                        await transferCreate(ancestorUpline.user_id, `${updatedUserTable.firstname} ${updatedUserTable.lastname}'s stage ${newAncestorStage} matching Bonus`, dateValue, uplineBonus, 'Right Steps', `${updatedUserTable.firstname} ${updatedUserTable.lastname}`)
 
                     }
-                    console.log(parent.attributes.username, "here")
+                    await sendMail(updatedUserTable.email_address, 'Right Steps', 'Stage Completed', `Congratulations, you've completed stage ${(newAncestorStage - 1)} and earned a bonus of $${bonusAmount}`)
                     return updateStage(parent, updateParent, n, a++)
 
                 }

@@ -12,7 +12,7 @@ import { withRouter } from 'react-router-dom'
 import { default as localforage } from 'localforage';
 import { useEffect } from 'react';
 import { States } from '../globals/States';
-
+import { CountryDropdown, RegionDropdown, CountryRegionData } from 'react-country-region-selector';
 export const SignupForm = (props) => {
     const [error, setError] = useContext(ErrorContext);
     const [user, setUser] = useContext(UserListContext);
@@ -35,10 +35,10 @@ export const SignupForm = (props) => {
 
     // for the referral url
     const [referralID, updateReferralID] = useContext(ReferralLiinkContext);
- 
+
     let service = new WebService()
 
-    useEffect(()=>{
+    useEffect(() => {
         // let fetchStates = async ()=>{
         //     let token = await service.sendGet(`https://www.universal-tutorial.com/api/getaccesstoken`)
         //     console.log(token)
@@ -121,47 +121,47 @@ export const SignupForm = (props) => {
                         upline: upline,
                         sponsor: referralID
                     });
-                    try{
+                    try {
                         console.log(result)
-                    if (result.status == 201) {
-                        let { data } = result
-                        setError({
-                            show: true,
-                            isError: false,
-                            message: data
-                        })
-                        updateFormState(1);
-                        updateFirstName('');
-                        updateLastName('');
-                        updateState('');
-                        updateUsername('');
-                        updatePassword('');
-                        updateConfPassword('');
-                        updateGender('');
-                        updateDOB('');
-                        updateCountry('');
-                        updateReferralID('');
-                        updateUpline('');
-                        updateEmail('');
-                        updatePhone('');
-                        updateLoading(false)
+                        if (result.status == 201) {
+                            let { data } = result
+                            setError({
+                                show: true,
+                                isError: false,
+                                message: data
+                            })
+                            updateFormState(1);
+                            updateFirstName('');
+                            updateLastName('');
+                            updateState('');
+                            updateUsername('');
+                            updatePassword('');
+                            updateConfPassword('');
+                            updateGender('');
+                            updateDOB('');
+                            updateCountry('');
+                            updateReferralID('');
+                            updateUpline('');
+                            updateEmail('');
+                            updatePhone('');
+                            updateLoading(false)
 
-                    } else {
+                        } else {
+                            setError({
+                                show: true,
+                                isError: true,
+                                message: result.response.data ? result.response.data : 'A network error occured'
+                            })
+                            updateLoading(false)
+                        }
+                    } catch (error) {
                         setError({
                             show: true,
                             isError: true,
-                            message: result.response.data? result.response.data : 'A network error occured'
+                            message: error.toString()
                         })
                         updateLoading(false)
                     }
-                } catch(error){
-                    setError({
-                        show: true,
-                        isError: true,
-                        message: error.toString()
-                    })
-                    updateLoading(false)
-                }
 
                 }
                 break;
@@ -216,6 +216,15 @@ export const SignupForm = (props) => {
                 break;
         }
     }
+
+    const handleCountryChange = (e) => {
+        updateCountry(e);
+    }
+
+    const handleStateChange = (e) => {
+        updateState(e);
+
+    }
     return (
 
         <RegisterFormStyle>
@@ -243,7 +252,7 @@ export const SignupForm = (props) => {
                     <Col lg={12} >
                         <Form.Group>
                             <Form.Label>Phone</Form.Label>
-                            <Form.Control  value={phone} onChange={handleChange} type="number" placeholder="Phone number" name="phone" min="0" pattern="[0-9]+" />
+                            <Form.Control value={phone} onChange={handleChange} type="number" placeholder="Phone number" name="phone" min="0" pattern="[0-9]+" />
                         </Form.Group>
                     </Col>
                     <Col lg={12} >
@@ -269,21 +278,34 @@ export const SignupForm = (props) => {
                         </Form.Group>
                     </Col>
                     <Col lg={6} md={6} sm={6}>
-                        <Form.Group>
+                        {/* <Form.Group>
                             <Form.Label>Nationality</Form.Label>
                             <Form.Control value={country} onChange={handleChange} as="select" name="country">
                                 <option defaultValue>Select Nationality</option>
                                 <option>Nigerian</option>
                             </Form.Control>
+                        </Form.Group> */}
+                        <Form.Group>
+                            <Form.Label>Nationality</Form.Label>
+                            <CountryDropdown
+                                className="form-control"
+                                value={country}
+                                name="country"
+                                onChange={handleCountryChange} />
                         </Form.Group>
                     </Col>
                     <Col lg={6} md={6} sm={6}>
                         <Form.Group>
                             <Form.Label>State Of Origin</Form.Label>
-                            <Form.Control value={state} onChange={handleChange} as="select" name="state">
+                            {/* <Form.Control value={state} onChange={handleChange} as="select" name="state">
                                 <option defaultValue>Select State</option>
                                 <option>Nigerian</option>
-                            </Form.Control>
+                            </Form.Control> */}
+                            <RegionDropdown
+                                className="form-control"
+                                country={country}
+                                value={state}
+                                onChange={handleStateChange} />
                         </Form.Group>
                     </Col>
                 </Row>
@@ -336,17 +358,17 @@ export const SignupForm = (props) => {
                                         <>
                                             <Button style={{ float: "right" }} id="Submit">
 
-                                            <Spinner
-                                                as="span"
-                                                animation="grow"
-                                                size="sm"
-                                                role="status"
-                                                aria-hidden="true"
-                                            />
-                                            <span>
-                                                Loading ....
+                                                <Spinner
+                                                    as="span"
+                                                    animation="grow"
+                                                    size="sm"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                />
+                                                <span>
+                                                    Loading ....
                                          </span>
-                                         </Button>
+                                            </Button>
                                         </>
                                     ) : (
                                             <Button style={{ float: "right" }} onClick={submitForm} id="Submit">Submit</Button>
