@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react'
-import { Container, Row, Col, Nav, Button,  Carousel, Image, Navbar, Form,  Accordion, Card } from 'react-bootstrap';
+import { Container, Row, Col, Nav, Button,  Carousel, Image, Navbar, Modal,  Accordion, Card } from 'react-bootstrap';
 import CarouselSlide from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import {Contain, NavStyle, CarouselStyle, AboutStyle, CoursesStyle, RegisterStyle, RegisterFormStyle, TestimonialsStyle, FAQStyle, FooterStyle} from './component/styles/style.jsx'
@@ -16,6 +16,8 @@ import Courses4 from './../assets/courses4.png'
 const Landing = () => {
     const [about, updateAbout] = useState(1)
     const [formState, updateFormState] = useState(1)
+    let [showModal, updateShowModal] = useState(false)
+
     const submitForm = ({target})=>{
         let {id} = target
         switch(id){
@@ -31,6 +33,14 @@ const Landing = () => {
             default:
             break;
         }
+    }
+
+    const handleClose = () => {
+        updateShowModal(false)
+    }
+
+    const displayModal = () => {
+        updateShowModal(true)
     }
     const aboutClick = ({ target }) => {
         let { id } = target;
@@ -59,6 +69,48 @@ const Landing = () => {
     }
     return (
         <Fragment>
+             <Modal show={showModal} onHide={handleClose}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>Getting started with FOREX</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <div>
+                                    <h5><a href="https://alpari.com/en/registration/?platform=mt4">Open an account</a></h5>
+                                    <p>
+                                        If you have never worked with Forex before, you can get acquainted 
+                                        with the ins and outs of currency trading on a demo account with virtual 
+                                        funds. With a demo account, you'll be able to explore the Forex market from within and develop your own trading strategy.
+                                    </p>
+                                </div>
+                                <div>
+                                    <h5><a href="https://alpari.com/en/registration/?platform=mt4">Download the trading terminal</a></h5>
+                                    <p>
+                                    After you have opened an account, whether it be a demo or live account, 
+                                    you will need to download MetaTrader 4 or 5; a special program for trading 
+                                    on the Forex market. In the terminal, you can keep track of market quotes, 
+                                    make trades by opening and closing positions, and stay up to date with financial news. 
+                                    The terminal is available on PC as well as on mobile devices.
+                                    </p>
+                                </div>
+                                <div>
+                                <h5><a href="https://alpari.com/en/registration/?platform=mt4">Top up your account and start trading</a></h5>
+                                <p>
+                                You can start trading on the Forex market with any amount of funds on your account. 
+                                If you would like to try trading Forex on a live account, 
+                                but you'd also like to keep risk to a minimum, try trading with a nano.mt4 account, 
+                                where currency is traded in eurocents and US dollar cents.
+                                </p>
+
+                                </div>
+                        </Modal.Body>
+                        <Modal.Footer>
+                            <Button variant="success" onClick={handleClose}>
+                                Close
+                            </Button>
+
+                        </Modal.Footer>
+                    </Modal>
+                   
             <NavStyle>
                 <Contain>
                     <Navbar bg="" expand="lg">
@@ -158,16 +210,10 @@ const Landing = () => {
                                                     <Col lg={6} md={6} sm={6}>
                                                         <Row>
                                                             <Col lg={12}>
-                                                                <p>
-                                                                MATRIX BONUS IS EARNED AFTER A STAGE IS COMPLETED. I.E, 
-                                                                WHEN YOU COMPLETE STAGE 1, YOU GET A MATRIX BONUS OF #10, 
-                                                                I,E #3,500. STAGE 2, YOU GET $1,000 I.E #350,000. STAGE 3, 
-                                                                $3,000 I.E #1,050,000. STAGE 4, $6,000 I.E #2,100,000. 
-                                                                STAGE 5 PAYS $12,000 I.E #4,200,000
-                                                                </p>
+                                                                <p>To deliver cutting edge FOREX training and coaching in a fun filled, relaxed manner.</p>
                                                             </Col>
                                                             <Col lg={12}>
-                                                                <Button>Learn More</Button>
+                                                                <Button onClick={displayModal}>Learn More</Button>
                                                             </Col>
                                                         </Row>
                                                     </Col>
@@ -203,16 +249,10 @@ const Landing = () => {
                                                     <Col lg={6} md={6} sm={6}>
                                                         <Row>
                                                             <Col lg={12}>
-                                                                <p>
-                                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                                                                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-                                                                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
-                                                                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui 
-                                                                    officia deserunt mollit anim id est laborum.
-                                                                </p>
+                                                                <p>To help two million people around the world find financial freedom and live their dreams through FOREX trading, by 2030. </p>
                                                             </Col>
                                                             <Col lg={12}>
-                                                                <Button>Learn More</Button>
+                                                                <Button onClick={displayModal}>Learn More</Button>
                                                             </Col>
                                                         </Row>
                                                     </Col>
@@ -249,15 +289,30 @@ const Landing = () => {
                                                         <Row>
                                                             <Col lg={12}>
                                                                 <p>
-                                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                                                                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-                                                                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
-                                                                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui 
-                                                                    officia deserunt mollit anim id est laborum.
+                                                                Right Steps Foundation is a leading Non Governmental 
+                                                                Organization gaining popularity around the African 
+                                                                Continent as a leading provider of cutting edge training 
+                                                                and coaching in the areas of trading financial instruments 
+                                                                like FOREX, 
+                                                                Global Stocks, Commodities, Futures, Binary Options, etc.
+                                                                </p>
+                                                                <p>
+                                                                The FOREX is by far the largest financial market in the 
+                                                                world with a daily turnover of 5.3 Trillion dollars. 
+                                                                The Forex (FOReign EXchange) market appeared at the end 
+                                                                of the 1970s after many countries decided to unpeg their 
+                                                                currency value from that of the US dollar or gold. 
+                                                                This led to the formation of an international market 
+                                                                on which currency could be exchanged and traded freely. 
+                                                                Today, Forex is the largest financial market in the world. 
+                                                                It doesn’t matter where you live or even where you are right now; 
+                                                                as long as you have access to the Internet, a trading terminal, and 
+                                                                an account with a Forex broker, all the instruments 
+                                                                and opportunities of Forex are available to you.
                                                                 </p>
                                                             </Col>
                                                             <Col lg={12}>
-                                                                <Button>Learn More</Button>
+                                                                <Button onClick={displayModal}>Learn More</Button>
                                                             </Col>
                                                         </Row>
                                                     </Col>
@@ -294,15 +349,28 @@ const Landing = () => {
                                                         <Row>
                                                             <Col lg={12}>
                                                                 <p>
-                                                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                                                                    labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-                                                                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
-                                                                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui 
-                                                                    officia deserunt mollit anim id est laborum.
+                                                                FOREX is about trying to ascertain the direction 
+                                                                in which the value of a currency will go and make a 
+                                                                trade for the purchase or sale of that currency. 
+                                                                As such, by buying a currency cheaper and selling it for 
+                                                                more, traders earn money on the Forex market. Traders 
+                                                                make their decisions based on the analysis of all factors 
+                                                                that can affect prices; allowing them to work out precisely 
+                                                                in which direction prices are moving. You can make a profit 
+                                                                on the Forex market when the value of a currency drops as well 
+                                                                as when it increases. But the truth is that making money in the 
+                                                                FOREX market is not as easy as it sounds. We also found out that 
+                                                                the best approach to helping people find their feet in this market is 
+                                                                by coaching and not just training. Which is why we launched our FOREX academy 
+                                                                where people can learn FOREX trading at their pace and convenience. 
+                                                                And all that is required to be a lifetime member of Right Steps Foundation so that 
+                                                                you can learn to trade the FOREX like a PRO is a onetime donation of $30 only. 
+                                                                Furthermore, traders can make trades 
+                                                                on the Forex market from anywhere in the world.
                                                                 </p>
                                                             </Col>
                                                             <Col lg={12}>
-                                                                <Button>Learn More</Button>
+                                                                <Button onClick={displayModal}>Learn More</Button>
                                                             </Col>
                                                         </Row>
                                                     </Col>
@@ -343,7 +411,7 @@ const Landing = () => {
                                                 max: 3000,
                                                 min: 1024
                                               },
-                                              items: 4,
+                                              items: 3,
                                               partialVisibilityGutter: 40
                                             },
                                             mobile: {
@@ -376,7 +444,7 @@ const Landing = () => {
                                                 rounded
                                                 />
 
-                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Fixing CSS load order/style.chunk.css incorrect in Nextjs</p>
+                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Basics of Global Stocks Trading</p>
                                           </Col>
                                       
                                           <Col lg={8}>
@@ -387,7 +455,7 @@ const Landing = () => {
                                                 rounded
                                                 />
 
-                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Fixing CSS load order/style.chunk.css incorrect in Nextjs</p>
+                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Intermediate Global Stocks trading</p>
                                           </Col>
                                           <Col lg={8}>
                                               <Image 
@@ -397,9 +465,9 @@ const Landing = () => {
                                                 rounded
                                                 />
 
-                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Fixing CSS load order/style.chunk.css incorrect in Nextjs</p>
+                                              <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Advanced Global Stocks Trading.</p>
                                           </Col>
-                                          <Col lg={8}>
+                                          {/* <Col lg={8}>
                                               <Image 
                                                 src={Courses4}
                                                 height="160px"
@@ -408,7 +476,7 @@ const Landing = () => {
                                                 />
 
                                               <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Fixing CSS load order/style.chunk.css incorrect in Nextjs</p>
-                                          </Col>
+                                          </Col> */}
                                         </CarouselSlide>
                                     </Col>
                                 </Row>
@@ -588,7 +656,12 @@ const Landing = () => {
                                               </Accordion.Toggle>
                                             </Card.Header>
                                             <Accordion.Collapse eventKey="0">
-                                              <Card.Body>Hello! I'm the body</Card.Body>
+                                              <Card.Body>
+                                                  <h5>WE HAVE A NETWORK MARKETING PROGRAM AND IT IS STRICTLY MEMBERSHIP BASED.
+                                                  $30 IS THE MEMBERSHIP FEE</h5>
+                                                  <h6>STAGE 1</h6>
+                                                  <p> IS THE FEEDER BOARD OF A 2 BY 2 MATRIX </p>
+                                              </Card.Body>
                                             </Accordion.Collapse>
                                           </Card>
                                           <Card>
@@ -599,18 +672,32 @@ const Landing = () => {
                                               </Accordion.Toggle>
                                             </Card.Header>
                                             <Accordion.Collapse eventKey="1">
-                                              <Card.Body>Hello! I'm another body</Card.Body>
+                                              <Card.Body>
+                                                  <p>
+                                                  EVERY MEMBER MUST HAVE ATLEAST TWO PERSONALLY ENROLLED MEMBERS. 
+                                                  THE SIGN UP FEE IS $30
+
+                                                  </p>
+                                              </Card.Body>
                                             </Accordion.Collapse>
                                           </Card>
                                           <Card>
                                             <Card.Header>
                                               <Accordion.Toggle as={Button} variant="link" eventKey="2">
-                                              <h3>Do i get good quality?</h3>
+                                              <h3>How Do I Earn?</h3>
 
                                               </Accordion.Toggle>
                                             </Card.Header>
                                             <Accordion.Collapse eventKey="2">
-                                              <Card.Body>Hello! I'm another body</Card.Body>
+                                              <Card.Body>
+                                                  <p>MEMBERS EARN IN FOUR MAJOR WAYS</p>
+                                                  <ul>
+                                                      <li><b>REFERRAL BONUS</b>: Members earns 20% of signup fee as referral bonus for all personal referrals. i.e. $6</li>
+                                                      <li><b>MATRIX BONUS</b>: Members earns matrix bonus each time they advance to a new stage. Matrix bonus for completing stage 1 is $10, stage 2 is $1000, stage 3 is $3000, stage 4 is $6000, and stage 5 is $12000.</li>
+                                                      <li><b>MATCHING BONUS</b>: A matching bonus of 10% is paid to a member each time a personally enrolled member earns a matrix bonus.</li>
+                                                      <li><b>AWARD /INCENTIVES</b>:  A MEMBER GETS A LAPTOP/IPAD ON COMPLETING STAGE 2. A BRAND NEW CAR ON COMPLETING STAGE 3. AN SUV ON COMPLETING STAGE 4. A BRAND NEW DUPLEX ON COMPLETING STAGE 5.</li>
+                                                  </ul>
+                                              </Card.Body>
                                             </Accordion.Collapse>
                                           </Card>
                                           <Card>
@@ -621,7 +708,15 @@ const Landing = () => {
                                               </Accordion.Toggle>
                                             </Card.Header>
                                             <Accordion.Collapse eventKey="3">
-                                              <Card.Body>Hello! I'm another body</Card.Body>
+                                              <Card.Body>
+                                                  <ul>
+                                                      <li>STAGE 1:  Matrix bonus of $10</li>
+                                                      <li>STAGE 2: Matrix bonus of $1000 and Laptop/IPad.</li>
+                                                      <li>STAGE 3: Matrix bonus of $3000 and a brand new car.</li>
+                                                      <li>STAGE 4: Matrix bonus of $6000 and a brand new SUV.</li>
+                                                      <li>STAGE 5: Matrix bonus of $12,000 and a brand new 4 bedroom Duplex.</li>
+                                                  </ul>
+                                              </Card.Body>
                                             </Accordion.Collapse>
                                           </Card>
                                         </Accordion>
@@ -664,14 +759,19 @@ const Landing = () => {
                                     <Col lg={3} md={3} sm={6} xs={6}>
                                         <h5>Contact</h5>
                                         <h6>
-                                            <a href="mailto:">ayo@webpage.com.ng</a>
+                                            {/* <a href="mailto:">ayo@webpage.com.ng</a> */}
+                                            Right Steps Foundation.
+
+
+
                                         </h6>
                                         <h6>
-                                            <a href="tel:+2347033975607">0703 397 5607</a>
+                                        The Box Office Hub.
+                                        Discovery Mall, Plot 215 Konoko Crescent, Wuse 2,
+                                        Abuja.
                                         </h6>
                                         <h6>
-                                            <a href="tel:+2348100000000">0810 000 0000</a>
-                                            
+                                            <a href="tel:+2347033975607">08060025724</a>
                                         </h6>
                                     </Col>
                                     <Col lg={3} md={3} sm={6} xs={6}>

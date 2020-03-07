@@ -128,7 +128,7 @@ export const Body = () => {
             case 'member':
                 if (memberCurrentPage > !memberStartPage) {
                     let newPageNo = memberCurrentPage + 1
-                    let newSkipValue = 10 + memberOffset
+                    let     newSkipValue = 10 + memberOffset
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
                     // fetchMembers("")

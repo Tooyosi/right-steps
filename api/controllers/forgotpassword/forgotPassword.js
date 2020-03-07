@@ -22,7 +22,12 @@ module.exports = {
                     token: null
                 })
                 var smtpTransport = nodemailer.createTransport({
-                    service: "Gmail",
+                    service: "https://business45.web-hosting.com",
+                    port: 465,
+                    secure: true,
+                    tls: {
+                        rejectUnauthorized:false
+                    },
                     auth: {
                         user: process.env.EMAIL,
                         pass: process.env.EMAIL_PASSWORD
@@ -31,7 +36,7 @@ module.exports = {
 
                 var mailOptions = {
                     to: user.email_address,
-                    from: "Right Steps",
+                    from: process.env.EMAIL,
                     subject: "Right-Steps Password Reset",
                     html: `Your Password has been reset. <br/>Kindly signin the website with the following credentials:<br/>Username: ${username}<br/>Password: ${ts} `
                 };

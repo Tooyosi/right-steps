@@ -65,31 +65,38 @@ let ancestors = async (id, stage) => {
                 if (parent.current_stage == 1) {
                     if ((child1.current_stage == 1 && child2.current_stage == 1)) {
                         let parentId
-                        if (parent.dataValues.parentMember_id != null) {
+                        if (parent.parentMember_id != null) {
                             let stage2upline = await models.Stage2.findOne({
                                 where: {
-                                    member_id: parent.dataValues.parentMember_id
+                                    member_id: parent.parentMember_id
                                 }
                             })
-
-                            parentId = stage2upline.dataValues.stage_2_id
+                            if (stage2upline != null) {
+                                parentId = stage2upline.stage_2_id
+                            } else {
+                                console.log(parent.parentMember_id)
+                                console.log('Cant move up yet')
+                            }
                         } else {
                             parentId = null
 
                         }
                         try {
-                            let newStage2 = await models.Stage2.create({
-                                member_id: parent.dataValues.member_id,
-                                user_id: parent.dataValues.user_id,
-                                upline_id: parent.dataValues.upline_id,
-                                parentId: parentId,
-                                parentStage_2_id: parentId,
-                                current_stage: 2
-                            })
+                            if (stage2upline !== null) {
+                                let newStage2 = await models.Stage2.create({
+                                    member_id: parent.member_id,
+                                    user_id: parent.user_id,
+                                    upline_id: parent.upline_id,
+                                    parentId: parentId,
+                                    parentStage_2_id: parentId,
+                                    current_stage: 2
+                                })
+
+                                newAncestorStage = 2;
+                                bonusAmount = 10;
+                            }
                         } catch (error) {
                         }
-                        newAncestorStage = 2;
-                        bonusAmount = 10;
                     }
                 }
                 // return console.log(parent.children[1].children[1].children[1])
@@ -105,6 +112,11 @@ let ancestors = async (id, stage) => {
                         status: 'Pending',
                         date: dateValue
                     }
+                    let updatedUserTable = await models.User.findOne({
+                        where: {
+                            user_id: parent.user_id
+                        }
+                    })
                     switch (newAncestorStage) {
                         case 3:
                             // completed stage 2
@@ -187,7 +199,7 @@ let ancestors = async (id, stage) => {
                         date: dateValue
                     })
 
-
+                    await transferCreate(updatedUserTable.user_id, `Stage ${newAncestorStage} Matrix bonus`, dateValue, bonusAmount, 'Right Steps', `${updatedUserTable.firstname} ${updatedUserTable.lastname}`)
 
                     if (ancestorUpline !== null) {
                         let uplineBonus = (bonusAmount * 0.1)
@@ -198,6 +210,7 @@ let ancestors = async (id, stage) => {
                             date: dateValue
                         })
                         let parentUplineNotification = await notificationAndAccount(ancestorUpline.user_id, `Congratulations, You have received a bonus of $${uplineBonus} for the upgrade of your downline ${parent.attributes.username} to stage ${newAncestorStage}`, uplineBonus, dateValue)
+                        await transferCreate(ancestorUpline.user_id, `${updatedUserTable.firstname} ${updatedUserTable.lastname}'s stage ${newAncestorStage} matching Bonus`, dateValue, uplineBonus, 'Right Steps', `${updatedUserTable.firstname} ${updatedUserTable.lastname}`)
 
                     }
                     console.log(parent.attributes.username, "here")
@@ -298,7 +311,12 @@ let ancestors = async (id, stage) => {
                                     }
                                 })
 
-                                parentId = stage3upline.dataValues.stage_3_id
+                                if (stage3upline != null) {
+                                    parentId = stage3upline.dataValues.stage_3_id
+                                } else {
+                                    console.log(parent.parentMember_id)
+                                    console.log('Cant move up yet')
+                                }
                             } else {
                                 parentId = null
 
@@ -327,8 +345,12 @@ let ancestors = async (id, stage) => {
                                         member_id: parent.dataValues.member_id
                                     }
                                 })
-
-                                parentId = stage4upline.dataValues.stage_4_id
+                                if (stage4upline != null) {
+                                    parentId = stage4upline.dataValues.stage_4_id
+                                } else {
+                                    console.log(parent.parentMember_id)
+                                    console.log('Cant move up yet')
+                                }
                             } else {
                                 parentId = null
 
@@ -358,7 +380,12 @@ let ancestors = async (id, stage) => {
                                     }
                                 })
 
-                                parentId = stage4upline.dataValues.stage_5_id
+                                if (stage4upline != null) {
+                                    parentId = stage4upline.dataValues.stage_5_id
+                                } else {
+                                    console.log(parent.parentMember_id)
+                                    console.log('Cant move up yet')
+                                }
                             } else {
                                 parentId = null
 
@@ -389,7 +416,8 @@ let ancestors = async (id, stage) => {
                     }
                 }
 
-                if (newAncestorStage !== undefined) {let stageAward
+                if (newAncestorStage !== undefined) {
+                    let stageAward
                     let awardNotification
                     let awards
                     let awardNotificationCreate
@@ -454,7 +482,7 @@ let ancestors = async (id, stage) => {
                             awardNotification = `Congratulations, you have received award of ${stageAward[0].name} for completing stage ${(Number(newAncestorStage) - 1)}.`
                             // create new award
                             awards = await models.Awards.create(awardObj);
-                            
+
                             await updatedUserTable.update({
                                 isCompleted: 1
                             })

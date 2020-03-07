@@ -3,7 +3,12 @@ const { logger } = require('./../../loggers/logger')
 
 let sendMail = async (email, from, subject, text) => {
     var smtpTransport = nodemailer.createTransport({
-        service: "Gmail",
+        service: "https://business45.web-hosting.com",
+        port: 465,
+        secure: true,
+        tls: {
+            rejectUnauthorized:false
+        },
         auth: {
             user: process.env.EMAIL,
             pass: process.env.EMAIL_PASSWORD
@@ -12,7 +17,7 @@ let sendMail = async (email, from, subject, text) => {
 
     var mailOptions = {
         to: email,
-        from: from,
+        from: process.env.EMAIL,
         subject: subject,
         text: text
     };
