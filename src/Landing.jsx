@@ -449,7 +449,7 @@ const Landing = () => {
 
                                                 </ol>
                                             </Col>
-                                            <Col lg={8}>
+                                            {/* <Col lg={8}>
                                                 <Image
                                                     src={Courses3}
                                                     height="160px"
@@ -458,7 +458,7 @@ const Landing = () => {
                                                 />
 
                                                 <p style={{ width: "60%", margin: "0px auto", marginTop: "20px" }}>Advanced Global Stocks Trading.</p>
-                                            </Col>
+                                            </Col> */}
                                             {/* <Col lg={8}>
                                               <Image 
                                                 src={Courses4}
