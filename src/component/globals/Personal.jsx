@@ -150,9 +150,9 @@ export const Personal = withRouter((props) => {
                                     </Link>
                                 </Col>
                                 <Col lg={12}>
-                                    <ButtonStyle style={{ width: "100%" }} className="btn">
+                                    {/* <ButtonStyle style={{ width: "100%" }} className="btn">
                                         Get lifetime membership
-                                            </ButtonStyle>
+                                            </ButtonStyle> */}
                                 </Col>
 
                             </Row>

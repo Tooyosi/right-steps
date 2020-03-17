@@ -128,7 +128,7 @@ export const Body = () => {
             case 'member':
                 if (memberCurrentPage > !memberStartPage) {
                     let newPageNo = memberCurrentPage + 1
-                    let     newSkipValue = 10 + memberOffset
+                    let newSkipValue = 10 + memberOffset
                     updateMemberCurrentPage(newPageNo)
                     updateMemberOffset(newSkipValue)
                     // fetchMembers("")
@@ -231,11 +231,11 @@ export const Body = () => {
     useEffect(() => {
         // glitch to prevent the balance display from hiding on the personal details component 
         // if (notificationOffset === 0) {
-            updateMemberId({
-                id: '',
-                loading: false
-            })
-            fetchMembers("")
+        updateMemberId({
+            id: '',
+            loading: false
+        })
+        fetchMembers("")
         // }
         fetchNotifications("")
     }, [notificationOffset, memberOffset])
@@ -274,15 +274,21 @@ export const Body = () => {
                                                     <Image src={Courses1} rounded fluid />
                                                 </Col>
                                                 <Col lg={6}>
-                                                    <h4>Business Administration</h4>
-                                                    <p>Learn the keys to business success</p>
+                                                    <h4>FOREX</h4>
+                                                    {/* <p>Learn the keys to business success</p> */}
                                                 </Col>
                                                 <Col lg={12}>
-                                                    <p>
+                                                    {/* <p>
                                                         Lorem ipsum Lorem ipsum dolor sit amet, Lorem ipsumdolor sit amet
                                                         consectetuer dipiscing elit consectetuer adipiscing elitdolor sit
                                                         amet consectetuer dipiscing elit
-                                        </p>
+                                        </p> */}
+                                                    <ol>
+                                                        <li>Basics of FOREX trading</li>
+                                                        <li>Intermediate  FOREX trading</li>
+                                                        <li>Advanced   FOREX trading</li>
+
+                                                    </ol>
                                                     <div className="text-right">
                                                         <ButtonStyle className="btn">
                                                             Register
@@ -297,15 +303,21 @@ export const Body = () => {
                                                     <Image src={Courses2} rounded fluid />
                                                 </Col>
                                                 <Col lg={6}>
-                                                    <h4>MS-Excel Business</h4>
-                                                    <p>platform for tracking records</p>
+                                                    <h4>GLOBAL STOCKS</h4>
+                                                    {/* <p>platform for tracking records</p> */}
                                                 </Col>
                                                 <Col lg={12}>
-                                                    <p>
+                                                    {/* <p>
                                                         Lorem ipsum Lorem ipsum dolor sit amet, Lorem ipsumdolor sit amet
                                                         consectetuer dipiscing elit consectetuer adipiscing elitdolor sit
                                                         amet consectetuer dipiscing elit
-                                        </p>
+                                                    </p> */}
+                                                    <ol>
+                                                    <li>Basics of Global Stocks  trading</li>
+                                                    <li>Intermediate  Global Stocks  trading</li>
+                                                    <li>Advanced   Global Stocks  trading</li>
+
+                                                </ol>
                                                     <div className="text-right">
                                                         <ButtonStyle className="btn">
                                                             Register

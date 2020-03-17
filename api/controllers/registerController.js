@@ -7,6 +7,7 @@ const dateValue = require('./functions/dateValue')
 const updateAccount = require('./functions/updateAccount')
 const updateAncestors = require('./functions/getAncestors')
 const transferCreate = require('./functions/createTransfer')
+const md5 = require('md5')
 module.exports = {
     post: ('/', async (req, res) => {
         let { firstname, lastname, phone, email, gender, dob, country, state, username, sponsor, upline, role } = req.body;
@@ -64,7 +65,7 @@ module.exports = {
                                 country: country,
                                 state: state,
                                 status: 0,
-                                password: ts,
+                                password: md5(ts),
                                 date_created: dateValue,
                                 last_login_date: dateValue,
                             }).save()
@@ -73,7 +74,7 @@ module.exports = {
                                 // create an account for newly registered member
                                 let userAccount = await models.Account.create({
                                     user_id: newUser.dataValues.user_id,
-                                    balance: signupFee,
+                                    balance: 0,
                                     date_updated: dateValue,
                                 })
 
@@ -109,7 +110,7 @@ module.exports = {
 
                                 };
                                 // add to new users transaction list
-                                await transferCreate(newUser.dataValues.user_id, 'Registration fee', dateValue, 30, `${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, `${firstname} ${lastname}` )
+                                // await transferCreate(newUser.dataValues.user_id, 'Registration fee', dateValue, 30, `${userSponsor.dataValues.firstname} ${userSponsor.dataValues.lastname}`, `${firstname} ${lastname}` )
 
                                 let newBalance = bonusAmount + balance
 

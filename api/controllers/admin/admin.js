@@ -1,7 +1,7 @@
 const models = require('../../connections/sequelize')
 const { logger } = require('../../loggers/logger')
 const nodemailer = require("nodemailer");
-
+const md5 = require('md5')
 module.exports = {
     get: ('/', async (req, res) => {
         let userId = req.params.id;
@@ -44,7 +44,7 @@ module.exports = {
                 country: country,
                 state: state,
                 status: 0,
-                password: ts,
+                password: md5(ts),
                 date_created: new Date().toISOString().slice(0, 19).replace('T', ' '),
                 last_login_date: new Date().toISOString().slice(0, 19).replace('T', ' '),
             }).save()

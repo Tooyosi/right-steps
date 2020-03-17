@@ -14,7 +14,11 @@ app.use(/.*/, function (req, res, next) {
 });
 
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'docs', 'index.html'))
+    if (host.match(/^www\..*/i)) {
+        res.sendFile(path.resolve(__dirname, 'docs', 'index.html'))
+    } else {
+        res.redirect(301, "https://www." + host);
+    }
 })
 
 app.listen(3000, process.env.IP, () => {

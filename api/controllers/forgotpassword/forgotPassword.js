@@ -3,6 +3,8 @@ const sequelize = require('../../connections/connection')
 const { logger } = require('../../loggers/logger')
 const dateValue = require('../functions/dateValue');
 const nodemailer = require('nodemailer')
+const md5 = require('md5')
+
 module.exports = {
     post:  ('/', async (req, res) =>{
         let {username} = req.body
@@ -18,7 +20,7 @@ module.exports = {
                 return res.status(400).json('User does not exist')
             }else{
                 let updatedUser = await user.update({
-                    password: ts,
+                    password: md5(ts),
                     token: null
                 })
                 var smtpTransport = nodemailer.createTransport({
