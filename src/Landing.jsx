@@ -280,7 +280,7 @@ const Landing = () => {
                                                                 and opportunities of Forex are available to you.
                                                                 </p>
 
-                                                                <p>
+                                                            <p>
                                                                 FOREX is about trying to ascertain the direction
                                                                 in which the value of a currency will go and make a
                                                                 trade for the purchase or sale of that currency.
@@ -312,7 +312,7 @@ const Landing = () => {
                                         <Col className="details" style={{ display: about == 4 ? "block" : "none" }} lg={12}>
                                             <Row>
                                                 <Col lg={6} md={6} sm={6}>
-                                                    <Image src={Philosophy} 
+                                                    <Image src={Philosophy}
                                                         rounded
                                                         width="100%"
                                                         fluid
@@ -321,7 +321,7 @@ const Landing = () => {
                                                 <Col lg={6} md={6} sm={6}>
                                                     <Row>
                                                         <Col lg={12}>
-                                                            <p style={{textTransform: "capitalize"}}>
+                                                            <p style={{ textTransform: "capitalize" }}>
                                                                 {/* FOREX is about trying to ascertain the direction
                                                                 in which the value of a currency will go and make a
                                                                 trade for the purchase or sale of that currency.
@@ -340,11 +340,11 @@ const Landing = () => {
                                                                 you can learn to trade the FOREX like a PRO is a onetime donation of $30 only.
                                                                 Furthermore, traders can make trades
                                                                 on the Forex market from anywhere in the world. */}
-                                                                At right steps foundation, we believe in transformational leadership, 
-                                                                so we literally take our members by the hand and show them the inn roads of 
-                                                                the global financial markets until they are comfortable enough to trade the 
-                                                                markets for themselves while helping others do the same. So with a one time donation of $30, 
-                                                                you get a lifetime memberships  and become a lifetime student of right steps foundation and 
+                                                                At right steps foundation, we believe in transformational leadership,
+                                                                so we literally take our members by the hand and show them the inn roads of
+                                                                the global financial markets until they are comfortable enough to trade the
+                                                                markets for themselves while helping others do the same. So with a one time donation of $30,
+                                                                you get a lifetime memberships  and become a lifetime student of right steps foundation and
                                                                 learn how to trade the global financial markets at your own pace and convinience.
                                                                 </p>
                                                         </Col>
@@ -641,34 +641,16 @@ const Landing = () => {
                                             <Card.Header>
                                                 <h3>Frequently Asked Questions</h3>
                                             </Card.Header>
-                                            <Card.Header>
+                                            {/* <Card.Header>
                                                 <Accordion.Toggle as={Button} variant="link" eventKey="0">
-                                                    <h3>How Does It Work?</h3>
+
 
                                                 </Accordion.Toggle>
                                             </Card.Header>
                                             <Accordion.Collapse eventKey="0">
                                                 <Card.Body>
-                                                    <h5>WE HAVE A NETWORK MARKETING PROGRAM AND IT IS STRICTLY MEMBERSHIP BASED, $30 IS THE MEMBERSHIP FEE</h5>
-                                                    <h6>STAGE 1</h6>
-                                                    <p> IS THE FEEDER BOARD OF A 2 BY 2 MATRIX </p>
-                                                    <Image
-                                                    src={Stage1}
-                                                    height="160px"
-                                                    width="40%"
-                                                    rounded
-                                                    />
-                                                    <h6>STAGES 2 TO 5 ARE ALL 2 BY 5 MATRIX SYSTEM</h6>
-                                                    <Image
-                                                    src={Stage2}
-                                                    height="160px"
-                                                    width="40%"
-                                                    rounded
-                                                    />
-                                                    <p>MEMBERS ARE EXITED FROM THE PROGRAMME AFTER COMPLETING STAGE 5, 
-                                                        AFTER BEING AWARDED WITH A BRAND NEW FOUR BEDROOM DUPLEX AND $12,000.</p>
                                                 </Card.Body>
-                                            </Accordion.Collapse>
+                                            </Accordion.Collapse> */}
                                         </Card>
                                         <Card>
                                             <Card.Header>
@@ -724,6 +706,25 @@ const Landing = () => {
                                     </Accordion>
                                 </Col>
                                 <Col lg={6}>
+                                    <h3>How Does It Work?</h3>
+                                    <h5>WE HAVE A NETWORK MARKETING PROGRAM AND IT IS STRICTLY MEMBERSHIP BASED, $30 IS THE MEMBERSHIP FEE</h5>
+                                    <h6>STAGE 1</h6>
+                                    <p> IS THE FEEDER BOARD OF A 2 BY 2 MATRIX </p>
+                                    <Image
+                                        src={Stage1}
+                                        height="160px"
+                                        width="40%"
+                                        rounded
+                                    />
+                                    <h6>STAGES 2 TO 5 ARE ALL 2 BY 5 MATRIX SYSTEM</h6>
+                                    <Image
+                                        src={Stage2}
+                                        height="160px"
+                                        width="40%"
+                                        rounded
+                                    />
+                                    <p>MEMBERS ARE EXITED FROM THE PROGRAMME AFTER COMPLETING STAGE 5,
+                                                        AFTER BEING AWARDED WITH A BRAND NEW FOUR BEDROOM DUPLEX AND $12,000.</p>
 
                                 </Col>
                             </Row>
