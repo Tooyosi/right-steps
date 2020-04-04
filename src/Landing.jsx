@@ -13,8 +13,10 @@ import Courses1 from './../assets/forex_trading.jpg'
 import Stage1 from './../assets/stage1.jpg'
 import Stage2 from './../assets/stage2.jpg'
 import Courses2 from './../assets/global_stocks.jpg'
-import Courses3 from './../assets/courses3.png'
-import Courses4 from './../assets/courses4.png'
+import IntermediateStock from './../assets/intermediate_stock.jpg'
+import AdvancedStock from './../assets/advanced_stock.jpg'
+import Advanced from './../assets/advanced.jpg'
+import Intermediate from './../assets/intermediate.jpg'
 import Business from './../assets/business.jpg'
 import Vision from './../assets/vision.jpg'
 import Philosophy from './../assets/philosophy.jpg'
@@ -498,14 +500,44 @@ const Landing = () => {
                                                     width="90%"
                                                     rounded
                                                 />
-                                                <h5 style={{ width: "60%", margin: "0px auto", marginTop: "20px" }}>FOREX</h5>
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Basics of FOREX trading</h5>
                                                 {/* <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Basics of Global Stocks Trading</p> */}
                                                 <ol>
-                                                    <li>Basics of FOREX trading</li>
-                                                    <li>Intermediate  FOREX trading</li>
-                                                    <li>Advanced   FOREX trading</li>
 
                                                 </ol>
+                                            </Col>
+                                            <Col lg={8}>
+                                                <Image
+                                                    src={IntermediateStock}
+                                                    height="160px"
+                                                    width="90%"
+                                                    rounded
+                                                />
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Intermediate  FOREX trading</h5>
+                                                {/* <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Basics of Global Stocks Trading</p> */}
+                                               
+                                            </Col>
+                                            <Col lg={8}>
+                                                <Image
+                                                    src={AdvancedStock}
+                                                    height="160px"
+                                                    width="90%"
+                                                    rounded
+                                                />
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Advanced  FOREX trading</h5>
+                                                {/* <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Basics of Global Stocks Trading</p> */}
+                                               
+                                            </Col>
+                                            <Col lg={8}>
+                                                <Image
+                                                    src={Intermediate}
+                                                    height="160px"
+                                                    width="90%"
+                                                    rounded
+                                                />
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Basics of Global Stocks  trading</h5>
+                                                {/* <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Basics of Global Stocks Trading</p> */}
+                                               
                                             </Col>
 
                                             <Col lg={8}>
@@ -515,26 +547,21 @@ const Landing = () => {
                                                     width="90%"
                                                     rounded
                                                 />
-                                                <h5 style={{ width: "60%", margin: "0px auto", marginTop: "20px" }}>GLOBAL STOCKS</h5>
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Intermediate  Global Stocks  trading</h5>
 
                                                 {/* <p style={{width: "60%", margin: "0px auto", marginTop: "20px"}}>Intermediate Global Stocks trading</p> */}
-                                                <ol>
-                                                    <li>Basics of Global Stocks  trading</li>
-                                                    <li>Intermediate  Global Stocks  trading</li>
-                                                    <li>Advanced   Global Stocks  trading</li>
-
-                                                </ol>
+                                                
                                             </Col>
-                                            {/* <Col lg={8}>
+                                            <Col lg={8}>
                                                 <Image
-                                                    src={Courses3}
+                                                    src={Advanced}
                                                     height="160px"
                                                     width="90%"
                                                     rounded
                                                 />
 
-                                                <p style={{ width: "60%", margin: "0px auto", marginTop: "20px" }}>Advanced Global Stocks Trading.</p>
-                                            </Col> */}
+                                                <h5 style={{ width: "100%", margin: "0px auto", marginTop: "20px" }}>Advanced Global Stocks Trading.</h5>
+                                            </Col>
                                             {/* <Col lg={8}>
                                               <Image 
                                                 src={Courses4}
