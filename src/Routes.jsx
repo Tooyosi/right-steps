@@ -13,6 +13,7 @@ import { TransactionsPage } from './component/transactions/Transactions';
 import { Settings } from './component/settings/Settings';
 import { ForgotPassword } from './registeration/ForgotPassword';
 import NoMatch from './component/globals/NoMatch';
+import { Education } from './component/Education/Education';
 
 
 
@@ -31,6 +32,7 @@ const Routes = () => (
               <Route exact path="/members" component={MembersPage}></Route>
               <Route exact path="/balance" component={Balance}></Route>
               <Route exact path="/settings" component={Settings}></Route>
+              <Route exact path="/education" component={Education}></Route>
               <Route exact path="/transactions" component={TransactionsPage}></Route>
               <Route exact path="/forgot" component={ForgotPassword}></Route>
               <Route exact path="/referral/:id" component={Referral}></Route>

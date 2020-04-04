@@ -6,6 +6,7 @@ const middleware = require("../../middleware/middleware")
 const ancestors = require('../../controllers/functions/getAncestors')
 
 router.get('/:id', middleware.withAuth, userController.get)
+router.put('/:id/changePassword', middleware.withAuth, userController.changePassword)
 router.put('/', middleware.withAuth, userController.put)
 router.get('/bonus/:id',middleware.withAuth, userController.bonus)
 router.get('/ancestor/:id', async (req, res)=>{

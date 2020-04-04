@@ -5,6 +5,7 @@ const UserModel = require("../models/users");
 const BonusModel = require("../models/bonus");
 const BonusTypesModel = require("../models/bonus_types");
 const MembersModel = require("../models/members");
+const MembersAncestorsModel = require("../models/membersancestors");
 const AdminMembersModel = require("../models/admin_members");
 const AccountModel = require("../models/account");
 const RoleModel = require("../models/role");
@@ -39,6 +40,7 @@ models.Stage2 = Stage2Model(sequelize, Sequelize)
 models.Stage3 = Stage3Model(sequelize, Sequelize)
 models.Stage4 = Stage4Model(sequelize, Sequelize)
 models.Stage5 = Stage5Model(sequelize, Sequelize)
+models.MembersAncestors = MembersAncestorsModel(sequelize, Sequelize)
 // associations
 models.Requests.belongsTo(models.User, { foreignKey: "user_id", as: "requester", })
 models.Awards.belongsTo(models.AwardTypes, { foreignKey: "award_type_id", as: "type", })

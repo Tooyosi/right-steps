@@ -89,25 +89,13 @@ let ancestors = async (id, stage) => {
 
                                     parentId = stage2upline.stage_2_id
                                 } else {
-                                    // if upline hasnt moved, change upline to null
-                                    let removeOneLegUpline = await models.Members.findOne({
-                                        where: {
-                                            member_id: parent.member_id
-                                        }
-                                    })
-
-                                    removeOneLegUpline.update({
-                                        parentMember_id: null,
-                                        upline_id: 1
-                                    })
-
-
-                                    parentId = null
-                                    moveUp = true
+                                    
+                                    // if upline hasnt moved, dont allow to move up
+                                    moveUp = false
                                 }
                             } else {
                                 parentId = null
-                                moveUp = true
+                                moveUp = false
 
                             }
                         }
@@ -349,44 +337,20 @@ let ancestors = async (id, stage) => {
                                 if (parent.dataValues.parentStage_2_id != null) {
                                     let stage3upline = await models.Stage3.findOne({
                                         where: {
-                                            user_id: parent.dataValues.upline_id
+                                            member_id: parent.dataValues.member_id
                                         }
                                     })
+
                                     if (stage3upline != null) {
                                         parentId = stage3upline.dataValues.stage_3_id
                                         moveUp = true
                                     } else {
-                                        // if upline hasnt moved, change upline to null
-                                        let removeOneLegUpline = await models.Stage2.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        removeOneLegUpline.update({
-                                            parentStage_2_id: null,
-                                            upline_id: 1
-                                        })
-
-                                        let removeOneLegUpline1 = await models.Members.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-                                        if (removeOneLegUpline1 !== null) {
-                                            await removeOneLegUpline1.update({
-                                                parentMember_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-
-
-                                        parentId = null
-                                        moveUp = true
+                                        // if upline hasnt moved, dont allow to move up
+                                        moveUp = false
                                     }
                                 } else {
                                     parentId = null
-                                    moveUp = true
+                                    moveUp = false
 
                                 }
 
@@ -425,7 +389,7 @@ let ancestors = async (id, stage) => {
                                 if (parent.dataValues.parentStage_4_id != null) {
                                     let stage4upline = await models.Stage4.findOne({
                                         where: {
-                                            user_id: parent.dataValues.upline_id
+                                            member_id: parent.dataValues.member_id
                                         }
                                     })
                                     if (stage4upline != null) {
@@ -433,50 +397,11 @@ let ancestors = async (id, stage) => {
                                         moveUp = true
 
                                     } else {
-                                        // if upline hasnt moved, change upline to null
-                                        let removeOneLegUpline = await models.Stage3.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        await removeOneLegUpline.update({
-                                            parentStage_3_id: null,
-                                            upline_id: 1
-                                        })
-
-
-                                        let removeOneLegUpline2 = await models.Stage2.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        if (removeOneLegUpline2 !== null) {
-                                            await removeOneLegUpline2.update({
-                                                parentStage_2_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-
-                                        let removeOneLegUpline1 = await models.Members.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        if (removeOneLegUpline1 !== null) {
-                                            await removeOneLegUpline1.update({
-                                                parentMember_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-                                        parentId = null
-                                        moveUp = true
+                                        moveUp = false
                                     }
                                 } else {
                                     parentId = null
-                                    moveUp = true
+                                    moveUp = false
 
                                 }
 
@@ -516,7 +441,7 @@ let ancestors = async (id, stage) => {
                                 if (parent.dataValues.parentStage_5_id != null) {
                                     let stage4upline = await models.Stage5.findOne({
                                         where: {
-                                            user_id: parent.dataValues.upline_id
+                                            member_id: parent.dataValues.member_id
                                         }
                                     })
 
@@ -525,62 +450,11 @@ let ancestors = async (id, stage) => {
                                         moveUp = true
 
                                     } else {
-                                        // if upline hasnt moved, change upline to null
-                                        let removeOneLegUpline = await models.Stage4.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        await removeOneLegUpline.update({
-                                            parentStage_4_id: null,
-                                            upline_id: 1
-                                        })
-
-                                        let removeOneLegUpline3 = await models.Stage3.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        if (removeOneLegUpline3 !== null) {
-                                            await removeOneLegUpline.update({
-                                                parentStage_3_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-
-                                        let removeOneLegUpline2 = await models.Stage2.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        if (removeOneLegUpline2 !== null) {
-                                            await removeOneLegUpline2.update({
-                                                parentStage_2_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-
-                                        let removeOneLegUpline1 = await models.Members.findOne({
-                                            where: {
-                                                member_id: parent.dataValues.member_id
-                                            }
-                                        })
-
-                                        if (removeOneLegUpline1 !== null) {
-                                            await removeOneLegUpline1.update({
-                                                parentMember_id: null,
-                                                upline_id: 1
-                                            })
-                                        }
-                                        parentId = null
-                                        moveUp = true
+                                        moveUp = false
                                     }
                                 } else {
                                     parentId = null
-                                    moveUp = true
+                                    moveUp = false
                                 }
 
                             }

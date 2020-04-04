@@ -122,7 +122,6 @@ export const SignupForm = (props) => {
                         sponsor: referralID
                     });
                     try {
-                        console.log(result)
                         if (result.status == 201) {
                             let { data } = result
                             setError({

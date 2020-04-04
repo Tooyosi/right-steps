@@ -54,6 +54,23 @@ class WebService {
         return newRes
     }
 
+    async sendCall(url, method,data, token) {
+        let result
+        try {
+            result = await axios({
+                method: method,
+                data: data? data : null,
+                url: `${url}`,
+                // withCredentials: true ,
+
+            })
+
+        } catch (error) {
+            result = error
+        }
+        
+        return result
+    }
     async sendPut(url, data, id) {
         let result
         try {

@@ -257,11 +257,11 @@ export const Body = () => {
 
     return (
         <Row>
-            <Col lg={{ span: 9, order: 1 }} md={{ span: 8, order: 1 }} xs={{ order: 12 }}>
+            <Col lg={{ span: 9, order: 1 }}  md={{ span: 12, order: 12 }} xs={{ span: 12, order: 12 }} xs={{ order: 12 }}>
                 <h3>Dashboard</h3>
                 <DashboardStyle>
                     <Container fluid={true}>
-                        <Row>
+                        {/* <Row>
                             <Col className="courses" lg={12}>
                                 <Container fluid={true}>
                                     <Row>
@@ -275,14 +275,14 @@ export const Body = () => {
                                                 </Col>
                                                 <Col lg={6}>
                                                     <h4>FOREX</h4>
-                                                    {/* <p>Learn the keys to business success</p> */}
+                                                    <p>Learn the keys to business success</p>
                                                 </Col>
                                                 <Col lg={12}>
-                                                    {/* <p>
+                                                    <p>
                                                         Lorem ipsum Lorem ipsum dolor sit amet, Lorem ipsumdolor sit amet
                                                         consectetuer dipiscing elit consectetuer adipiscing elitdolor sit
                                                         amet consectetuer dipiscing elit
-                                        </p> */}
+                                        </p>
                                                     <ol>
                                                         <li>Basics of FOREX trading</li>
                                                         <li>Intermediate  FOREX trading</li>
@@ -304,14 +304,14 @@ export const Body = () => {
                                                 </Col>
                                                 <Col lg={6}>
                                                     <h4>GLOBAL STOCKS</h4>
-                                                    {/* <p>platform for tracking records</p> */}
+                                                    <p>platform for tracking records</p>
                                                 </Col>
                                                 <Col lg={12}>
-                                                    {/* <p>
+                                                    <p>
                                                         Lorem ipsum Lorem ipsum dolor sit amet, Lorem ipsumdolor sit amet
                                                         consectetuer dipiscing elit consectetuer adipiscing elitdolor sit
                                                         amet consectetuer dipiscing elit
-                                                    </p> */}
+                                                    </p>
                                                     <ol>
                                                     <li>Basics of Global Stocks  trading</li>
                                                     <li>Intermediate  Global Stocks  trading</li>
@@ -329,7 +329,7 @@ export const Body = () => {
                                     </Row>
                                 </Container>
                             </Col>
-                        </Row>
+                        </Row> */}
                         <Row>
                             <Col className="referral left" lg={6}>
                                 <Container fluid={true}>
@@ -482,7 +482,7 @@ export const Body = () => {
                     </Container>
                 </DashboardStyle>
             </Col>
-            <Col lg={{ span: 3, order: 12 }} md={{ span: 4, order: 12 }} xs={{ span: 12, order: 1 }}>
+            <Col lg={{ span: 3, order: 12 }} md={{ span: 12, order: 1 }} xs={{ span: 12, order: 1 }} xs={{ span: 12, order: 1 }}>
                 <Personal Data={{ name: "Mr. Tega Osemudiamen", balance: "25,000", stage: "4" }} />
             </Col>
         </Row>

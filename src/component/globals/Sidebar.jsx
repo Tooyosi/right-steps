@@ -15,24 +15,23 @@ import { BASE_URL, LOGOUT_URL } from './links'
 import WebService from './WebService'
 import { default as localforage } from 'localforage';
 
-export const Sidebar = () => {
+export const Sidebar = (props) => {
     let [toggle, updateToggle] = useState(false)
     let [user] = useContext(UserListContext)
 
-    const toggleClick = () => {
-        if (toggle) {
-            updateToggle(false)
-        } else {
-            updateToggle(true)
+    // const toggleClick = () => {
+    //     if (toggle) {
+    //         updateToggle(false)
+    //     } else {
+    //         updateToggle(true)
 
-        }
-    }
+    //     }
+    // }
 
     const doLogout = async ()=>{
         let service = new WebService()
         let result = await service.sendPost(LOGOUT_URL, {userId: user.user_id})
         if(result){
-            console.log(result)
             localforage.removeItem('user', (data)=>{
                 window.location.replace('/')
             })
@@ -40,13 +39,13 @@ export const Sidebar = () => {
     }
     return (
         <Fragment>
-            <ToggleStyle onClick={toggleClick}>
+            <ToggleStyle onClick={props.ClickToggle}>
                 <span></span>
                 <span></span>
                 <span></span>
             </ToggleStyle>
-            <BackdropStyle onClick={toggleClick} Toggle={toggle}>
-                <SidebarStyle Toggle={toggle}>
+            <BackdropStyle onClick={props.ClickToggle} Toggle={props.Toggle}>
+                <SidebarStyle Toggle={props.Toggle}>
                     <Col lg={12} className="text-center">
                         <Image src={Logo} fluid width="100px" />
                     </Col>
@@ -84,6 +83,14 @@ export const Sidebar = () => {
                                 </i>
                                 <Link to="/balance">
                                     <p>Balance</p>
+                                </Link>
+                            </li>
+                            <li className={window.location.pathname == "/education" ? "active" : ""}>
+                                <i>
+                                    <Image src={Members} />
+                                </i>
+                                <Link to="/education">
+                                    <p>Education</p>
                                 </Link>
                             </li>
                             <li className={window.location.pathname == "/members" ? "active" : ""}>

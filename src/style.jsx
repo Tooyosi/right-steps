@@ -304,9 +304,6 @@ export const FAQStyle = styled.div`
 export const FooterStyle = styled.div`
     padding: 70px 0;
     background-color: ${FooterBackground};
-    .socialIcons{
-        margin-top: 60px;
-    }
     a{
         color: inherit;
         text-decoration: none;
@@ -406,15 +403,15 @@ export const FormsFrame = styled.div`
 
 export const BackdropStyle = styled.div`
     position: absolute;
-    width: 105%;
+    width: 100%;
     background: rgba(3,0,0,0.3);
     z-index: 2;
-    transition: visibility 0.3s ease-out, opacity 0.3s ease-out;
+    transition: display 0.15s ease;
     @media(max-width: 1395px){
         display: ${props => props.Toggle? "block" : "none"};
         visibility:${props => props.Toggle? 'visible' : 'hidden'};
         opacity:${props => props.Toggle? '1' : '0'};
-        transition: visibility 0.3s ease-out, opacity 0.3s ease-out;
+        transition: 0.3s ease-out;
         height: 3000px;
     }
 `

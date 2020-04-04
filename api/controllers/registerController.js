@@ -152,8 +152,8 @@ module.exports = {
 
                                 // to go through all stages atleast 4 times
                                 // for (let i = 0; i < 3; i++) {
-                                    updateAncestors(userUpline.dataValues.user_id)
-                                    // updateAncestors(newUser.dataValues.user_id)
+                                    // updateAncestors(userUpline.dataValues.user_id)
+                                    updateAncestors(newUser.dataValues.user_id)
                                     
                                 // }
                                 var smtpTransport = nodemailer.createTransport({
@@ -224,7 +224,6 @@ module.exports = {
             }
 
         } catch (error) {
-            console.log(error)
             logger.error(error.original ? error.original.toString() : error.toString())
             return res.status(400).send(error.original ? error.original.toString() : error.toString())
         }

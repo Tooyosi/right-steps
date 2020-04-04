@@ -5,6 +5,7 @@ import { MEMBERS_LINK, BASE_URL, AWARDS_LINK, USER_TRANSFER_LINK } from '../glob
 import { UserListContext, MemberIdContext, ErrorContext } from '../Context/Context'
 import ErrorDisplay from '../globals/Error'
 import WebService from '../globals/WebService'
+import FundTransfers from './FundTransfers'
 
 export const Transfers = (props) => {
     let [user] = useContext(UserListContext)
@@ -20,6 +21,7 @@ export const Transfers = (props) => {
     const [error, setError] = useContext(ErrorContext);
     const [imageLink, updateImageLink] = useContext(ErrorContext);
     const [loading, updateLoading] = useState(true)
+    const [currentTab, updateCurrentTab] = useState(1)
     // for members
 
 
@@ -137,12 +139,10 @@ export const Transfers = (props) => {
         updateLoading(true)
 
         let result = await service.sendGet(`${USER_TRANSFER_LINK}/${user.user_id}?offset=${offset}`)
-        console.log(result)
         if (result.status == 200) {
             let { data: { rows, count } } = result
             let pages = Math.ceil(Number(count) / 10)
             updateTotalPages(pages)
-            console.log(rows)
             updateHistory(rows)
             updateLoading(false)
         } else {
@@ -171,7 +171,6 @@ export const Transfers = (props) => {
 
     const displayModal = ({ target }) => {
         let { id } = target;
-        console.log(id)
         updateImageLink(id)
         updateShowModal(true)
     }
@@ -183,7 +182,6 @@ export const Transfers = (props) => {
             message: ''
         })
         let { name, id } = target
-        console.log(id)
         switch (name) {
             case "Approve":
                 updateApproveLoading(true)
@@ -214,98 +212,116 @@ export const Transfers = (props) => {
         updateApproveLoading(false)
         updateDeclineLoading(false)
     }
+
+    const switchTabs = () => {
+        currentTab == 1 ? updateCurrentTab(2) : updateCurrentTab(1)
+    }
     return (
-        <HistoryStyle>
-            {error.show ? (
-                <ErrorDisplay message={error.message} error={error.isError} />
-            ) : null}
-            <Container fluid={true}>
-                {loading ? (<Col lg={7} md={7} sm={7} xs={7} className="text-center">
-                    <Spinner animation="border" variant="success" />
-                </Col>) : (
-                        <Row>
-                            <Col lg={12}>
-                                <Table bordered hover responsive={true}>
-                                    <thead>
-                                        <tr>
-                                            <th>Beneficiary</th>
-                                            <th>From</th>
-                                            <th>Type</th>
-                                            <th>Amount</th>
-                                            <th>Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {history.map((request, i) => (
-                                            <tr key={i}>
-                                                <td>{request.transferred_to} </td>
-                                                <td>{request.transferred_from}</td>
-                                                <td>{request.transfer_type}</td>
-                                                <td>${request.amount}</td>
-                                                <td>{request.date}</td>
+        <>
+                {user.role.name == "Admin" ? (
+
+            <Row className="text-center">
+                <Col lg={6} md={6} sm={6} xs={12} onClick={switchTabs} style={{ color: currentTab == 1 ? '#49C5A1' : '#B8C5D3' }} id="personal">Fund</Col>
+                
+                <Col lg={6} md={6} sm={6} xs={12} onClick={switchTabs} style={{ color: currentTab == 2 ? '#49C5A1' : '#B8C5D3' }} id="transfer">History</Col>
+
+            </Row>
+                ) : null}
+            <br />
+            {currentTab == 1? (<FundTransfers/>) : (
+            <HistoryStyle>
+                {error.show ? (
+                    <ErrorDisplay message={error.message} error={error.isError} />
+                ) : null}
+                <Container fluid={true}>
+                    {loading ? (<Col lg={7} md={7} sm={7} xs={7} className="text-center">
+                        <Spinner animation="border" variant="success" />
+                    </Col>) : (
+                            <Row>
+                                <Col lg={12}>
+                                    <Table bordered hover responsive={true}>
+                                        <thead>
+                                            <tr>
+                                                <th>Beneficiary</th>
+                                                <th>From</th>
+                                                <th>Type</th>
+                                                <th>Amount</th>
+                                                <th>Date</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </Table>
-                                <div id="page-numbers" className="pull-right">
-                                    <ul className="pagination">
-                                        {pages.map((page, index) => {
+                                        </thead>
+                                        <tbody>
+                                            {history.map((request, i) => (
+                                                <tr key={i}>
+                                                    <td>{request.transferred_to} </td>
+                                                    <td>{request.transferred_from}</td>
+                                                    <td>{request.transfer_type}</td>
+                                                    <td>${request.amount}</td>
+                                                    <td>{request.date}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                    <div id="page-numbers" className="pull-right">
+                                        <ul className="pagination">
+                                            {pages.map((page, index) => {
 
-                                            if (page === LEFT_PAGE) return (
-                                                <li key={index} className="page-item">
-                                                    <a className="page-link" aria-label="Previous" onClick={handleMoveLeft} name="member">
-                                                        <span aria-hidden="true">&laquo;</span>
-                                                        <span className="sr-only">Previous</span>
-                                                    </a>
-                                                </li>
-                                            );
+                                                if (page === LEFT_PAGE) return (
+                                                    <li key={index} className="page-item">
+                                                        <a className="page-link" aria-label="Previous" onClick={handleMoveLeft} name="member">
+                                                            <span aria-hidden="true">&laquo;</span>
+                                                            <span className="sr-only">Previous</span>
+                                                        </a>
+                                                    </li>
+                                                );
 
-                                            if (page === RIGHT_PAGE) return (
-                                                <li key={index} className="page-item">
-                                                    <a className="page-link" aria-label="Next" onClick={handleMoveRight} name="member">
-                                                        <span aria-hidden="true">&raquo;</span>
-                                                        <span className="sr-only">Next</span>
-                                                    </a>
-                                                </li>
-                                            );
+                                                if (page === RIGHT_PAGE) return (
+                                                    <li key={index} className="page-item">
+                                                        <a className="page-link" aria-label="Next" onClick={handleMoveRight} name="member">
+                                                            <span aria-hidden="true">&raquo;</span>
+                                                            <span className="sr-only">Next</span>
+                                                        </a>
+                                                    </li>
+                                                );
 
-                                            return (
-                                                <li key={index} className={`page-item${currentPage === page ? ' active' : ''}`}>
-                                                    <a className="page-link" id={page} onClick={pageClick} name="member">{page}</a>
-                                                </li>
-                                            );
+                                                return (
+                                                    <li key={index} className={`page-item${currentPage === page ? ' active' : ''}`}>
+                                                        <a className="page-link" id={page} onClick={pageClick} name="member">{page}</a>
+                                                    </li>
+                                                );
 
-                                        })}
+                                            })}
 
-                                    </ul>
-                                </div>
+                                        </ul>
+                                    </div>
 
-                            </Col>
-                            <Modal show={showModal} onHide={handleClose}>
-                                <Modal.Header closeButton>
-                                    <Modal.Title></Modal.Title>
-                                </Modal.Header>
-                                <Modal.Body>{imageLink !== '' ? <Image
-                                    rounded
-                                    height='500px'
-                                    fluid
-                                    width='460px'
-                                    src={`${BASE_URL}${imageLink}`}
-                                /> : (
-                                        <Spinner animation="border" variant="success" />
+                                </Col>
+                                <Modal show={showModal} onHide={handleClose}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title></Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>{imageLink !== '' ? <Image
+                                        rounded
+                                        height='500px'
+                                        fluid
+                                        width='460px'
+                                        src={`${BASE_URL}${imageLink}`}
+                                    /> : (
+                                            <Spinner animation="border" variant="success" />
 
-                                    )}</Modal.Body>
-                                <Modal.Footer>
-                                    <Button variant="success" onClick={handleClose}>
-                                        Close
+                                        )}</Modal.Body>
+                                    <Modal.Footer>
+                                        <Button variant="success" onClick={handleClose}>
+                                            Close
                             </Button>
 
-                                </Modal.Footer>
-                            </Modal>
+                                    </Modal.Footer>
+                                </Modal>
 
-                        </Row>
-                    )}
-            </Container>
-        </HistoryStyle>
+                            </Row>
+                        )}
+                </Container>
+            </HistoryStyle>
+                )}
+        </>
     )
 }

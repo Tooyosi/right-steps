@@ -1,0 +1,42 @@
+body{
+    
+
+}
+#eapps-facebook-feed-1 > a{
+    display: none !important;
+}
+@media(min-width: 1000px){
+    body{
+        /* background-color: #F5F6FA !important; */
+    }
+}
+/* for quill js */
+ .ql-container{
+    min-height: 400px;
+    margin-bottom: 10px !important;
+  }
+
+  /* for survey list table */
+  .survey-table{
+      margin-top: 20px;
+  }
+  /* .panel-footer{
+      background: transparent !important;
+  } */
+
+  /* for survey creator */
+  .svd_commercial_container{
+      display: none !important;
+  }
+  .sv_main.sv_default_css input[type="button"], .sv_default_css button, 
+  .svd_container.svd_container .svd_custom_select::before,
+  .svd_container.svd_container .svd-main-background-color, .svd_container.svd_container .btn-primary {
+      background-color: red !important;
+  }
+  .checkmark{
+      /* border: red; */
+  }
+  .svd_container.svd_container .svd-secondary-icon .svd-svg-icon,
+  .svd_container.svd_container .svd-primary-icon .svd-svg-icon {
+      fill: red !important;
+  }

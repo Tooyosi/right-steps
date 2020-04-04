@@ -11,6 +11,7 @@ import ErrorDisplay from '../globals/Error';
 import { Icon } from 'react-icons-kit'
 import { longArrowRight } from 'react-icons-kit/fa/longArrowRight'
 import { default as localforage } from 'localforage';
+import FundTransfers from '../transactions/FundTransfers';
 
 const Body = (props) => {
     let [user, setUser] = useContext(UserListContext);
@@ -37,128 +38,11 @@ const Body = (props) => {
     let [table, updateTable] = useState()
     let [enableSearch, updateEnableSearch] = useState(false)
 
+    let [oldPassword, updateOldPassword] = useState('');
+    let [newPassword, updateNewPassword] = useState('');
+    let [confirmPassword, updateConfirmPassword] = useState('');
 
     let [active, updateActive] = useState(1)
-
-    const LEFT_PAGE = 'LEFT';
-    const RIGHT_PAGE = 'RIGHT';
-
-    const range = (from, to, step = 1) => {
-        let i = from;
-        const range = [];
-
-        while (i <= to) {
-            range.push(i);
-            i += step;
-        }
-
-        return range;
-    }
-
-    const getStartPage = (currentPage) => {
-        let startPage = Math.max(2, currentPage - 2);
-        return startPage
-    }
-
-    const getEndPage = (totalPages, currentPage) => {
-        const endPage = Math.min(totalPages - 1, currentPage + 2);
-        return endPage
-    }
-
-    let memberStartPage = getStartPage(memberCurrentPage)
-    let memberEndPage = getEndPage(memberTotalPages, memberCurrentPage);
-
-    const fetchPageNumbers = (totalPages, startPage, endPage) => {
-        /**
-         * totalNumbers: the total page numbers to show on the control
-         * totalBlocks: totalNumbers + 2 to cover for the left(<) and right(>) controls
-         */
-        const totalNumbers = (2 * 2) + 3;
-        const totalBlocks = totalNumbers + 2;
-
-        if (totalPages > totalBlocks) {
-
-            let pages = range(startPage, endPage);
-
-            /**
-             * hasLeftSpill: has hidden pages to the left
-             * hasRightSpill: has hidden pages to the right
-             * spillOffset: number of hidden pages either to the left or to the right
-             */
-            const hasLeftSpill = startPage > 2;
-            const hasRightSpill = (totalPages - endPage) > 1;
-            const spillOffset = totalNumbers - (pages.length + 1);
-
-            switch (true) {
-                // handle: (1) < {5 6} [7] {8 9} (10)
-                case (hasLeftSpill && !hasRightSpill): {
-                    const extraPages = range(startPage - spillOffset, startPage - 1);
-                    pages = [LEFT_PAGE, ...extraPages, ...pages];
-                    break;
-                }
-
-                // handle: (1) {2 3} [4] {5 6} > (10)
-                case (!hasLeftSpill && hasRightSpill): {
-                    const extraPages = range(endPage + 1, endPage + spillOffset);
-                    pages = [...pages, ...extraPages, RIGHT_PAGE];
-                    break;
-                }
-
-                // handle: (1) < {4 5} [6] {7 8} > (10)
-                case (hasLeftSpill && hasRightSpill):
-                default: {
-                    pages = [LEFT_PAGE, ...pages, RIGHT_PAGE];
-                    break;
-                }
-            }
-
-            return [1, ...pages, totalPages];
-
-        }
-
-        return range(1, totalPages);
-
-    }
-
-    const handleMoveRight = evt => {
-        evt.preventDefault();
-        let { name } = evt.target;
-        if (memberCurrentPage > !memberStartPage) {
-            let newPageNo = memberCurrentPage + 1
-            let newSkipValue = 10 + offset
-            updateMemberCurrentPage(newPageNo)
-            updateOffset(newSkipValue)
-        }
-
-    }
-
-    const handleMoveLeft = (evt) => {
-        evt.preventDefault();
-        if (memberStartPage > !memberCurrentPage) {
-            let newPageNo = memberCurrentPage - 1
-            let newSkipValue = offset - 10
-            updateMemberCurrentPage(newPageNo)
-            updateOffset(newSkipValue)
-        }
-
-
-    }
-
-    const memberPages = fetchPageNumbers(memberTotalPages, memberStartPage, memberEndPage);
-
-
-    const pageClick = (e) => {
-        e.preventDefault();
-
-        let { id, name } = e.target
-        if (id != memberCurrentPage) {
-            let newPageNo = Number(id)
-            let newSkipValue = 10 * (newPageNo - 1)
-            updateMemberCurrentPage(newPageNo)
-            updateOffset(newSkipValue)
-            // fetchMembers("")
-        }
-    }
 
     let service = new WebService();
     let [accountInfo, updateAccountInfo] = useState([])
@@ -187,7 +71,6 @@ const Body = (props) => {
             updateLoading(true)
             let result = await service.sendGet(`${USER_SEARCH_LINK}/${searchTerm}?offset=${offset}`)
             let { data: { rows, count } } = result
-            console.log(rows)
             if (rows.length > 0) {
                 updateMemberSearchResult(rows)
                 let pages = Math.ceil(Number(count) / 10)
@@ -324,7 +207,53 @@ const Body = (props) => {
                 }
 
                 break;
+            case "changePassword":
+                if(oldPassword.trim() == "" || newPassword.trim() == "" || confirmPassword.trim() == ""){
+                    setError({
+                        isError: true,
+                        message: "One or more parameters are missing",
+                        show: true
+                    })
+                } else if(newPassword !== confirmPassword){
+                    setError({
+                        isError: true,
+                        message: "Password don't match",
+                        show: true
+                    })
+                }else{
+                    setError({
+                        isError: false,
+                        message: "",
+                        show: false
+                    })
+                    updateUserLoading(true)
 
+                    try {
+                        let result = await service.sendPut(`${USER_LINK}/${user.user_id}/changePassword`,{oldPassword, newPassword})
+                        if(result.status == 200){
+                            localforage.removeItem('user')
+                                    .then((value) => {
+                                        props.history.replace('/');
+                                    })
+                        }else{
+                            setError({
+                                show: true,
+                                isError: true,
+                                message: result.response ? result.response.data : 'An error occured'
+                            })
+                        }                        
+                    } catch (error) {
+                        setError({
+                            show: true,
+                            isError: true,
+                            message: error.toString()
+                        })
+                    }
+
+                    updateUserLoading(false)
+
+                }
+                break;
             default:
                 break;
         }
@@ -362,6 +291,15 @@ const Body = (props) => {
                 break;
             case "searchTerm":
                 updateSearchTerm(value)
+                break;
+            case "oldPassword":
+                updateOldPassword(value);
+                break;
+            case "newPassword":
+                updateNewPassword(value);
+                break;
+            case "confirmPassword":
+                updateConfirmPassword(value);
                 break;
             default:
                 break;
@@ -424,7 +362,7 @@ const Body = (props) => {
 
             let conf = confirm(`Continue transfer to ${receiverName}? This action can not be reversed`)
             if (conf) {
-            updateEnableSearch(true)
+                updateEnableSearch(true)
 
                 let dataToSend = {
                     senderId: user.user_id,
@@ -456,7 +394,7 @@ const Body = (props) => {
                     setError({
                         show: true,
                         isError: true,
-                        message: result.response.data ? result.response.data : 'An error occured'
+                        message: result.response ? result.response.data : 'An error occured'
                     })
                 }
                 e.target.disabled = false
@@ -481,7 +419,7 @@ const Body = (props) => {
                                     {user.role.name == 'Admin' ? (null) : (
                                         <Col lg={4} md={4} sm={3} xs={12} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="account">Account Details</Col>
                                     )}
-                                    <Col lg={4} md={4} sm={3} xs={12} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="transfer">Funds Transfer</Col>
+                                    <Col lg={4} md={4} sm={3} xs={12} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="transfer">Change Password</Col>
 
                                 </Row>
                                 <br />
@@ -692,110 +630,68 @@ const Body = (props) => {
                                     </Container>
                                 </RegisterFormStyle>
                                 <RegisterFormStyle style={{ display: active == 3 ? 'block' : 'none' }}>
-
                                     <Col>
                                         {error.show ? (
                                             <ErrorDisplay message={error.message} error={error.isError} />
                                         ) : null}
                                     </Col>
-                                    <Container fluid={true}>
+                                    <Form>
                                         <Row>
-
-                                            <Col lg={6} md={6} sm={6}>
-                                                <Form onSubmit={submitForm}>
-                                                    <Row>
-                                                        <Col lg={8} >
-                                                            <Form.Group>
-                                                                {/* <Form.Label>Bank Name</Form.Label> */}
-                                                                <Form.Control type="search" placeholder="Search by name or username" value={searchTerm} name="searchTerm" onChange={handleChange} />
-                                                            </Form.Group>
-                                                        </Col>
-                                                        <Col lg={4}>
-                                                            <input type="button" className="btn btn-success" value={searchTerm.trim() != "" ? `Search for ${searchTerm}` : `Search`} disabled={enableSearch} onClick={fetchFundsMember} />
-                                                        </Col>
-                                                    </Row>
-                                                </Form>
-                                            </Col>
-                                            <Col lg={12} md={12} sm={12}>
-                                                <form ref={table => updateTable(table)} onSubmit={fundUserAccount}>
-                                                    <Table striped responsive hover>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Firstname</th>
-                                                                <th>Lastname</th>
-                                                                <th>Username</th>
-                                                                <th>Amount</th>
-                                                                <th>Action</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {memberSearchResult.length != 0 ? (
-                                                                <>
-                                                                    {memberSearchResult.map((member, i) => (
-                                                                        <tr key={i}>
-                                                                            <td>{member.firstname}</td>
-                                                                            <td>{member.lastname}</td>
-                                                                            <td>{member.username}</td>
-                                                                            <td style={{ display: member.user_id == user.user_id ? 'none' : '' }}>
-                                                                                <Form.Control style={{ width: "70px" }} type="number" name="number" min="0" data-id={member.user_id} data-name={`${member.firstname} ${member.lastname}`} className={member.user_id} placeholder="Amount" onChange={handleChange} />
-                                                                            </td>
-                                                                            <td style={{ display: member.user_id == user.user_id ? 'none' : '' }}>
-                                                                                <input type="button" className="btn btn-success" value="Send" id={member.user_id} onClick={fundUserAccount} />
-                                                                            </td>
-                                                                        </tr>
-                                                                    ))}
-
-                                                                </>
-                                                            ) : (
-                                                                    <>
-                                                                        {emptyMemberMessage == null ? (null) : (
-                                                                            <tr>
-                                                                                <td>{emptyMemberMessage}</td>
-                                                                            </tr>
-                                                                        )}
-                                                                    </>
-
-                                                                )}
-                                                        </tbody>
-                                                    </Table>
-                                                    <div id="page-numbers" className="pull-right">
-                                                        <ul className="pagination">
-                                                            {memberPages.map((page, index) => {
-
-                                                                if (page === LEFT_PAGE) return (
-                                                                    <li key={index} className="page-item" onClick={handleMoveLeft} name="member">
-                                                                        <a className="page-link" aria-label="Previous" onClick={handleMoveLeft} name="member">
-                                                                            <span aria-hidden="true">&laquo;</span>
-                                                                            <span className="sr-only">Previous</span>
-                                                                        </a>
-                                                                    </li>
-                                                                );
-
-                                                                if (page === RIGHT_PAGE) return (
-                                                                    <li key={index} className="page-item" onClick={handleMoveRight} name="member">
-                                                                        <a className="page-link" aria-label="Next" onClick={handleMoveRight} name="member">
-                                                                            <span aria-hidden="true">&raquo;</span>
-                                                                            <span className="sr-only">Next</span>
-                                                                        </a>
-                                                                    </li>
-                                                                );
-
-                                                                return (
-                                                                    <li key={index} className={`page-item${memberCurrentPage === page ? ' active' : ''}`}>
-                                                                        <a className="page-link" id={page} onClick={pageClick} name="member">{page}</a>
-                                                                    </li>
-                                                                );
-
-                                                            })}
-
-                                                        </ul>
-                                                    </div>
-
-                                                </form>
-
+                                            <Col lg={6} >
+                                                <Form.Group>
+                                                    <Form.Label>Old Password</Form.Label>
+                                                    <Form.Control type="password" placeholder="Old Password" value={oldPassword} name="oldPassword" onChange={handleChange} />
+                                                </Form.Group>
                                             </Col>
                                         </Row>
-                                    </Container>
+                                        <Row>
+                                            <Col lg={6} >
+                                                <Form.Group>
+                                                    <Form.Label>New Password</Form.Label>
+                                                    <Form.Control type="password" placeholder="New Password" value={newPassword} name="newPassword" onChange={handleChange} />
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col lg={6} >
+                                                <Form.Group>
+                                                    <Form.Label>Confirm Password</Form.Label>
+                                                    <Form.Control type="password" placeholder="Confirm Password" value={confirmPassword} name="confirmPassword" onChange={handleChange} />
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+
+                                            <Col lg={12} md={12} sm={12}>
+                                                <Button id="Submit">
+                                                    {userLoading ? (
+                                                        <>
+                                                            <Spinner
+                                                                as="span"
+                                                                animation="grow"
+                                                                size="sm"
+                                                                role="status"
+                                                                aria-hidden="true"
+                                                            />
+                                                            <span style={{ marginRight: "5px" }}>
+                                                                Loading ....
+                                                                        </span>
+                                                        </>
+                                                    ) : (
+                                                            <>
+                                                                <span style={{ marginRight: "5px" }} onClick={submitForm} id="changePassword">
+                                                                    Change Password
+                                                                            </span>
+                                                                <Icon size={'12px'} icon={longArrowRight} onClick={submitForm} id="changePassword" />
+
+                                                            </>
+
+                                                        )}
+                                                </Button>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+
                                 </RegisterFormStyle>
 
                             </Container>

@@ -5,24 +5,34 @@ import 'react-multi-carousel/lib/styles.css';
 import { Contain, NavStyle, CarouselStyle, AboutStyle, CoursesStyle, RegisterStyle, RegisterFormStyle, TestimonialsStyle, FAQStyle, FooterStyle } from './component/styles/style.jsx'
 import { SignupForm } from './component/forms/Signup.jsx';
 import Logo from './../assets/logo.png'
-import Slide1 from './../assets/administration.png'
+import Slide1 from './../assets/right_education.png'
+import Slide2 from './../assets/live_your_dreams.png'
+import Slide3 from './../assets/administration.png'
 import About1 from './../assets/about1.png'
-import Courses1 from './../assets/courses1.png'
+import Courses1 from './../assets/forex_trading.jpg'
 import Stage1 from './../assets/stage1.jpg'
 import Stage2 from './../assets/stage2.jpg'
-import Courses2 from './../assets/courses2.png'
+import Courses2 from './../assets/global_stocks.jpg'
 import Courses3 from './../assets/courses3.png'
 import Courses4 from './../assets/courses4.png'
 import Business from './../assets/business.jpg'
 import Vision from './../assets/vision.jpg'
 import Philosophy from './../assets/philosophy.jpg'
-
-
+import { FACEBOOK_ACCESS_TOKEN, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } from './component/globals/links.js';
+import WebService from './component/globals/WebService.js';
+import { useEffect } from 'react';
+import parse from 'html-react-parser';
+import { twitter } from 'react-icons-kit/fa/twitter'
+import Icon from 'react-icons-kit';
+import { facebook } from 'react-icons-kit/fa/facebook'
+import { instagram } from 'react-icons-kit/fa/instagram'
 const Landing = () => {
     const [about, updateAbout] = useState(1)
     const [formState, updateFormState] = useState(1)
     let [showModal, updateShowModal] = useState(false)
-
+    const [facebookPosts, updateFacebookPosts] = useState({
+        data: []
+    })
     const submitForm = ({ target }) => {
         let { id } = target
         switch (id) {
@@ -39,7 +49,7 @@ const Landing = () => {
                 break;
         }
     }
-
+    let service = new WebService()
     const handleClose = () => {
         updateShowModal(false)
     }
@@ -72,6 +82,72 @@ const Landing = () => {
                 break;
         }
     }
+
+    let fetchFbPosts = async () => {
+        const script = document.createElement("script");
+        script.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v6.0&appId=548599319409205&autoLogAppEvents=1";
+        script.crossOrigin = "anonymous"
+        document.body.appendChild(script);
+
+        // let result = await service.sendCall(
+        //     `https://graph.facebook.com/v6.0/me/posts?access_token=${FACEBOOK_ACCESS_TOKEN}&debug=all&format=json&method=get&pretty=0&suppress_http_code=1&transport=cors`, "Get"
+        //     // `https://graph.facebook.com/oauth/access_token?client_id=${FACEBOOK_APP_ID}&client_secret=${FACEBOOK_APP_SECRET}&grant_type=client_credentials`
+        // )
+        // if (result.status == 200) {
+        //     let { data } = result
+        //     let { access_token } = data
+        //     // console.log(access_token)
+        //     // let fetchFeeds = await service.sendCall(`https://graph.facebook.com/v2.9/LADbible/posts?access_token=548599319409205|V1OUY4zn_XwlWkxWUdN8BRZIuSM`, "Get" )   
+        //     // console.log(fetchFeeds)
+        //     console.log(data)
+        //     // updateFacebookPosts(data)
+        // }
+
+        // console.log(result)
+        // console.log("here 1")
+
+        // console.log("here 2")
+
+        // script.onload = () => {
+        //     console.log("here 3")
+
+
+        //     window.FB.init({
+        //         appId: `${FACEBOOK_APP_ID}`,
+        //         autoLogAppEvents: true,
+        //         xfbml: true,
+        //         version: 'v6.0'
+        //     });
+
+        //     window.FB.ui({
+        //         method: 'share',
+        //         href: 'https://developers.facebook.com/docs/'
+        //       }, function(response){
+        //           console.log(response)
+        //       });
+
+
+        //     // window.FB.login((response) => {
+        //     //     if (response.authResponse) {
+        //     //         console.log('Welcome!  Fetching your information.... ');
+        //     //         FB.api('/me', function (response) {
+        //     //             console.log('Good to see you, ' + response.name + '.');
+        //     //         });
+        //     //     } else {
+        //     //         console.log('User cancelled login or did not fully authorize.');
+        //     //     }
+        //     // })
+        //     console.log(window.FB)
+
+        // }
+
+
+    }
+    useEffect(() => {
+        fetchFbPosts()
+
+
+    }, [])
     return (
         <Fragment>
             <Modal show={showModal} onHide={handleClose}>
@@ -157,7 +233,7 @@ const Landing = () => {
                             <Carousel.Item>
                                 <img
                                     className="d-block w-100"
-                                    src={Slide1}
+                                    src={Slide2}
                                     alt="Third slide"
                                 />
 
@@ -165,7 +241,7 @@ const Landing = () => {
                             <Carousel.Item>
                                 <img
                                     className="d-block w-100"
-                                    src={Slide1}
+                                    src={Slide3}
                                     alt="Third slide"
                                 />
 
@@ -635,6 +711,30 @@ const Landing = () => {
                     <FAQStyle>
                         <Container fluid={true}>
                             <Row>
+                                
+                                <Col lg={12} >
+                                    <div style={{textAlign: 'center', width: "80%", margin: "0 auto"}}>
+                                    <h3>How Does It Work?</h3>
+                                    <h5>WE HAVE A NETWORK MARKETING PROGRAM AND IT IS STRICTLY MEMBERSHIP BASED,<br/> $30 IS THE MEMBERSHIP FEE</h5>
+                                    <h6>STAGE 1</h6>
+                                    <p> IS THE FEEDER BOARD OF A 2 BY 2 MATRIX </p>
+                                    <Image
+                                        src={Stage1}
+                                        height="160px"
+                                        width="150px"
+                                        rounded
+                                    />
+                                    <h6>STAGES 2 TO 5 ARE ALL 2 BY 5 MATRIX SYSTEM</h6>
+                                    <Image
+                                        src={Stage2}
+                                        height="160px"
+                                        width="150px"
+                                        rounded
+                                    />
+                                    <p>MEMBERS ARE EXITED FROM THE PROGRAMME AFTER COMPLETING STAGE 5, <br/>
+                                                        AFTER BEING AWARDED WITH A BRAND NEW FOUR BEDROOM DUPLEX AND $12,000.</p>
+                                                        </div>
+                                </Col>
                                 <Col lg={6}>
                                     <Accordion defaultActiveKey="0">
                                         <Card>
@@ -706,26 +806,32 @@ const Landing = () => {
                                     </Accordion>
                                 </Col>
                                 <Col lg={6}>
-                                    <h3>How Does It Work?</h3>
-                                    <h5>WE HAVE A NETWORK MARKETING PROGRAM AND IT IS STRICTLY MEMBERSHIP BASED, $30 IS THE MEMBERSHIP FEE</h5>
-                                    <h6>STAGE 1</h6>
-                                    <p> IS THE FEEDER BOARD OF A 2 BY 2 MATRIX </p>
-                                    <Image
-                                        src={Stage1}
-                                        height="160px"
-                                        width="40%"
-                                        rounded
-                                    />
-                                    <h6>STAGES 2 TO 5 ARE ALL 2 BY 5 MATRIX SYSTEM</h6>
-                                    <Image
-                                        src={Stage2}
-                                        height="160px"
-                                        width="40%"
-                                        rounded
-                                    />
-                                    <p>MEMBERS ARE EXITED FROM THE PROGRAMME AFTER COMPLETING STAGE 5,
-                                                        AFTER BEING AWARDED WITH A BRAND NEW FOUR BEDROOM DUPLEX AND $12,000.</p>
+                                    <div className="fb-page" data-href="https://www.facebook.com/106039834393060" data-tabs="timeline" data-width="700" data-height="700" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/106039834393060" className="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/106039834393060">Integration Test</a></blockquote></div>
+                                    {/* <script src="https://apps.elfsight.com/p/platform.js" defer></script> */}
+                                    {/* <div class="elfsight-app-f88584af-5a2a-4116-95cf-d75c816214e6"></div> */}
+                                    {/* <div class="fb-post" data-href="https://www.facebook.com/20531316728/posts/10154009990506729/" data-width="500" data-show-text="false"><blockquote cite="https://developers.facebook.com/20531316728/posts/10154009990506729/" class="fb-xfbml-parse-ignore">Posted by <a href="https://www.facebook.com/facebookapp/">Facebook App</a> on&nbsp;<a href="https://developers.facebook.com/20531316728/posts/10154009990506729/">Thursday, August 27, 2015</a></blockquote></div> */}
+                                    {facebookPosts.data.length < 1 ? (null) : (
 
+                                        <>
+                                            {facebookPosts.data.map((post, i) => (
+                                                <Fragment key={i}>
+                                                    {/* <p>{parse(post.message)}</p> */}
+                                                    {/* <p>{(post.message)}</p>
+
+                                            <p>{post.created_time}</p> */}
+                                                    {/* <iframe src={`https://facebook.com/${post.id}&output=embed`} allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen frameborder="0"></iframe> */}
+                                                    {/* <div className="fb-page" data-href={`https://facebook.com/${post.id}`} data-tabs="timeline" data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true">
+                                                        <blockquote cite={`https://facebook.com/${post.id}`} className="fb-xfbml-parse-ignore">
+                                                            <a href={`https://facebook.com/${post.id}`}>Facebook</a></blockquote>
+                                                        </div> */}
+                                                    {/* <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fbarrackoyog%2Fposts%2F10211594047605571&width=500" width="500" height="594" style={{border:"none" , overflow:"hidden"}} scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe> */}
+                                                    {/* <iframe src={`https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com${post.id}`} width="500" height="594" style={{border:"none" , overflow:"hidden"}} scrolling="no" frameBorder="0"  allow="encrypted-media"></iframe> */}
+
+                                                    {/* <div className="fb-post" data-href={`https://www.facebook.com/${post.id}`} data-width="500" data-show-text="true"></div> */}
+                                                </Fragment>
+                                            ))}
+                                        </>
+                                    )}
                                 </Col>
                             </Row>
                         </Container>
@@ -740,14 +846,29 @@ const Landing = () => {
                                         <Row>
                                             <Col lg={4} md={4} sm={4}>
                                                 <Image
-                                                    width="180px"
+                                                    width="100px"
                                                     src={Logo}
                                                     roundedCircle
                                                 // fluid
                                                 />
                                             </Col>
                                             <Col lg={8} md={8} sm={8}>
-                                                {"\u00a9"} Right Step Foundation
+                                                <div>
+                                                    {"\u00a9"} Right Step Foundation
+                                                </div>
+                                                <div style={{ textAlign: "right" }} className="socialIcons">
+                                                    <a href="https://www.twitter.com" target="_blank">
+                                                        <Icon icon={twitter} size={"50px"} style={{ color: '#00acee' }} />
+                                                    </a>
+                                                    <a href="https://www.facebook.com" target="_blank">
+                                                        <Icon icon={facebook} size={"50px"} style={{ color: '#3b5998' }} />
+                                                    </a>
+
+                                                    <a href="https://www.instagram.com" target="_blank">
+                                                        <Icon icon={instagram} size={"50px"} style={{ color: '#E1306C' }} />
+                                                    </a>
+                                                </div>
+
                                             </Col>
                                         </Row>
                                     </Container>

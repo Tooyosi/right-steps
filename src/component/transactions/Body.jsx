@@ -129,14 +129,17 @@ export const Body = () => {
         <Container fluid={true}>
             <Row className="text-center">
                 {user.role.name !== "Admin" ? (
-                    <Col lg={2} md={2} sm={3} xs={2} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="make">Make Request</Col>
+                    <Col lg={2} md={2} sm={3} xs={6} onClick={switchTabs} style={{ color: active == 1 ? '#49C5A1' : '#B8C5D3' }} id="make">Make Request</Col>
                 ) : (null)}
 
-                <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="approve">Approved Requests</Col>
+                {/* <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 2 ? '#49C5A1' : '#B8C5D3' }} id="approve">Approved Requests</Col> */}
+                {user.role.name == "Admin" ? (
                 <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 3 ? '#49C5A1' : '#B8C5D3' }} id="pending">Pending Requests</Col>
-                <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 4 ? '#49C5A1' : '#B8C5D3' }} id="history">Transaction History</Col>
-                <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 5 ? '#49C5A1' : '#B8C5D3' }} id="awards">Awards</Col>
-                <Col lg={2} md={2} sm={3} xs={3} onClick={switchTabs} style={{ color: active == 6 ? '#49C5A1' : '#B8C5D3' }} id="transfers">Transfers</Col>
+                ) : (null)}
+
+                <Col lg={2} md={2} sm={3} xs={6} onClick={switchTabs} style={{ color: active == 4 ? '#49C5A1' : '#B8C5D3' }} id="history">Transaction History</Col>
+                <Col lg={2} md={2} sm={3} xs={6} onClick={switchTabs} style={{ color: active == 5 ? '#49C5A1' : '#B8C5D3' }} id="awards">Awards</Col>
+                <Col lg={2} md={2} sm={3} xs={6} onClick={switchTabs} style={{ color: active == 6 ? '#49C5A1' : '#B8C5D3' }} id="transfers">Transfers</Col>
             </Row>
             <br />
             {user.role.name !== "Admin" ? (

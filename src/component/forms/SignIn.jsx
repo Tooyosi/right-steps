@@ -20,9 +20,7 @@ const SignInForm = (props) => {
     const [user, setUser] = useContext(UserListContext);
     
     useEffect(()=>{
-        console.log(window.history)
         if(window.history.state !== null){
-            console.log(window.history.state)
             setError(window.history.state)
             window.history.pushState(null, "error")
         }

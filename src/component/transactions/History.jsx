@@ -138,13 +138,11 @@ export const History = (props) => {
 
         let link;
         user.role.name == "Admin" ? link = `${REQUEST_LINK}?offset=${offset}&date=${date}&userId&status=${type}` : link = `${REQUEST_LINK}?offset=${offset}&date=${date}&userId=${user.user_id}&status=${type}`
-        console.log(link)
         let result = await service.sendGet(link)
         if (result.status == 200) {
             let { data: { rows, count } } = result
             let pages = Math.ceil(Number(count) / 10)
             updateTotalPages(pages)
-            console.log(rows)
             updateHistory(rows)
             updateLoading(false)
         } else {
@@ -173,7 +171,6 @@ export const History = (props) => {
 
     const displayModal = ({ target }) => {
         let { id } = target;
-        console.log(id)
         updateImageLink(id)
         updateShowModal(true)
     }
@@ -185,7 +182,6 @@ export const History = (props) => {
             message: ''
         })
         let { name, id } = target
-        console.log(id)
         switch (name) {
             case "Approve":
                 updateApproveLoading(true)

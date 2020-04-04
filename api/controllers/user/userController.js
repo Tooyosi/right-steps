@@ -1,5 +1,4 @@
 const models = require('../../connections/sequelize')
-const sequelize = require('../../connections/connection')
 const Op = require('sequelize').Op
 const getDownlines = require('../functions/getDownlines')
 const { logger } = require('../../loggers/logger')
@@ -10,7 +9,7 @@ const fs = require('fs')
 let notificationCreate = require('../functions/createNotification')
 let transferCreate = require('../functions/createTransfer')
 let date = require('../functions/dateValue')
-
+let md5 = require("md5")
 const upload = uploadFunction('./uploads/profile')
 var uploader = upload.single('userImage')
 
@@ -28,6 +27,36 @@ module.exports = {
 
     }),
 
+    changePassword: ('/', async (req, res)=>{
+        let {id} = req.params;
+        let {oldPassword, newPassword} = req.body
+        if(oldPassword.trim() == "" || newPassword.trim() == ""){
+            return res.status(400).json("One ore more parameters are missing") 
+        }
+        try {
+            let foundUser = await models.User.findOne({
+                where:{
+                    user_id: id
+                }
+            })
+            if((md5(Number(oldPassword)) !== foundUser.password) && (md5(oldPassword) !== foundUser.password) ){
+                console.log(md5(oldPassword))
+                console.log(foundUser.password)
+                return res.status(400).json("Invalid Password") 
+            }else{
+                await foundUser.update({
+                    password: md5(newPassword),
+                    token: null
+                })
+
+                return res.status(200).json("Successful") 
+
+            }            
+        } catch (error) {
+            logger.error(error.toString())
+            return res.status(400).json(error.toString())            
+        }
+    }),
     bonus: ('/', async (req, res) => {
         let { id } = req.params
 

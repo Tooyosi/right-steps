@@ -98,7 +98,6 @@ export const Personal = withRouter((props) => {
     }
 
     const matrixRedirect = ({ target: {id} }) => {
-        console.log(id)
         updateIdToSend(id)
         updateRedirect(true)
     }
@@ -121,7 +120,7 @@ export const Personal = withRouter((props) => {
                                         {showUserMemberDetails ? (
                                             <div className="balance">
                                                 <p>My Balance</p>
-                                                <p>{personalDetails.account.balance}</p>
+                                                <p>${personalDetails.account.balance}</p>
                                             </div>
                                         ) : (null)}
                                         <div className="balance">

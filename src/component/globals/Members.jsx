@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useContext } from 'react'
 import { Image, Col } from 'react-bootstrap'
 import { MembersListStyle, StageDivStyle } from '../styles/style'
-import Courses1 from './../../../assets/courses1.png'
+import Courses1 from './../../../assets/userplaceholder.png'
 import WebService from './WebService'
 import { MEMBERS_LINK } from './links'
 import { MemberIdContext } from '../Context/Context'
